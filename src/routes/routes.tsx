@@ -20,16 +20,6 @@ export const PublicRoutes = {
     element: <Login />,
     isPublic: true,
   },
-  newPassword: {
-    path: '/nova-senha',
-    element: <NewPassword />,
-    isPublic: true,
-  },
-  forgotPassword: {
-    path: '/esqueci-senha',
-    element: <ForgotPassword />,
-    isPublic: true,
-  },
   register: {
     path: '/cadastro',
     element: <Register />,
@@ -38,6 +28,16 @@ export const PublicRoutes = {
   confirmSignUp: {
     path: '/confirmar-cadastro',
     element: <ConfirmSignUp />,
+    isPublic: true,
+  },
+  newPassword: {
+    path: '/nova-senha',
+    element: <NewPassword />,
+    isPublic: true,
+  },
+  forgotPassword: {
+    path: '/esqueci-senha',
+    element: <ForgotPassword />,
     isPublic: true,
   },
 } satisfies Record<string, AppRoute>;
