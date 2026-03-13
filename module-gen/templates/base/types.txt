@@ -1,0 +1,17 @@
+export interface {ModelUpper} {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Create{ModelUpper}DTO {
+  name: string;
+  description?: string;
+}
+
+export interface Update{ModelUpper}DTO {
+  name?: string;
+  description?: string;
+}

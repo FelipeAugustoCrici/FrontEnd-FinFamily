@@ -1,0 +1,47 @@
+import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui/Card';
+import { Table, TableCell } from '@/common/components/Table';
+
+import { {ModelUpper}Header } from './components/{ModelUpper}Header';
+import { {ModelUpper}Filters } from './components/{ModelUpper}Filters';
+import { use{ModelUpper}Filters } from './hooks/use{ModelUpper}Filters';
+import { use{ModelUpper}s } from './hooks/use{ModelUpper}s';
+import { useDelete{ModelUpper} } from './hooks/useDelete{ModelUpper}';
+
+export function {ModelUpper}List() {
+  const navigate = useNavigate();
+  const filters = use{ModelUpper}Filters();
+  const delete{ModelUpper} = useDelete{ModelUpper}();
+
+  const { {ModelLower}s, isLoading } = use{ModelUpper}s();
+
+  const filtered{ModelUpper}s = {ModelLower}s?.filter((item) =>
+    item.name?.toLowerCase().includes(filters.search.toLowerCase()),
+  ) || [];
+
+  return (
+    <div className="space-y-6">
+      <{ModelUpper}Header onCreate={() => navigate('/{ModelLower}/create')} />
+
+      <Card className="overflow-hidden">
+        <{ModelUpper}Filters search={filters.search} onSearchChange={filters.setSearch} />
+
+        <Table
+          data={filtered{ModelUpper}s}
+          isLoading={isLoading}
+          emptyMessage="Nenhum {ModelVisible} encontrado"
+          headers={['Nome', 'Descrição']}
+          onEdit={(item) => navigate(`/{ModelLower}/edit/${item.id}`)}
+          onDelete={(item) => delete{ModelUpper}.mutate(item.id)}
+        >
+          {(item) => (
+            <>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.description || '-'}</TableCell>
+            </>
+          )}
+        </Table>
+      </Card>
+    </div>
+  );
+}

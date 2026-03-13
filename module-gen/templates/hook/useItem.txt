@@ -1,0 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+import { {ModelLower}Service } from '../services/{ModelLower}.service';
+
+export function use{ModelUpper}(id?: string) {
+  return useQuery({
+    queryKey: ['{ModelLower}', id],
+    queryFn: () => {ModelLower}Service.getById(id!),
+    enabled: !!id,
+  });
+}

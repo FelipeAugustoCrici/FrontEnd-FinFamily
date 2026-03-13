@@ -1,0 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
+import { {ModelLower}Service } from '../services/{ModelLower}.service';
+
+export function use{ModelUpper}s(search?: string) {
+  return useQuery({
+    queryKey: ['{ModelLower}s', search],
+    queryFn: () => {ModelLower}Service.list(),
+  });
+}

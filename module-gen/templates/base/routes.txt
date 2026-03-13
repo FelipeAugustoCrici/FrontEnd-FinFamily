@@ -1,0 +1,19 @@
+import { {ModelUpper}List } from '../{ModelUpper}List';
+import { {ModelUpper}Create } from '../{ModelUpper}Create';
+import { {ModelUpper}Edit } from '../{ModelUpper}Edit';
+
+export const {ModelUpper}Routes = {
+  {ModelLower}: {
+    path: '/{ModelLower}',
+    element: <{ModelUpper}List />,
+  },
+  {ModelLower}Create: {
+    path: '/{ModelLower}/create',
+    element: <{ModelUpper}Create />,
+  },
+  {ModelLower}Update: {
+    path: '/{ModelLower}/edit/:id',
+    element: <{ModelUpper}Edit />,
+    use: '/{ModelLower}/edit',
+  },
+};

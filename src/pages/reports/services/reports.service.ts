@@ -1,0 +1,24 @@
+import { api } from '@/services/api.service';
+import type { SummaryData } from '../types/reports.types';
+
+export const reportsService = {
+  getSummary: async (month: number, year: number): Promise<SummaryData> => {
+    const { data } = await api.get(`/finance/summary?month=${month}&year=${year}`);
+    return data;
+  },
+
+  getSummaryForPeriod: async (months: number): Promise<SummaryData[]> => {
+    const now = new Date();
+    const promises: Promise<SummaryData>[] = [];
+
+    for (let i = 0; i < months; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      promises.push(reportsService.getSummary(month, year));
+    }
+
+    const results = await Promise.all(promises);
+    return results.reverse(); // Ordem cronológica
+  },
+};

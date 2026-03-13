@@ -1,0 +1,28 @@
+import { api } from '@/services/api';
+import { {ModelUpper}, Create{ModelUpper}DTO, Update{ModelUpper}DTO } from '../types/{ModelLower}.types';
+
+export const {ModelLower}Service = {
+  async list(): Promise<{ModelUpper}[]> {
+    const { data } = await api.get('/{ModelLower}s');
+    return data;
+  },
+
+  async getById(id: string): Promise<{ModelUpper}> {
+    const { data } = await api.get(`/{ModelLower}s/${id}`);
+    return data;
+  },
+
+  async create(data: Create{ModelUpper}DTO): Promise<{ModelUpper}> {
+    const response = await api.post('/{ModelLower}s', data);
+    return response.data;
+  },
+
+  async update(id: string, data: Update{ModelUpper}DTO): Promise<{ModelUpper}> {
+    const response = await api.put(`/{ModelLower}s/${id}`, data);
+    return response.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/{ModelLower}s/${id}`);
+  },
+};

@@ -1,0 +1,29 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/useToast';
+import { {ModelLower}Service } from '../services/{ModelLower}.service';
+import { {ModelUpper}FormData } from '../components/{ModelUpper}Form';
+
+export function useUpdate{ModelUpper}() {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: {ModelUpper}FormData }) =>
+      {ModelLower}Service.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{ModelLower}s'] });
+      showToast({
+        title: 'Sucesso',
+        description: '{ModelUpper} atualizado com sucesso!',
+        variant: 'success',
+      });
+    },
+    onError: () => {
+      showToast({
+        title: 'Erro',
+        description: 'Erro ao atualizar {ModelLower}',
+        variant: 'error',
+      });
+    },
+  });
+}

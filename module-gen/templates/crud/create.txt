@@ -1,0 +1,19 @@
+import { useNavigate } from 'react-router-dom';
+import { {ModelUpper}Form } from './components/{ModelUpper}Form';
+import { useCreate{ModelUpper} } from './hooks/useCreate{ModelUpper}';
+
+export function {ModelUpper}Create() {
+  const navigate = useNavigate();
+  const create{ModelUpper} = useCreate{ModelUpper}();
+
+  return (
+    <{ModelUpper}Form
+      onSubmit={(data) =>
+        create{ModelUpper}.mutate(data, {
+          onSuccess: () => navigate('/{ModelLower}'),
+        })
+      }
+      isLoading={create{ModelUpper}.isPending}
+    />
+  );
+}

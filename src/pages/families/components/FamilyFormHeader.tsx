@@ -1,0 +1,36 @@
+import { Button } from '@/components/ui/Button';
+import { Save, X, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export function FamilyFormHeader({ isEdit, isLoading }: { isEdit: boolean; isLoading: boolean }) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-2xl font-bold text-primary-800">
+          {isEdit ? 'Editar Família' : 'Nova Família'}
+        </h2>
+        <p className="text-primary-500">
+          {isEdit ? 'Atualize os dados da família' : 'Preencha as informações da nova família'}
+        </p>
+      </div>
+
+      <div className="flex gap-3">
+        <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
+          <X size={18} className="mr-2" />
+          Cancelar
+        </Button>
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <Loader2 size={18} className="mr-2 animate-spin" />
+          ) : (
+            <Save size={18} className="mr-2" />
+          )}
+          {isEdit ? 'Atualizar' : 'Salvar'}
+        </Button>
+      </div>
+    </div>
+  );
+}

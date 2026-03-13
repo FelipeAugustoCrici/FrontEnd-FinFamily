@@ -1,0 +1,23 @@
+import { Search } from 'lucide-react';
+
+type Props = {
+  search: string;
+  onSearchChange: (value: string) => void;
+};
+
+export function FamilyFilters({ search, onSearchChange }: Props) {
+  return (
+    <div className="p-4 border-b border-primary-50 flex flex-col md:flex-row gap-4 items-center justify-between bg-primary-50/30">
+      <div className="relative w-full md:w-96">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400" size={18} />
+        <input
+          type="text"
+          placeholder="Buscar por nome..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 bg-white border border-primary-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+        />
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,23 @@
+import {ModelUpper}List from './crud/{ModelUpper}List';
+import {ModelUpper}Create from './crud/{ModelUpper}Create';
+import {ModelUpper}Edit from './crud/{ModelUpper}Edit';
+import MainPage, { TPageProps } from 'src/common/components/Main/MainPage';
+import { useRoutes } from 'src/routes/useRoutes';
+
+export default function {ModelUpper}Page({ state }: TPageProps) {
+  const { routes } = useRoutes();
+
+  return (
+    <MainPage
+      CreateElement={{ModelUpper}Create}
+      ListElement={{ModelUpper}List}
+      EditElement={{ModelUpper}Edit}
+      state={state}
+      routes={{
+        create: routes.{ModelLower}Create,
+        edit: routes.{ModelLower}Update,
+        list: routes.{ModelLower},
+      }}
+    />
+  );
+}
