@@ -35,15 +35,21 @@ const CATEGORY_COLORS = [
 ];
 
 export function transformToMonthlyData(summaries: SummaryData[]): MonthlyData[] {
-  return summaries.map((summary) => ({
-    month: MONTH_NAMES[summary.month - 1],
-    income: summary.totals.incomes,
-    expense: summary.totals.expenses,
-    balance: summary.totals.balance,
-  }));
+  return summaries
+    .filter((summary) => !!summary)
+    .map((summary) => ({
+      month: MONTH_NAMES[summary.month - 1],
+      income: summary.totals.incomes,
+      expense: summary.totals.expenses,
+      balance: summary.totals.balance,
+    }));
 }
 
 export function transformToCategoryExpenses(summary: SummaryData): CategoryExpense[] {
+  if (!summary || !summary.details || !summary.details.expenses) {
+    return [];
+  }
+
   const categoryMap = new Map<string, number>();
 
   // Agrupar despesas por categoria
@@ -70,7 +76,7 @@ export function transformToCategoryExpenses(summary: SummaryData): CategoryExpen
 }
 
 export function transformToPersonExpenses(summary: SummaryData): PersonExpense[] {
-  if (!summary.perPerson || summary.perPerson.length === 0) {
+  if (!summary || !summary.perPerson || summary.perPerson.length === 0) {
     return [];
   }
 
@@ -85,6 +91,10 @@ export function transformToPersonExpenses(summary: SummaryData): PersonExpense[]
 }
 
 export function transformToRecurringExpenses(summary: SummaryData): RecurringExpense[] {
+  if (!summary || !summary.details || !summary.details.expenses) {
+    return [];
+  }
+
   // Filtrar despesas recorrentes (fixas)
   const recurringExpenses = summary.details.expenses.filter(
     (expense: any) => expense.type === 'fixed' || expense.recurringId,
