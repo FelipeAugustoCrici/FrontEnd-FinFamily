@@ -1,7 +1,7 @@
 import { RouteProps } from 'react-router-dom';
 
 import { Dashboard } from '@/pages/dashboard';
-import { Login, NewPassword, ForgotPassword } from '@/pages/auth';
+import { Login, NewPassword, ForgotPassword, Register, ConfirmSignUp } from '@/pages/auth';
 import { FamilyRoutes } from '@/pages/families/base/FamilyRoutes';
 import { RecordRoutes } from '@/pages/records/base/RecordRoutes';
 import { CategoryRoutes } from '@/pages/categories/base/CategoryRoutes';
@@ -28,6 +28,16 @@ export const PublicRoutes = {
   forgotPassword: {
     path: '/esqueci-senha',
     element: <ForgotPassword />,
+    isPublic: true,
+  },
+  register: {
+    path: '/cadastro',
+    element: <Register />,
+    isPublic: true,
+  },
+  confirmSignUp: {
+    path: '/confirmar-cadastro',
+    element: <ConfirmSignUp />,
     isPublic: true,
   },
 } satisfies Record<string, AppRoute>;

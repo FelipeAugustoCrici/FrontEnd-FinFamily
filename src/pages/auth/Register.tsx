@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSignUp } from './hooks/useSignUp';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -28,7 +28,6 @@ export function Register() {
         return;
       }
 
-      // fallback: navigate to login after successful signup
       navigate('/login', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao criar conta.';
@@ -69,11 +68,16 @@ export function Register() {
 
             {error && <p className="text-sm text-danger-600">{error}</p>}
 
-            <div className="flex justify-end">
-              <Button type="submit" variant="primary" isLoading={loading} className="w-full">
-                {loading ? 'Criando conta...' : 'Cadastrar'}
-              </Button>
-            </div>
+            <Button type="submit" variant="primary" isLoading={loading} className="w-full">
+              {loading ? 'Criando conta...' : 'Cadastrar'}
+            </Button>
+
+            <p className="text-center text-sm text-primary-500">
+              Já tem uma conta?{' '}
+              <Link to="/login" className="text-primary-700 font-medium hover:underline">
+                Entrar
+              </Link>
+            </p>
           </form>
         </Card>
       </div>

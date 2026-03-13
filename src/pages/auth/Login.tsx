@@ -27,6 +27,13 @@ export function Login() {
         return;
       }
 
+      if (result?.status === 'CONFIRM_SIGN_UP') {
+        navigate('/confirmar-cadastro', {
+          state: { email },
+        });
+        return;
+      }
+
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao fazer login.';
@@ -69,6 +76,13 @@ export function Login() {
                 Entrar
               </Button>
             </div>
+
+            <p className="text-center text-sm text-primary-500">
+              Não tem uma conta?{' '}
+              <Link to="/cadastro" className="text-primary-700 font-medium hover:underline">
+                Cadastre-se agora
+              </Link>
+            </p>
           </form>
         </Card>
       </div>
