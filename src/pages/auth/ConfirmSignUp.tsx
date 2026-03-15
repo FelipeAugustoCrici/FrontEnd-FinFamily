@@ -18,15 +18,15 @@ export function ConfirmSignUp() {
     setError(null);
 
     try {
-      await confirm(state.email, code);
-      navigate('/login', { replace: true });
+      await confirm(state.email, code, state.password, state.name);
+      navigate('/', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao confirmar cadastro.';
       setError(message);
     }
   }
 
-  if (!state?.email) {
+  if (!state?.email || !state?.password || !state?.name) {
     return <p className="text-center text-sm text-danger-600">Fluxo inválido</p>;
   }
 

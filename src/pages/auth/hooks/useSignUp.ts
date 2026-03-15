@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { confirmUserSignUp, registerUser } from '../services/auth.service';
+import { confirmUserSignUp, registerUser, setupUserAfterConfirmation } from '../services/auth.service';
 
 export function useSignUp() {
   const [loading, setLoading] = useState(false);
@@ -13,10 +13,11 @@ export function useSignUp() {
     }
   }
 
-  async function confirm(email: string, code: string) {
+  async function confirm(email: string, code: string, password: string, name: string) {
     setLoading(true);
     try {
       await confirmUserSignUp(email, code);
+      await setupUserAfterConfirmation(email, password, name);
     } finally {
       setLoading(false);
     }

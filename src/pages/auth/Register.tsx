@@ -23,7 +23,7 @@ export function Register() {
 
       if (result?.nextStep?.signUpStep === 'CONFIRM_SIGN_UP') {
         navigate('/confirmar-cadastro', {
-          state: { email },
+          state: { email, password, name },
         });
         return;
       }
