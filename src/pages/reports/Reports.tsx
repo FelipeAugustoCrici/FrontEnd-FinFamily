@@ -45,7 +45,7 @@ export function Reports() {
     );
   }
 
-  if (!summaries || summaries.length === 0) {
+  if (!summaries || summaries.length === 0 || summaries.every((s) => !s)) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
@@ -56,11 +56,12 @@ export function Reports() {
     );
   }
 
-  // Usar o último mês (mais recente) para os dados detalhados
-  const currentSummary = summaries[summaries.length - 1];
+  // Filtrar resumos nulos e usar o último mês (mais recente) para os dados detalhados
+  const validSummaries = summaries.filter((s) => !!s);
+  const currentSummary = validSummaries[validSummaries.length - 1];
 
   // Transformar dados
-  const monthlyData = transformToMonthlyData(summaries);
+  const monthlyData = transformToMonthlyData(validSummaries);
   const categoryExpenses = transformToCategoryExpenses(currentSummary);
   const personExpenses = transformToPersonExpenses(currentSummary);
   const recurringExpenses = transformToRecurringExpenses(currentSummary);
