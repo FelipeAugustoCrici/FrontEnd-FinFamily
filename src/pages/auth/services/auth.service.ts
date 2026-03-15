@@ -25,6 +25,9 @@ export async function setupUserAfterConfirmation(
   email: string,
   password: string,
   name: string,
+  phone?: string,
+  cpf?: string,
+  birthDate?: string,
 ): Promise<void> {
   await signIn({ username: email, password });
   await fetchAuthSession({ forceRefresh: true });
@@ -38,5 +41,9 @@ export async function setupUserAfterConfirmation(
   await api.post('/finance/persons', {
     name,
     familyId: family.id,
+    email,
+    ...(phone && { phone: phone.replace(/\D/g, '') }),
+    ...(cpf && { cpf: cpf.replace(/\D/g, '') }),
+    ...(birthDate && { birthDate }),
   });
 }

@@ -18,7 +18,7 @@ export function ConfirmSignUp() {
     setError(null);
 
     try {
-      await confirm(state.email, code, state.password, state.name);
+      await confirm(state.email, code, state.password, state.name, state.phone, state.cpf, state.birthDate);
       navigate('/', { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao confirmar cadastro.';

@@ -13,11 +13,19 @@ export function useSignUp() {
     }
   }
 
-  async function confirm(email: string, code: string, password: string, name: string) {
+  async function confirm(
+    email: string,
+    code: string,
+    password: string,
+    name: string,
+    phone?: string,
+    cpf?: string,
+    birthDate?: string,
+  ) {
     setLoading(true);
     try {
       await confirmUserSignUp(email, code);
-      await setupUserAfterConfirmation(email, password, name);
+      await setupUserAfterConfirmation(email, password, name, phone, cpf, birthDate);
     } finally {
       setLoading(false);
     }
