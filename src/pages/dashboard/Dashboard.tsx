@@ -13,6 +13,7 @@ import {
   Loader2,
   AlertTriangle,
   Brain,
+  Target,
 } from 'lucide-react';
 
 import { useDashboard } from './hooks/useDashboard';
@@ -21,6 +22,8 @@ import { CreditCardsSummary } from './components/CreditCardsSummary';
 import { UpcomingWeekCard } from '@/pages/calendar/components/UpcomingWeekCard';
 import { formatShortDate } from '@/common/utils/date';
 import { QuickLaunchInput } from '@/pages/records/components/QuickLaunch/QuickLaunchInput';
+import { useGoals } from '@/pages/planning/hooks/useGoals';
+import { fmt as fmtGoal, getBadge, getProgressBarColor, GOAL_TYPE_META } from '@/pages/planning/components/goalUtils';
 
 const fmt = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -32,6 +35,7 @@ export const Dashboard = () => {
   const [year, setYear] = useState(now.getFullYear());
 
   const { data: summary, isLoading, error } = useDashboard({ month, year });
+  const { data: goals = [] } = useGoals();
 
   if (isLoading) {
     return (
@@ -399,10 +403,58 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Row 6 — Cartões */}
+      {/* Row 6 — Metas Financeiras */}
+      {goals.length > 0 && (() => {
+        const activeGoals = goals.filter((g) => g.status !== 'archived');
+        const completed = activeGoals.filter((g) => g.status === 'completed').length;
+        const overallPct = activeGoals.length > 0
+          ? activeGoals.reduce((s, g) => s + Math.min((g.currentValue / g.targetValue) * 100, 100), 0) / activeGoals.length
+          : 0;
+        return (
+          <Card
+            title="Metas Financeiras"
+            description={`${completed} de ${activeGoals.length} concluídas · progresso geral ${overallPct.toFixed(0)}%`}
+            footer={
+              <Button variant="ghost" className="w-full text-primary-600 hover:text-primary-800" onClick={() => navigate('/planning')}>
+                Ver todas as metas <ArrowRight size={16} className="ml-2" />
+              </Button>
+            }
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {activeGoals.slice(0, 6).map((goal) => {
+                const pct = Math.min((goal.currentValue / goal.targetValue) * 100, 100);
+                const badge = getBadge(pct);
+                const barColor = getProgressBarColor(pct);
+                const meta = GOAL_TYPE_META[goal.type ?? 'savings'];
+                const Icon = meta.icon;
+                return (
+                  <div key={goal.id} className={`p-3 rounded-xl border ${goal.status === 'completed' ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200'}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${meta.bg}`}>
+                        <Icon size={13} className={meta.color} />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800 truncate flex-1">{goal.description}</p>
+                    </div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-lg font-bold text-slate-800">{pct.toFixed(0)}%</span>
+                      <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full border ${badge.color}`}>{badge.label}</span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className={`bg-gradient-to-r ${barColor} h-full rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">{fmtGoal(goal.currentValue)} / {fmtGoal(goal.targetValue)}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        );
+      })()}
+
+      {/* Row 7 — Cartões */}
       <CreditCardsSummary month={month} year={year} />
 
-      {/* Row 7 — IA Insights full width */}
+      {/* Row 8 — IA Insights full width */}
       <div className="bg-primary-800 rounded-2xl p-5 text-white shadow-lg shadow-primary-900/20 flex items-start gap-4">
         <div className="w-9 h-9 bg-primary-700 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
           <Brain size={17} className="text-primary-200" />

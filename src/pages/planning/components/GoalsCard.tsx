@@ -1,46 +1,31 @@
 import { useState } from 'react';
+import { Target, Plus, Trash2, PlusCircle, Eye } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Target, Trash2, TrendingUp } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
 import { useGoals } from '../hooks/useGoals';
 import { useDeleteGoal } from '../hooks/useDeleteGoal';
-import { Modal } from '@/components/ui/Modal';
-import { formatShortDate } from '@/common/utils/date';
+import { GoalContributionModal } from './GoalContributionModal';
+import { GoalDetailModal } from './GoalDetailModal';
+import { fmt, getBadge, getMotivation, getProgressBarColor, GOAL_TYPE_META } from './goalUtils';
+import type { Goal } from '../types/planning.types';
 
 export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
   const { data: goals = [], isLoading } = useGoals();
   const deleteGoal = useDeleteGoal();
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
-  const handleDelete = (id: string) => {
-    setSelectedGoalId(id);
-    setDeleteModalOpen(true);
-  };
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [contributeGoal, setContributeGoal] = useState<Goal | null>(null);
+  const [detailGoal, setDetailGoal] = useState<Goal | null>(null);
 
   const confirmDelete = () => {
-    if (selectedGoalId) {
-      deleteGoal.mutate(selectedGoalId);
-      setDeleteModalOpen(false);
-      setSelectedGoalId(null);
-    }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
-
-  const calculateProgress = (current: number, target: number) => {
-    return Math.min((current / target) * 100, 100);
+    if (deleteId) { deleteGoal.mutate(deleteId); setDeleteId(null); }
   };
 
   if (isLoading) {
     return (
       <Card title="Metas Financeiras">
-        <div className="text-center py-8 text-gray-500">Carregando...</div>
+        <div className="text-center py-8 text-slate-400">Carregando...</div>
       </Card>
     );
   }
@@ -50,60 +35,91 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
       <Card title="Metas Financeiras">
         <div className="space-y-4">
           <Button onClick={onCreateNew} className="w-full" variant="primary">
-            <Target size={18} className="mr-2" />
+            <Plus size={16} className="mr-2" />
             Nova Meta
           </Button>
 
           {goals.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Target size={48} className="mx-auto mb-3 opacity-30" />
-              <p>Nenhuma meta cadastrada</p>
-              <p className="text-sm mt-1">Crie sua primeira meta financeira!</p>
+            <div className="text-center py-10 text-slate-400">
+              <Target size={40} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">Nenhuma meta ainda</p>
+              <p className="text-xs mt-1">Crie sua primeira meta financeira!</p>
             </div>
           ) : (
             <div className="space-y-3">
               {goals.map((goal) => {
-                const progress = calculateProgress(goal.currentValue, goal.targetValue);
+                const pct = Math.min((goal.currentValue / goal.targetValue) * 100, 100);
+                const badge = getBadge(pct);
+                const motivation = getMotivation(pct);
+                const barColor = getProgressBarColor(pct);
+                const meta = GOAL_TYPE_META[goal.type ?? 'savings'];
+                const Icon = meta.icon;
+                const completed = goal.status === 'completed' || pct >= 100;
+
                 return (
-                  <div key={goal.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{goal.description}</h4>
-                        {goal.deadline && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Prazo: {formatShortDate(goal.deadline)}
-                          </p>
-                        )}
+                  <div
+                    key={goal.id}
+                    className={`p-4 rounded-xl border transition-all ${
+                      completed
+                        ? 'bg-emerald-50 border-emerald-200'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${meta.bg}`}>
+                          <Icon size={15} className={meta.color} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-slate-800 text-sm truncate">{goal.description}</p>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${badge.color}`}>
+                            {badge.label}
+                          </span>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => handleDelete(goal.id)}
-                        className="text-red-500 hover:text-red-700 p-1"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex items-center gap-1 ml-2 shrink-0">
+                        <button
+                          onClick={() => setDetailGoal(goal)}
+                          className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                          <Eye size={14} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteId(goal.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">
-                          {formatCurrency(goal.currentValue)} de {formatCurrency(goal.targetValue)}
-                        </span>
-                        <span className="font-semibold text-primary-600">
-                          {progress.toFixed(0)}%
-                        </span>
+                    <div className="space-y-1.5 mb-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-2xl font-bold text-slate-800">{pct.toFixed(0)}%</span>
+                        <span className="text-xs text-slate-500">{fmt(goal.currentValue)} / {fmt(goal.targetValue)}</span>
                       </div>
-                      <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-primary-500 to-primary-600 h-full transition-all duration-300"
-                          style={{ width: `${progress}%` }}
+                          className={`bg-gradient-to-r ${barColor} h-full rounded-full transition-all duration-700`}
+                          style={{ width: `${pct}%` }}
                         />
                       </div>
+                      <p className="text-xs text-slate-400 italic">{motivation}</p>
                     </div>
 
-                    {progress >= 100 && (
-                      <div className="mt-2 flex items-center gap-1 text-green-600 text-sm font-medium">
-                        <TrendingUp size={14} />
-                        Meta atingida!
+                    {!completed && (
+                      <button
+                        onClick={() => setContributeGoal(goal)}
+                        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-100 transition-colors"
+                      >
+                        <PlusCircle size={13} />
+                        Adicionar valor
+                      </button>
+                    )}
+
+                    {completed && (
+                      <div className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-semibold">
+                        🎉 Meta concluída!
                       </div>
                     )}
                   </div>
@@ -114,19 +130,28 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
         </div>
       </Card>
 
-      <Modal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        title="Confirmar Exclusão"
-      >
-        <p className="text-gray-600 mb-6">Tem certeza que deseja excluir esta meta?</p>
+      {contributeGoal && (
+        <GoalContributionModal
+          goal={contributeGoal}
+          isOpen={!!contributeGoal}
+          onClose={() => setContributeGoal(null)}
+        />
+      )}
+
+      {detailGoal && (
+        <GoalDetailModal
+          goal={detailGoal}
+          isOpen={!!detailGoal}
+          onClose={() => setDetailGoal(null)}
+          onContribute={() => setContributeGoal(detailGoal)}
+        />
+      )}
+
+      <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title="Confirmar Exclusão">
+        <p className="text-slate-600 mb-6">Tem certeza que deseja excluir esta meta?</p>
         <div className="flex gap-3 justify-end">
-          <Button variant="ghost" onClick={() => setDeleteModalOpen(false)}>
-            Cancelar
-          </Button>
-          <Button variant="primary" onClick={confirmDelete}>
-            Confirmar
-          </Button>
+          <Button variant="ghost" onClick={() => setDeleteId(null)}>Cancelar</Button>
+          <Button variant="primary" onClick={confirmDelete}>Confirmar</Button>
         </div>
       </Modal>
     </>

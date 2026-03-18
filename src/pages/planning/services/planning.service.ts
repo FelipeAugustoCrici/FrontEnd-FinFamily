@@ -30,11 +30,17 @@ export const planningService = {
     return data;
   },
 
+  addContribution: async (
+    goalId: string,
+    data: { value: number; date?: string; observation?: string; personId?: string },
+  ) => {
+    const { data: res } = await api.post(`/finance/goals/${goalId}/contributions`, data);
+    return res;
+  },
+
   deleteGoal: async (id: string): Promise<void> => {
     await api.delete(`/finance/goals/${id}`);
   },
-
-  // Budgets
   getBudgets: async (month?: number, year?: number): Promise<Budget[]> => {
     const params = new URLSearchParams();
     if (month) params.append('month', month.toString());
