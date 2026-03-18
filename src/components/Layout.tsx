@@ -25,7 +25,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { logout } from '@/services/logout';
 import { useUserInfo, useUserFamily } from '@/hooks/useUserInfo';
 import { formatLongDate } from '@/common/utils/date';
-import LogoSvg from '@/common/icons/Logo.svg';
+import LogoSvg from '@/common/icons/logo.svg';
 
 interface SidebarItemProps {
   to: string;
