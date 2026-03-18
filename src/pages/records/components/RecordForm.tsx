@@ -23,6 +23,7 @@ const recordSchema = z.object({
   familyId: z.string().min(1, 'Família é obrigatória'),
   isRecurring: z.boolean(),
   durationMonths: z.string().optional(),
+  isShared: z.boolean().default(true),
 });
 
 export type RecordFormData = z.infer<typeof recordSchema>;
@@ -89,6 +90,7 @@ export function RecordForm({
       familyId: familyIdValue,
       isRecurring: !!(initialData as any)?.recurringId,
       durationMonths: '',
+      isShared: (initialData as any)?.isShared !== false,
     },
   });
 
@@ -112,6 +114,7 @@ export function RecordForm({
           (families.length > 0 ? families[0].id : ''),
         isRecurring: !!data.recurringId,
         durationMonths: '',
+        isShared: data.isShared !== false,
       });
     }
   }, [initialData, families, reset]);

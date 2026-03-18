@@ -12,66 +12,48 @@ interface CurrencyInputProps extends Omit<
   onChange?: (value: string) => void;
 }
 
-/**
- * Formata um número para o padrão brasileiro (1.234,56)
- */
 function formatCurrency(value: string): string {
-  // Remove tudo que não é número
   const numbers = value.replace(/\D/g, '');
-
   if (!numbers) return '';
-
-  // Converte para número e divide por 100 para ter os centavos
   const amount = parseFloat(numbers) / 100;
-
-  // Formata com separadores brasileiros
   return amount.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 }
 
-/**
- * Remove a formatação e retorna apenas o valor numérico
- */
 function unformatCurrency(value: string): string {
   const numbers = value.replace(/\D/g, '');
   if (!numbers) return '0';
   return (parseFloat(numbers) / 100).toFixed(2);
 }
 
+function numericToDisplay(value: string | number | undefined): string {
+  if (value === undefined || value === '' || value === '0' || value === '0.00') return '';
+  const numValue = typeof value === 'number' ? value.toString() : value;
+  const parsed = parseFloat(numValue);
+  if (isNaN(parsed) || parsed === 0) return '';
+  const valueInCents = Math.round(parsed * 100).toString();
+  return formatCurrency(valueInCents);
+}
+
 export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
   ({ label, error, icon, value, onChange, ...props }, ref) => {
-    const [displayValue, setDisplayValue] = useState('');
-    const isInitialMount = useRef(true);
+    const [displayValue, setDisplayValue] = useState(() => numericToDisplay(value));
+    const isFocused = useRef(false);
 
-    // Atualizar display apenas na montagem inicial ou quando o valor externo mudar significativamente
+    // Sincroniza valor externo quando o campo não está em foco
     useEffect(() => {
-      if (isInitialMount.current && value !== undefined) {
-        isInitialMount.current = false;
-        const numValue = typeof value === 'number' ? value.toString() : value;
-        if (numValue && numValue !== '0' && numValue !== '0.00') {
-          // Converter o valor numérico para centavos e formatar
-          const valueInCents = Math.round(parseFloat(numValue) * 100).toString();
-          const formatted = formatCurrency(valueInCents);
-          setDisplayValue(formatted);
-        } else {
-          setDisplayValue('');
-        }
+      if (!isFocused.current) {
+        setDisplayValue(numericToDisplay(value));
       }
     }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-
-      // Formatar o valor
-      const formatted = formatCurrency(inputValue);
+      const formatted = formatCurrency(e.target.value);
       setDisplayValue(formatted);
-
-      // Chamar onChange com o valor não formatado
       if (onChange) {
-        const unformatted = unformatCurrency(inputValue);
-        onChange(unformatted);
+        onChange(unformatCurrency(e.target.value));
       }
     };
 
@@ -86,6 +68,8 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
         inputMode="numeric"
         value={displayValue}
         onChange={handleChange}
+        onFocus={(e) => { isFocused.current = true; props.onFocus?.(e) }}
+        onBlur={(e) => { isFocused.current = false; props.onBlur?.(e) }}
       />
     );
   },

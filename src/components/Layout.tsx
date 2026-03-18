@@ -17,6 +17,7 @@ import {
   Target,
   PiggyBank,
   ChevronDown,
+  Heart,
 } from 'lucide-react';
 import { cn } from './ui/Button';
 import { Moon, Sun } from 'lucide-react';
@@ -139,6 +140,7 @@ export const Layout = () => {
     { to: '/calendar', icon: CalendarDays, label: 'Calendário' },
     { to: '/credit-cards', icon: CreditCard, label: 'Cartões' },
     { to: '/reports', icon: BarChart3, label: 'Relatórios' },
+    { to: '/couple-mode', icon: Heart, label: 'Modo Casal' },
     { to: '/category', icon: Tags, label: 'Categorias' },
     { to: '/family', icon: Users, label: 'Famílias' },
   ];

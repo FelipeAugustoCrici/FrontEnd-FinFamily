@@ -13,6 +13,7 @@ type RecordFormData = {
   familyId: string;
   isRecurring: boolean;
   durationMonths?: string;
+  isShared?: boolean;
 };
 
 const mapFormTypeToBackendType = (formType: string, isRecurring: boolean): string => {

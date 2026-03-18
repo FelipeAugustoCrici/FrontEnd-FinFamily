@@ -1,12 +1,13 @@
 import { useFormContext, useWatch, Controller } from 'react-hook-form';
 import { Input, Select } from '@/components/ui/Input';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
-import { FileText, DollarSign, Calendar, Tag } from 'lucide-react';
+import { FileText, DollarSign, Calendar, Tag, Users } from 'lucide-react';
 import _ from 'lodash';
 
 export function RecordDetailsForm({ categories }: { categories: any[] }) {
   const { register, setValue, formState, control } = useFormContext();
   const type = useWatch({ name: 'type' });
+  const isShared = useWatch({ name: 'isShared' });
 
   const expenseCategories = categories.filter((c) => c.type === 'expense');
 
@@ -94,6 +95,28 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
         error={formState.errors.date?.message as string}
         icon={<Calendar size={18} className="text-primary-400" />}
       />
+
+      {type === 'expense' && (
+        <button
+          type="button"
+          onClick={() => setValue('isShared', !isShared)}
+          className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
+            isShared
+              ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/30 dark:border-indigo-800 dark:text-indigo-300'
+              : 'bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-800/40 dark:border-slate-700 dark:text-slate-400'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Users size={16} />
+            <span className="text-sm font-medium">
+              {isShared ? 'Despesa compartilhada' : 'Despesa individual'}
+            </span>
+          </div>
+          <div className={`w-10 h-5 rounded-full transition-colors relative ${isShared ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${isShared ? 'translate-x-5' : 'translate-x-0.5'}`} />
+          </div>
+        </button>
+      )}
     </div>
   );
 }
