@@ -10,8 +10,9 @@ import type {
 
 export const planningService = {
   // Goals
-  getGoals: async (): Promise<Goal[]> => {
-    const { data } = await api.get('/finance/goals');
+  getGoals: async (familyId?: string): Promise<Goal[]> => {
+    const params = familyId ? `?familyId=${familyId}` : '';
+    const { data } = await api.get(`/finance/goals${params}`);
     return data;
   },
 
