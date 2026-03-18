@@ -11,9 +11,8 @@ export function useCreateCategory() {
     mutationFn: (data: CategoryFormData) => categoryService.create(data),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['categories'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories-paginated'] });
 
       showToast({
         title: 'Categoria criada',

@@ -10,6 +10,7 @@ export function useDeleteCategory() {
     mutationFn: (id: string) => categoryService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories-paginated'] });
       showToast({
         title: 'Sucesso',
         description: 'Categoria excluída com sucesso!',
