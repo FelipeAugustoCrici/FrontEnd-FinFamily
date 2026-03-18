@@ -15,17 +15,10 @@ type RecordFormData = {
   durationMonths?: string;
 };
 
-// Mapear tipo do formulário para tipo do backend
 const mapFormTypeToBackendType = (formType: string, isRecurring: boolean): string => {
-  if (formType === 'expense') {
-    return isRecurring ? 'fixed' : 'variable';
-  }
-  if (formType === 'salary') {
-    return 'fixed'; // Salários são sempre fixos
-  }
-  if (formType === 'income') {
-    return 'temporary'; // Extras/bônus são temporários
-  }
+  if (formType === 'expense') return isRecurring ? 'fixed' : 'variable';
+  if (formType === 'salary') return 'fixed';
+  if (formType === 'income') return 'temporary';
   return 'variable';
 };
 
@@ -39,14 +32,13 @@ export function useCreateRecord() {
 
       const data: any = {
         ...formData,
-        formType: formData.type, // Mantém o tipo do formulário para determinar a rota
-        type: backendType, // Tipo do backend
+        formType: formData.type,
+        type: backendType,
         value: Number(formData.value),
         durationMonths: formData.durationMonths ? Number(formData.durationMonths) : undefined,
         status: 'PENDING' as const,
       };
 
-      // Remove categoryName se estiver vazio
       if (!data.categoryName || data.categoryName.trim() === '') {
         delete data.categoryName;
       }

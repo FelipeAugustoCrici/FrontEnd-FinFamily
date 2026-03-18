@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  PlusCircle,
+  ClipboardList,
   ListOrdered,
+  LayoutDashboard,
   BarChart3,
   User,
   LogOut,
@@ -14,11 +14,17 @@ import {
   Users,
   CreditCard,
   CalendarDays,
+  Target,
+  PiggyBank,
+  ChevronDown,
 } from 'lucide-react';
 import { cn } from './ui/Button';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 import { logout } from '@/services/logout';
 import { useUserInfo, useUserFamily } from '@/hooks/useUserInfo';
 import { formatLongDate } from '@/common/utils/date';
+import LogoSvg from '@/common/icons/Logo.svg';
 
 interface SidebarItemProps {
   to: string;
@@ -46,18 +52,92 @@ const SidebarItem = ({ to, icon: Icon, label, active }: SidebarItemProps) => (
   </Link>
 );
 
+interface SubItem {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+}
+
+interface SidebarAccordionProps {
+  icon: React.ElementType;
+  label: string;
+  items: SubItem[];
+  isActive: boolean;
+}
+
+const SidebarAccordion = ({ icon: Icon, label, items, isActive }: SidebarAccordionProps) => {
+  const [open, setOpen] = React.useState(isActive);
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (isActive) setOpen(true);
+  }, [isActive]);
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 w-full group',
+          isActive
+            ? 'bg-primary-800 text-white'
+            : 'text-primary-400 hover:bg-primary-800 hover:text-white',
+        )}
+      >
+        <Icon size={20} className={cn(isActive ? 'text-white' : 'text-primary-500 group-hover:text-white')} />
+        <span className="font-medium flex-1 text-left">{label}</span>
+        <ChevronDown
+          size={16}
+          className={cn('transition-transform duration-200', open ? 'rotate-180' : '')}
+        />
+      </button>
+
+      {open && (
+        <div className="ml-4 mt-1 space-y-1 border-l border-primary-700 pl-3">
+          {items.map((item) => {
+            const active = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm group',
+                  active
+                    ? 'bg-primary-700 text-white shadow-md'
+                    : 'text-primary-400 hover:bg-primary-800 hover:text-white',
+                )}
+              >
+                <item.icon size={16} className={cn(active ? 'text-white' : 'text-primary-500 group-hover:text-white')} />
+                <span className="font-medium">{item.label}</span>
+                {active && <ChevronRight size={14} className="ml-auto" />}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const planningSubItems: SubItem[] = [
+  { to: '/planning/goals', icon: Target, label: 'Metas' },
+  { to: '/planning/budgets', icon: PiggyBank, label: 'Orçamentos' },
+];
+
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const location = useLocation();
   const { data: userInfo } = useUserInfo();
   const { data: family } = useUserFamily();
+  const { isDark, toggle } = useTheme();
+
+  const isPlanningActive = location.pathname.startsWith('/planning');
 
   const menuItems = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/record', icon: ListOrdered, label: 'Lançamentos' },
     { to: '/calendar', icon: CalendarDays, label: 'Calendário' },
     { to: '/credit-cards', icon: CreditCard, label: 'Cartões' },
-    { to: '/planning', icon: PlusCircle, label: 'Planejamento' },
     { to: '/reports', icon: BarChart3, label: 'Relatórios' },
     { to: '/category', icon: Tags, label: 'Categorias' },
     { to: '/family', icon: Users, label: 'Famílias' },
@@ -67,15 +147,22 @@ export const Layout = () => {
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-primary-900 p-6 text-white fixed h-full shadow-2xl z-20">
-        <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-10 h-10 bg-success-500 rounded-xl flex items-center justify-center shadow-lg shadow-success-500/20">
-            <BarChart3 className="text-white" size={24} />
-          </div>
+        <div className="flex flex-col items-center gap-2 mb-10 px-2">
+          <img src={LogoSvg} alt="FinFamily" className="w-16 h-16 invert" />
           <span className="text-xl font-bold tracking-tight">FinFamily AI</span>
         </div>
 
-        <nav className="flex-1 space-y-2">
-          {menuItems.map((item) => (
+        <nav className="flex-1 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-primary-700 scrollbar-track-transparent">
+          {menuItems.slice(0, 4).map((item) => (
+            <SidebarItem key={item.to} {...item} active={location.pathname === item.to} />
+          ))}
+          <SidebarAccordion
+            icon={ClipboardList}
+            label="Planejamento"
+            items={planningSubItems}
+            isActive={isPlanningActive}
+          />
+          {menuItems.slice(4).map((item) => (
             <SidebarItem key={item.to} {...item} active={location.pathname === item.to} />
           ))}
         </nav>
@@ -108,12 +195,21 @@ export const Layout = () => {
 
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-primary-800">
-              {menuItems.find((item) => location.pathname === item.to || location.pathname.startsWith(item.to + '/'))?.label || 'Bem-vindo'}
+              {isPlanningActive
+                ? planningSubItems.find((i) => location.pathname === i.to)?.label ?? 'Planejamento'
+                : menuItems.find((item) => location.pathname === item.to || location.pathname.startsWith(item.to + '/'))?.label || 'Bem-vindo'}
             </h1>
             <p className="text-xs text-primary-500 hidden sm:block">{formatLongDate(new Date())}</p>
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggle}
+              className="p-2 rounded-lg text-primary-500 hover:bg-primary-100 transition-colors"
+              aria-label="Alternar tema"
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-sm font-semibold text-primary-800">
                 {userInfo?.name || 'Carregando...'}
@@ -143,16 +239,25 @@ export const Layout = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-10 px-2 text-white">
-              <div className="flex items-center gap-3">
-                <BarChart3 className="text-success-500" size={24} />
-                <span className="text-xl font-bold">FinanceFlow</span>
+              <div className="flex flex-col items-center gap-2">
+                <img src={LogoSvg} alt="FinFamily" className="w-12 h-12 invert" />
+                <span className="text-xl font-bold">FinFamily AI</span>
               </div>
               <button onClick={() => setIsMobileMenuOpen(false)}>
                 <X size={24} />
               </button>
             </div>
-            <nav className="space-y-2">
-              {menuItems.map((item) => (
+            <nav className="space-y-2 overflow-y-auto flex-1">
+              {menuItems.slice(0, 4).map((item) => (
+                <SidebarItem key={item.to} {...item} active={location.pathname === item.to} />
+              ))}
+              <SidebarAccordion
+                icon={ClipboardList}
+                label="Planejamento"
+                items={planningSubItems}
+                isActive={isPlanningActive}
+              />
+              {menuItems.slice(4).map((item) => (
                 <SidebarItem key={item.to} {...item} active={location.pathname === item.to} />
               ))}
             </nav>

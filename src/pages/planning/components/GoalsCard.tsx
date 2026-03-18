@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Target, Plus, Trash2, PlusCircle, Eye } from 'lucide-react';
+import { Target, Plus, Trash2, PlusCircle, Eye, TrendingUp, Calendar, Minus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
@@ -7,7 +7,7 @@ import { useGoals } from '../hooks/useGoals';
 import { useDeleteGoal } from '../hooks/useDeleteGoal';
 import { GoalContributionModal } from './GoalContributionModal';
 import { GoalDetailModal } from './GoalDetailModal';
-import { fmt, getBadge, getMotivation, getProgressBarColor, GOAL_TYPE_META } from './goalUtils';
+import { fmt, getBadge, getMotivation, getProgressBarColor, GOAL_TYPE_META, computeInsights } from './goalUtils';
 import type { Goal } from '../types/planning.types';
 
 export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
@@ -55,6 +55,12 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                 const meta = GOAL_TYPE_META[goal.type ?? 'savings'];
                 const Icon = meta.icon;
                 const completed = goal.status === 'completed' || pct >= 100;
+                const insights = computeInsights(
+                  goal.contributions ?? [],
+                  goal.targetValue,
+                  goal.currentValue,
+                  goal.deadline,
+                );
 
                 return (
                   <div
@@ -65,6 +71,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
+                    {/* Header */}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${meta.bg}`}>
@@ -78,21 +85,16 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                         </div>
                       </div>
                       <div className="flex items-center gap-1 ml-2 shrink-0">
-                        <button
-                          onClick={() => setDetailGoal(goal)}
-                          className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
-                        >
+                        <button onClick={() => setDetailGoal(goal)} className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors">
                           <Eye size={14} />
                         </button>
-                        <button
-                          onClick={() => setDeleteId(goal.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors"
-                        >
+                        <button onClick={() => setDeleteId(goal.id)} className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors">
                           <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
 
+                    {/* Progress */}
                     <div className="space-y-1.5 mb-3">
                       <div className="flex justify-between items-center">
                         <span className="text-2xl font-bold text-slate-800">{pct.toFixed(0)}%</span>
@@ -107,7 +109,61 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                       <p className="text-xs text-slate-400 italic">{motivation}</p>
                     </div>
 
+                    {/* Insights */}
                     {!completed && (
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                          <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
+                            <Plus size={9} /> Este mês
+                          </p>
+                          <p className={`text-xs font-bold ${insights.thisMonthTotal > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                            {insights.thisMonthTotal > 0 ? `+${fmt(insights.thisMonthTotal)}` : '—'}
+                          </p>
+                        </div>
+                        <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                          <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
+                            <Minus size={9} /> Falta
+                          </p>
+                          <p className="text-xs font-bold text-rose-500">{fmt(insights.remaining)}</p>
+                        </div>
+                        <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                          <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
+                            <Calendar size={9} /> Previsão
+                          </p>
+                          <p className="text-xs font-bold text-amber-600">
+                            {insights.estimatedMonths === null
+                              ? '—'
+                              : insights.estimatedMonths === 0
+                                ? 'Concluída'
+                                : `~${insights.estimatedMonths}m`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Monthly avg insight */}
+                    {!completed && insights.monthlyAvg !== null && insights.monthlyAvg > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-sky-50 border border-sky-100 rounded-lg mb-3">
+                        <TrendingUp size={11} className="text-sky-500 shrink-0" />
+                        <p className="text-xs text-sky-700">
+                          Média {fmt(insights.monthlyAvg)}/mês
+                          {insights.estimatedMonths !== null && insights.estimatedMonths > 0 &&
+                            ` → conclui em ${insights.estimatedMonths} ${insights.estimatedMonths === 1 ? 'mês' : 'meses'}`}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Suggested monthly based on deadline */}
+                    {!completed && insights.suggestedMonthly !== null && insights.suggestedMonthly > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-violet-50 border border-violet-100 rounded-lg mb-3">
+                        <Calendar size={11} className="text-violet-500 shrink-0" />
+                        <p className="text-xs text-violet-700">
+                          Guardar {fmt(insights.suggestedMonthly)}/mês para bater o prazo
+                        </p>
+                      </div>
+                    )}
+
+                    {!completed ? (
                       <button
                         onClick={() => setContributeGoal(goal)}
                         className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-100 transition-colors"
@@ -115,9 +171,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                         <PlusCircle size={13} />
                         Adicionar valor
                       </button>
-                    )}
-
-                    {completed && (
+                    ) : (
                       <div className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-semibold">
                         🎉 Meta concluída!
                       </div>
