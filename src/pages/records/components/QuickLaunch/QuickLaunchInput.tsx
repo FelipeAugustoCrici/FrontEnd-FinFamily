@@ -3,7 +3,7 @@ import { Zap, Loader2, X, ChevronDown } from 'lucide-react';
 import moment from 'moment';
 import { cn } from '@/components/ui/Button';
 import { useCategories } from '@/pages/categories/hooks/useCategories';
-import { useUserFamily } from '@/hooks/useUserInfo';
+import { useUserFamily, useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { familyService } from '@/pages/families/services/families.service';
 import { useCreateRecord } from '../../hooks/useCreateRecord';
@@ -12,20 +12,23 @@ import { QuickLaunchPreview } from './QuickLaunchPreview';
 
 const PLACEHOLDERS = [
   'mercado 150',
+  'recebi 2500 de salario',
+  'enviei 150 para a Shirlley',
+  'ganhei 500 do meu pai',
   'gasolina 80 ontem',
-  'salário 2500 hoje',
   'ifood 45 alimentação',
-  'internet 120 dia 10',
 ];
 
 export function QuickLaunchInput() {
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [editedDescription, setEditedDescription] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data: family } = useUserFamily();
+  const { data: userInfo } = useUserInfo();
   const { data: categories = [] } = useCategories();
   const { data: families = [] } = useQuery({
     queryKey: ['families'],
@@ -33,6 +36,9 @@ export function QuickLaunchInput() {
   });
 
   const members: { id: string; name: string }[] = families.flatMap((f: any) => f.members ?? []);
+  const loggedMemberId = members.find(
+    (m: any) => m.email && userInfo?.email && m.email === userInfo.email
+  )?.id ?? members[0]?.id ?? '';
   const createRecord = useCreateRecord();
 
   // Rotate placeholder
@@ -53,6 +59,7 @@ export function QuickLaunchInput() {
   }, []);
 
   const parsed = parseQuickLaunch(text, members, categories);
+  const activeDescription = editedDescription ?? parsed.description;
   const categoryName = resolveCategoryName(parsed.categoryHint, categories);
   const personName = members.find((m) => m.id === parsed.personHint)?.name ?? null;
 
@@ -66,13 +73,12 @@ export function QuickLaunchInput() {
     parsed.date === tomorrowStr ? 'Amanhã' :
     parsed.date.split('-').reverse().join('/');
 
-  const canSave = parsed.description.length > 0 && parsed.amount !== null;
+  const canSave = activeDescription.length > 0 && parsed.amount !== null;
 
   const handleSave = useCallback(() => {
     if (!canSave) return;
 
     const familyId = family?.id ?? families[0]?.id ?? '';
-    const defaultPersonId = members[0]?.id ?? '';
 
     const resolvedCategoryId = parsed.categoryHint && categories.find((c) => c.id === parsed.categoryHint)
       ? parsed.categoryHint
@@ -81,19 +87,20 @@ export function QuickLaunchInput() {
 
     createRecord.mutate(
       {
-        description: parsed.description,
+        description: activeDescription,
         value: String(parsed.amount),
         date: parsed.date,
         type: parsed.type,
         categoryId: resolvedCategoryId,
         categoryName: resolvedCategoryName,
-        personId: parsed.personHint ?? defaultPersonId,
+        personId: parsed.personHint ?? loggedMemberId,
         familyId,
         isRecurring: false,
       } as any,
       {
         onSuccess: () => {
           setText('');
+          setEditedDescription(null);
           setOpen(false);
           inputRef.current?.focus();
         },
@@ -132,6 +139,7 @@ export function QuickLaunchInput() {
           value={text}
           onChange={(e) => {
             setText(e.target.value);
+            setEditedDescription(null);
             setOpen(e.target.value.length > 0);
           }}
           onFocus={() => text.length > 0 && setOpen(true)}
@@ -142,7 +150,7 @@ export function QuickLaunchInput() {
 
         {text.length > 0 && (
           <button
-            onClick={() => { setText(''); setOpen(false); }}
+            onClick={() => { setText(''); setEditedDescription(null); setOpen(false); }}
             className="text-primary-400 hover:text-primary-600 transition-colors"
           >
             <X size={15} />
@@ -164,6 +172,8 @@ export function QuickLaunchInput() {
             categoryName={categoryName}
             personName={personName}
             dateLabel={dateLabel}
+            description={activeDescription}
+            onDescriptionChange={setEditedDescription}
           />
 
           {parsed.missingFields.length > 0 && (
@@ -190,7 +200,7 @@ export function QuickLaunchInput() {
               Salvar{canSave ? ' (Enter)' : ''}
             </button>
             <button
-              onClick={() => { setText(''); setOpen(false); }}
+              onClick={() => { setText(''); setEditedDescription(null); setOpen(false); }}
               className="px-4 py-2.5 rounded-lg text-sm text-primary-500 hover:bg-primary-50 transition-colors"
             >
               Cancelar (Esc)
@@ -198,7 +208,7 @@ export function QuickLaunchInput() {
           </div>
 
           <p className="text-xs text-primary-400 text-center">
-            Dica: "mercado 150 ontem" · "salário 2500" · "ifood 45 alimentação"
+            Dica: "recebi 2500 de salario" · "enviei 150 para a Shirlley" · "mercado 80 ontem"
           </p>
         </div>
       )}

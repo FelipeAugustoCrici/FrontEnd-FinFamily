@@ -18,6 +18,8 @@ interface Props {
   categoryName: string | null;
   personName: string | null;
   dateLabel: string;
+  description: string;
+  onDescriptionChange: (v: string) => void;
 }
 
 const Row = ({
@@ -38,14 +40,13 @@ const Row = ({
   </div>
 );
 
-export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel }: Props) {
+export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel, description, onDescriptionChange }: Props) {
   const isIncome = parsed.type !== 'expense';
   const typeLabel =
     parsed.type === 'salary' ? 'Salário' : parsed.type === 'income' ? 'Receita' : 'Despesa';
 
   return (
     <div className="rounded-xl border border-primary-100 bg-primary-50/60 p-4 space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
-      {/* type badge */}
       <div className="flex items-center gap-2 mb-1">
         <div
           className={cn(
@@ -68,7 +69,17 @@ export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel
         )}
       </div>
 
-      <Row icon={FileText} label="Descrição" value={parsed.description || '—'} />
+      <div className="flex items-center gap-2.5 text-sm">
+        <FileText size={14} className="text-primary-400 shrink-0" />
+        <span className="text-primary-500 w-24 shrink-0">Descrição</span>
+        <input
+          value={description}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          placeholder="Descrição"
+          className="flex-1 bg-white border border-primary-200 rounded-md px-2 py-0.5 text-sm font-semibold text-primary-800 outline-none focus:border-primary-400 transition-colors"
+        />
+      </div>
+
       <Row
         icon={DollarSign}
         label="Valor"
