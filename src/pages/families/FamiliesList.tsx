@@ -4,13 +4,14 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { Plus, Users, Trash2, Edit, UserPlus, Loader2, AlertTriangle } from 'lucide-react';
+import { Plus, Users, Trash2, Edit, UserPlus, Loader2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useFamilies } from './hooks/useFamilies';
 import { useCreateFamily } from './hooks/useCreateFamily';
 import { useDeleteFamily } from './hooks/useDeleteFamily';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/useToast';
 import { familyService } from './services/families.service';
+import { AddMemberModal } from './components/AddMemberModal';
 
 export function FamiliesList() {
   const navigate = useNavigate();
@@ -21,36 +22,13 @@ export function FamiliesList() {
   const { showToast } = useToast();
 
   const [newFamilyName, setNewFamilyName] = useState('');
-  const [newMemberName, setNewMemberName] = useState('');
-  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteMemberModalOpen, setDeleteMemberModalOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
-  const family = families[0]; // Apenas uma família
+  const family = families[0];
   const hasFamily = families.length > 0;
-
-  const createMember = useMutation({
-    mutationFn: ({ familyId, name }: { familyId: string; name: string }) =>
-      familyService.createMember(familyId, name),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['families'] });
-      setNewMemberName('');
-      setIsAddingMember(false);
-      showToast({
-        title: 'Sucesso',
-        description: 'Membro adicionado com sucesso!',
-        variant: 'success',
-      });
-    },
-    onError: () => {
-      showToast({
-        title: 'Erro',
-        description: 'Erro ao adicionar membro',
-        variant: 'error',
-      });
-    },
-  });
 
   const deleteMember = useMutation({
     mutationFn: (memberId: string) => familyService.deleteMember(memberId),
@@ -75,15 +53,8 @@ export function FamiliesList() {
     if (!newFamilyName.trim()) return;
     createFamily.mutate(
       { name: newFamilyName },
-      {
-        onSuccess: () => setNewFamilyName(''),
-      },
+      { onSuccess: () => setNewFamilyName('') },
     );
-  };
-
-  const handleAddMember = () => {
-    if (!newMemberName.trim() || !family) return;
-    createMember.mutate({ familyId: family.id, name: newMemberName });
   };
 
   const handleDeleteFamily = () => {
@@ -197,7 +168,15 @@ export function FamiliesList() {
                     </div>
                     <div>
                       <p className="font-semibold text-primary-800">{member.name}</p>
-                      <p className="text-xs text-primary-500">Membro da família</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {member.hasAccess ? (
+                          <span className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full font-medium">
+                            <ShieldCheck size={10} /> Acesso ativo
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400">Sem acesso à plataforma</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button
@@ -221,49 +200,25 @@ export function FamiliesList() {
             )}
           </div>
 
-          {/* Formulário de adicionar membro */}
+          {/* Botão de adicionar membro */}
           <div className="p-4 bg-gray-50 border-t border-gray-100">
-            {isAddingMember ? (
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Nome do membro"
-                  value={newMemberName}
-                  onChange={(e) => setNewMemberName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddMember()}
-                  autoFocus
-                />
-                <Button
-                  onClick={handleAddMember}
-                  disabled={!newMemberName.trim() || createMember.isPending}
-                >
-                  {createMember.isPending ? (
-                    <Loader2 className="animate-spin" size={18} />
-                  ) : (
-                    <Plus size={18} />
-                  )}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setIsAddingMember(false);
-                    setNewMemberName('');
-                  }}
-                >
-                  Cancelar
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={() => setIsAddingMember(true)} className="w-full">
-                <UserPlus size={18} className="mr-2" />
-                Adicionar Membro
-              </Button>
-            )}
+            <Button onClick={() => setAddMemberOpen(true)} className="w-full">
+              <UserPlus size={18} className="mr-2" />
+              Adicionar Membro
+            </Button>
           </div>
         </Card>
       </div>
 
-      {/* Modal de confirmação de exclusão da família */}
-      <Modal
+      {family && (
+        <AddMemberModal
+          familyId={family.id}
+          isOpen={addMemberOpen}
+          onClose={() => setAddMemberOpen(false)}
+        />
+      )}
+
+      {/* Modal de confirmação de exclusão da família */}      <Modal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         title="Confirmar Exclusão"

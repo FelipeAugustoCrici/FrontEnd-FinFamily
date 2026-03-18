@@ -1,6 +1,10 @@
 export interface FamilyMember {
   id: string;
   name: string;
+  email?: string;
+  phone?: string;
+  userId?: string;
+  hasAccess?: boolean;
 }
 
 export interface Family {

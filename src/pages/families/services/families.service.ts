@@ -26,11 +26,14 @@ export const familyService = {
     await api.delete(`/finance/families/${id}`);
   },
 
-  async createMember(familyId: string, name: string): Promise<void> {
-    await api.post('/finance/persons', {
-      name,
-      familyId,
-    });
+  async createMember(familyId: string, data: {
+    name: string;
+    email?: string;
+    phone?: string;
+    hasAccess?: boolean;
+    temporaryPassword?: string;
+  }): Promise<void> {
+    await api.post('/finance/persons', { ...data, familyId });
   },
 
   async deleteMember(memberId: string): Promise<void> {
