@@ -25,7 +25,7 @@ export function Register() {
       const result = await signUp(email, password, name);
 
       if (result?.nextStep?.signUpStep === 'CONFIRM_SIGN_UP') {
-        navigate('/confirmar-cadastro', {
+        navigate('/confirm-signup', {
           state: { email, password, name, phone, cpf, birthDate },
         });
         return;

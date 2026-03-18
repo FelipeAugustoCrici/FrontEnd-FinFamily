@@ -13,8 +13,11 @@ import { useCategories } from './hooks/useCategories';
 import { useCreateCategory } from './hooks/useCreateCategory';
 import { useDeleteCategory } from './hooks/useDeleteCategory';
 import { Category } from './types/category.types';
+import { useUserFamily } from '@/hooks/useUserInfo';
 
 export function CategoriesList() {
+  const { data: family } = useUserFamily();
+
   const methods = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -35,7 +38,7 @@ export function CategoriesList() {
   const incomeCategories = categories.filter((c) => c.type === 'income');
 
   function onSubmit(data: CategoryFormData) {
-    createCategory.mutate(data, {
+    createCategory.mutate({ ...data, familyId: family?.id }, {
       onSuccess: () => reset(),
     });
   }

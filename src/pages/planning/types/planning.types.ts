@@ -27,10 +27,16 @@ export type Budget = {
 export type CreditCard = {
   id: string;
   name: string;
-  limit: number;
+  bank?: string;
+  brand?: string;
+  color?: string;
+  limitAmount: number;
+  availableLimit: number;
   closingDay: number;
   dueDay: number;
-  familyId: string;
+  familyId?: string;
+  ownerId?: string;
+  isActive: boolean;
   createdAt: string;
 };
 
@@ -52,8 +58,11 @@ export type BudgetFormData = {
 
 export type CreditCardFormData = {
   name: string;
-  limit: string;
+  bank?: string;
+  brand?: string;
+  color?: string;
+  limitAmount: string;
   closingDay: string;
   dueDay: string;
-  familyId: string;
+  familyId?: string;
 };

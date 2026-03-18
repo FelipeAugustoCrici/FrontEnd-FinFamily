@@ -4,7 +4,7 @@ import { RecordForm } from './components/RecordForm';
 import { useUpdateRecord } from './hooks/useUpdateRecord';
 import { useRecord } from './hooks/useRecord';
 import { familyService } from '@/pages/families/services/families.service';
-import { getCategories } from '@/pages/categories/services/categories.service';
+import { useCategories } from '@/pages/categories/hooks/useCategories';
 
 export function RecordsEdit() {
   const navigate = useNavigate();
@@ -18,10 +18,7 @@ export function RecordsEdit() {
     queryFn: () => familyService.list(),
   });
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getCategories,
-  });
+  const { data: categories = [] } = useCategories();
 
   // Pega apenas os membros da primeira família (sistema permite apenas uma família)
   const people = families[0]?.members || [];

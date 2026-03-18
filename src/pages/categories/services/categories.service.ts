@@ -3,8 +3,9 @@ import type { Category } from '../types/category.types';
 import type { CategoryFormData } from '../schemas/category.schema';
 
 export const categoryService = {
-  async list(): Promise<Category[]> {
-    const { data } = await api.get('/finance/categories');
+  async list(familyId?: string): Promise<Category[]> {
+    const params = familyId ? `?familyId=${familyId}` : '';
+    const { data } = await api.get(`/finance/categories${params}`);
     return data;
   },
 

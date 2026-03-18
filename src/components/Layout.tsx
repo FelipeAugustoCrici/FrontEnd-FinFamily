@@ -12,6 +12,8 @@ import {
   X,
   Tags,
   Users,
+  CreditCard,
+  CalendarDays,
 } from 'lucide-react';
 import { cn } from './ui/Button';
 import { logout } from '@/services/logout';
@@ -53,10 +55,12 @@ export const Layout = () => {
   const menuItems = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/record', icon: ListOrdered, label: 'Lançamentos' },
-    { to: '/family', icon: Users, label: 'Famílias' },
-    { to: '/category', icon: Tags, label: 'Categorias' },
-    { to: '/reports', icon: BarChart3, label: 'Relatórios' },
+    { to: '/calendar', icon: CalendarDays, label: 'Calendário' },
+    { to: '/credit-cards', icon: CreditCard, label: 'Cartões' },
     { to: '/planning', icon: PlusCircle, label: 'Planejamento' },
+    { to: '/reports', icon: BarChart3, label: 'Relatórios' },
+    { to: '/category', icon: Tags, label: 'Categorias' },
+    { to: '/family', icon: Users, label: 'Famílias' },
   ];
 
   return (
@@ -78,10 +82,10 @@ export const Layout = () => {
 
         <div className="mt-auto pt-6 border-t border-primary-800 space-y-2">
           <SidebarItem
-            to="/perfil"
+            to="/profile"
             icon={User}
             label="Meu Perfil"
-            active={location.pathname === '/perfil'}
+            active={location.pathname === '/profile'}
           />
           <button
             onClick={logout}
@@ -104,7 +108,7 @@ export const Layout = () => {
 
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-primary-800">
-              {menuItems.find((item) => item.to === location.pathname)?.label || 'Bem-vindo'}
+              {menuItems.find((item) => location.pathname === item.to || location.pathname.startsWith(item.to + '/'))?.label || 'Bem-vindo'}
             </h1>
             <p className="text-xs text-primary-500 hidden sm:block">{formatLongDate(new Date())}</p>
           </div>

@@ -21,14 +21,14 @@ export function Login() {
       const result = await login(email, password);
 
       if (result?.status === 'NEW_PASSWORD_REQUIRED') {
-        navigate('/nova-senha', {
+        navigate('/new-password', {
           state: { user: result.user },
         });
         return;
       }
 
       if (result?.status === 'CONFIRM_SIGN_UP') {
-        navigate('/confirmar-cadastro', {
+        navigate('/confirm-signup', {
           state: { email },
         });
         return;
@@ -69,7 +69,7 @@ export function Login() {
             {error && <p className="text-sm text-danger-600">{error}</p>}
 
             <div className="flex items-center justify-between">
-              <Link to="/esqueci-senha" className="text-sm text-primary-600 hover:underline">
+              <Link to="/forgot-password" className="text-sm text-primary-600 hover:underline">
                 Esqueci minha senha
               </Link>
               <Button type="submit" variant="primary" isLoading={isLoading}>
@@ -79,7 +79,7 @@ export function Login() {
 
             <p className="text-center text-sm text-primary-500">
               Não tem uma conta?{' '}
-              <Link to="/cadastro" className="text-primary-700 font-medium hover:underline">
+              <Link to="/register" className="text-primary-700 font-medium hover:underline">
                 Cadastre-se agora
               </Link>
             </p>

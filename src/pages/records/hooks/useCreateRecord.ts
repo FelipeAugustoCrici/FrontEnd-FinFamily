@@ -58,6 +58,11 @@ export function useCreateRecord() {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
       queryClient.invalidateQueries({ queryKey: ['incomes'] });
       queryClient.invalidateQueries({ queryKey: ['extras'] });
+      queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['extras-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-upcoming'] });
       showToast({
         title: 'Sucesso',
         description: 'Lançamento criado com sucesso!',

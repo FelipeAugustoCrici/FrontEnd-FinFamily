@@ -50,7 +50,7 @@ export function RecordForm({
     }
 
     if (!data?.sourceId && !data?.recurringId && !data?.categoryId) {
-      return 'income';
+      return 'expense';
     }
 
     if (data?.sourceId) {

@@ -6,8 +6,10 @@ import { FamilyRoutes } from '@/pages/families/base/FamilyRoutes';
 import { RecordRoutes } from '@/pages/records/base/RecordRoutes';
 import { CategoryRoutes } from '@/pages/categories/base/CategoryRoutes';
 import { PlanningRoutes } from '@/pages/planning';
-import { Profile } from '@/pages/profile';
 import { ReportsRoutes } from '@/pages/reports/base/ReportsRoutes';
+import { CreditCardRoutes } from '@/pages/credit-cards/base/CreditCardRoutes';
+import { CalendarRoutes } from '@/pages/calendar/base/CalendarRoutes';
+import { ProfileRoutes } from '@/pages/profile/base/ProfileRoutes';
 
 export type AppRoute = RouteProps & {
   isPublic?: boolean;
@@ -21,22 +23,22 @@ export const PublicRoutes = {
     isPublic: true,
   },
   register: {
-    path: '/cadastro',
+    path: '/register',
     element: <Register />,
     isPublic: true,
   },
   confirmSignUp: {
-    path: '/confirmar-cadastro',
+    path: '/confirm-signup',
     element: <ConfirmSignUp />,
     isPublic: true,
   },
   newPassword: {
-    path: '/nova-senha',
+    path: '/new-password',
     element: <NewPassword />,
     isPublic: true,
   },
   forgotPassword: {
-    path: '/esqueci-senha',
+    path: '/forgot-password',
     element: <ForgotPassword />,
     isPublic: true,
   },
@@ -56,10 +58,9 @@ export const PrivateRoutes = {
   ...CategoryRoutes,
   ...ReportsRoutes,
   ...PlanningRoutes,
-  profile: {
-    path: '/perfil',
-    element: <Profile />,
-  },
+  ...CreditCardRoutes,
+  ...CalendarRoutes,
+  ...ProfileRoutes,
 } satisfies Record<string, AppRoute>;
 
 export const ROUTES = {

@@ -1,13 +1,13 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@/components/ui/Modal';
 import { Input, Select } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { useCreateBudget } from '../hooks/useCreateBudget';
-import { DollarSign, Calendar } from 'lucide-react';
-import { api } from '@/services/api.service';
+import { Calendar } from 'lucide-react';
+import { useCategories } from '@/pages/categories/hooks/useCategories';
 
 const budgetSchema = z.object({
   categoryId: z.string().min(1, 'Categoria é obrigatória'),
@@ -28,15 +28,7 @@ interface BudgetFormModalProps {
 
 export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalProps) {
   const createBudget = useCreateBudget();
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data } = await api.get('/finance/categories');
-      return data;
-    },
-  });
-
+  const { data: categories = [] } = useCategories();
   const expenseCategories = categories.filter((c: any) => c.type === 'expense');
 
   const currentDate = new Date();
@@ -47,6 +39,7 @@ export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalPr
     formState: { errors },
     reset,
     setValue,
+    control,
   } = useForm<BudgetFormData>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
@@ -89,22 +82,18 @@ export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalPr
           error={errors.categoryId?.message}
         />
 
-        <Input
-          label="Limite Mensal (R$)"
-          type="text"
-          placeholder="0,00"
-          {...register('limitValue')}
-          error={errors.limitValue?.message}
-          icon={<DollarSign size={18} className="text-primary-400" />}
-          onInput={(e) => {
-            let value = e.currentTarget.value.replace(/[^\d.,]/g, '');
-            value = value.replace(',', '.');
-            const parts = value.split('.');
-            if (parts.length > 2) {
-              value = parts[0] + '.' + parts.slice(1).join('');
-            }
-            e.currentTarget.value = value;
-          }}
+        <Controller
+          name="limitValue"
+          control={control}
+          render={({ field }) => (
+            <CurrencyInput
+              label="Limite Mensal"
+              placeholder="0,00"
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.limitValue?.message}
+            />
+          )}
         />
 
         <div className="grid grid-cols-2 gap-4">
