@@ -9,6 +9,7 @@ import { PurchaseFormModal } from './components/PurchaseFormModal';
 import { PayInvoiceModal } from './components/PayInvoiceModal';
 import type { CreditCardInvoice } from './types/credit-card.types';
 import { formatShortDate } from '@/common/utils/date';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { ArrowLeft, ShoppingBag, CreditCard, Receipt } from 'lucide-react';
 
 export function CreditCardDetail() {
@@ -23,7 +24,17 @@ export function CreditCardDetail() {
   const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-  if (isLoading) return <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" /></div>;
+  if (isLoading) return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24, padding: '24px 0' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Skeleton height={180} borderRadius={18} />
+        <Skeleton height={120} borderRadius={18} />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {[1,2,3,4,5].map(i => <Skeleton key={i} height={64} borderRadius={12} />)}
+      </div>
+    </div>
+  );
   if (!card) return <div className="text-center py-16 text-primary-500">Cartão não encontrado</div>;
 
   const usedAmount = card.limitAmount - card.availableLimit;

@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { SkeletonReports } from '@/components/ui/Skeleton';
 import { Download, Loader2, Calendar } from 'lucide-react';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import { useReportsSummary } from './hooks/useReportsSummary';
@@ -29,8 +30,9 @@ export function Reports() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+      <div className="space-y-6">
+        <PageHeader actions={<Button variant="outline" size="sm"><Download size={16} className="mr-2" /> Exportar PDF</Button>} />
+        <SkeletonReports t={{ bg: { card: '#ffffff', muted: '#f1f5f9' }, border: { default: 'rgba(0,0,0,0.06)', divider: 'rgba(0,0,0,0.04)' }, shadow: { card: '0 8px 24px rgba(0,0,0,0.06)' } }} />
       </div>
     );
   }

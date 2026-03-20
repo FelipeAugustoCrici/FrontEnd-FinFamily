@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { SkeletonDashboard } from '@/components/ui/Skeleton';
 import {
   ArrowUpCircle,
   ArrowDownCircle,
@@ -51,8 +52,9 @@ export const DashboardNew = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+      <div className="space-y-8 pb-10">
+        <PageHeader showPeriod month={month} year={year} onPrevMonth={handlePrev} onNextMonth={handleNext} />
+        <SkeletonDashboard t={{ bg: { card: isDark ? '#0f172a' : '#ffffff', muted: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', mutedStrong: isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0' }, border: { default: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)', divider: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', subtle: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }, shadow: { card: isDark ? '0 4px 20px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.06)' } }} />
       </div>
     );
   }

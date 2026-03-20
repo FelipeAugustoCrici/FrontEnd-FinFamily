@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, ArrowRight, AlertTriangle } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 import { cn } from '@/components/ui/Button';
 import { useUpcoming7Days } from '../hooks/useCalendar';
 import { CalendarEventItem } from './CalendarEventItem';
@@ -11,6 +13,7 @@ const fmt = (v: number) =>
 
 export function UpcomingWeekCard() {
   const navigate = useNavigate();
+  const t = useTokens();
   const { data: events = [], isLoading, isError } = useUpcoming7Days();
 
   const totalExpense = events.filter((e) => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
@@ -32,7 +35,11 @@ export function UpcomingWeekCard() {
       }
     >
       {isLoading ? (
-        <div className="h-24 flex items-center justify-center text-primary-400 text-sm">Carregando...</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} height={44} borderRadius={10} />
+          ))}
+        </div>
       ) : events.length === 0 ? (
         <div className="h-24 flex flex-col items-center justify-center gap-2 text-primary-400">
           <CalendarDays size={24} />

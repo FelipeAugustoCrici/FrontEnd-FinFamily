@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { api } from '@/services/api.service';
 import { useTokens } from '@/hooks/useTokens';
+import { SkeletonDetail } from '@/components/ui/Skeleton';
 import {
   ArrowLeft,
   Edit2,
@@ -120,11 +121,7 @@ export function RecordsDetail() {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   if (isLoading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
-        <Loader2 size={32} style={{ color: '#6366f1' }} className="animate-spin" />
-      </div>
-    );
+    return <SkeletonDetail t={t} />;
   }
 
   if (!record) {

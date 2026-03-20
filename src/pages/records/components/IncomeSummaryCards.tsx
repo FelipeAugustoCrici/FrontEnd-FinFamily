@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { financeService } from '@/services/api';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useTokens } from '@/hooks/useTokens';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { ChevronDown, Edit2, Trash2 } from 'lucide-react';
 import _ from 'lodash';
 
@@ -62,11 +63,7 @@ export function IncomeSummaryCards({
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="animate-pulse rounded-2xl h-36"
-            style={{ background: t.bg.card, border: `1px solid ${t.border.default}` }}
-          />
+          <Skeleton key={i} height={144} borderRadius={18} />
         ))}
       </div>
     );

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { SkeletonCard } from '@/components/ui/Skeleton';
 import {
   Settings2, Heart, CheckCircle2, ChevronLeft, ChevronRight,
   Trash2, ArrowRight, AlertTriangle, TrendingUp, TrendingDown,
@@ -139,9 +140,8 @@ export function CoupleModeList() {
         <>
           {isLoading ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              {[1, 2].map((i) => (
-                <div key={i} style={{ height: 200, background: t.bg.muted, borderRadius: 18, animation: 'pulse 1.5s infinite' }} />
-              ))}
+              <SkeletonCard lines={4} t={t} />
+              <SkeletonCard lines={4} t={t} />
             </div>
           ) : !result ? (
             <div style={{

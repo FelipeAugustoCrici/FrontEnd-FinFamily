@@ -10,6 +10,7 @@ import { CardVisual } from './components/CardVisual';
 import { CreditCardFormModal } from './components/CreditCardFormModal';
 import { PurchaseFormModal } from './components/PurchaseFormModal';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { SkeletonCreditCards } from '@/components/ui/Skeleton';
 import { Plus, Eye, Trash2, CreditCard as CreditCardIcon, ShoppingBag } from 'lucide-react';
 
 export function CreditCardsList() {
@@ -46,9 +47,7 @@ export function CreditCardsList() {
       />
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => <div key={i} className="h-48 bg-primary-100 rounded-xl animate-pulse" />)}
-        </div>
+        <SkeletonCreditCards count={3} t={{ bg: { card: '#ffffff', muted: '#f1f5f9' }, border: { default: 'rgba(0,0,0,0.06)', divider: 'rgba(0,0,0,0.04)' }, shadow: { card: '0 8px 24px rgba(0,0,0,0.06)' } }} />
       ) : cards.length === 0 ? (
         <Card>
           <div className="text-center py-16">

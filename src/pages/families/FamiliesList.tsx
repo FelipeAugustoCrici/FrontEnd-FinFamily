@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { SkeletonList } from '@/components/ui/Skeleton';
 import { Plus, Users, Trash2, Edit, UserPlus, Loader2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useFamilies } from './hooks/useFamilies';
 import { useCreateFamily } from './hooks/useCreateFamily';
@@ -82,8 +83,10 @@ export function FamiliesList() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="animate-spin text-primary-500" size={32} />
+      <div style={{ maxWidth: 896, margin: '0 auto' }}>
+        <div style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)', borderRadius: 18, overflow: 'hidden' }}>
+          <SkeletonList rows={4} t={{ border: { divider: 'rgba(0,0,0,0.04)' } }} />
+        </div>
       </div>
     );
   }

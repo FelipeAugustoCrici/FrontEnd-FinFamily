@@ -314,3 +314,8 @@ button, a { transition: all 0.2s ease-in-out; }
   to   { width: 0%; }
 }
 .animate-toast-progress { animation: toast-progress 4s linear forwards; }
+
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -4,6 +4,8 @@ import { PiggyBank, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 import { BudgetFormModal } from '../components/BudgetFormModal';
 import { useBudgets } from '../hooks/useBudgets';
 import { useDeleteBudget } from '../hooks/useDeleteBudget';
@@ -15,6 +17,7 @@ const fmt = (v: number) =>
 export function BudgetsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const t = useTokens();
 
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
@@ -42,7 +45,7 @@ export function BudgetsPage() {
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => <div key={i} className="h-36 bg-primary-100 rounded-xl animate-pulse" />)}
+          {[1, 2, 3].map((i) => <Skeleton key={i} height={144} borderRadius={18} />)}
         </div>
       ) : budgets.length === 0 ? (
         <Card>

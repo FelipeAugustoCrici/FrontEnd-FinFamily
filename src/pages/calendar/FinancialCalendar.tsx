@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, Loader2 } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 import { useCalendar } from './hooks/useCalendar';
 import { MonthlySummaryCards } from './components/MonthlySummaryCards';
 import { CalendarGrid } from './components/CalendarGrid';
@@ -16,6 +18,7 @@ const MONTH_NAMES = [
 
 export function FinancialCalendar() {
   const now = new Date();
+  const t = useTokens();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
   const [filter, setFilter] = useState<CalendarFilter>({ type: 'all', status: 'all' });
@@ -61,8 +64,30 @@ export function FinancialCalendar() {
 
       {/* Calendar grid */}
       {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-primary-400" />
+        <div style={{
+          background: t.bg.card,
+          border: `1px solid ${t.border.default}`,
+          borderRadius: 18,
+          padding: 16,
+          boxShadow: t.shadow.card,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+        }}>
+          {/* Day headers */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
+            {Array.from({ length: 7 }).map((_, i) => (
+              <Skeleton key={i} height={12} borderRadius={4} />
+            ))}
+          </div>
+          {/* Calendar rows */}
+          {Array.from({ length: 5 }).map((_, row) => (
+            <div key={row} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
+              {Array.from({ length: 7 }).map((_, col) => (
+                <Skeleton key={col} height={72} borderRadius={10} />
+              ))}
+            </div>
+          ))}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-primary-100 p-4 shadow-sm">

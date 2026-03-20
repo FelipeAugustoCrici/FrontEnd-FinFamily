@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 import { User, Mail, Phone, Calendar, Save, Loader2 } from 'lucide-react';
 import { fetchUserAttributes, updateUserAttributes } from 'aws-amplify/auth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -24,6 +26,7 @@ export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const t = useTokens();
 
   // Buscar dados do usuário do Cognito
   const { data: userAttributes, isLoading } = useQuery({
@@ -122,8 +125,12 @@ export function Profile() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Skeleton height={56} borderRadius={14} />
+        <Skeleton height={120} borderRadius={18} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {[1, 2, 3].map(i => <Skeleton key={i} height={180} borderRadius={18} />)}
+        </div>
       </div>
     );
   }

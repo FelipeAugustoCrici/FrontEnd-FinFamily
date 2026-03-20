@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 import { useInvoiceById } from './hooks/useCreditCards';
 import { InvoiceStatusBadge } from './components/InvoiceStatusBadge';
 import { PayInvoiceModal } from './components/PayInvoiceModal';
@@ -13,13 +15,28 @@ export function InvoiceDetail() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
   const navigate = useNavigate();
   const [payOpen, setPayOpen] = useState(false);
+  const t = useTokens();
 
   const { data: invoice, isLoading } = useInvoiceById(invoiceId!);
 
   const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-  if (isLoading) return <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" /></div>;
+  if (isLoading) return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '8px 0' }}>
+      <Skeleton height={40} width={200} borderRadius={10} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        {[1,2,3,4].map(i => <Skeleton key={i} height={88} borderRadius={18} />)}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+        <Skeleton height={320} borderRadius={18} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Skeleton height={150} borderRadius={18} />
+          <Skeleton height={150} borderRadius={18} />
+        </div>
+      </div>
+    </div>
+  );
   if (!invoice) return <div className="text-center py-16 text-primary-500">Fatura não encontrada</div>;
 
   const byCategory = _.groupBy(invoice.installments, (i) => i.purchase?.category?.name || 'Sem categoria');

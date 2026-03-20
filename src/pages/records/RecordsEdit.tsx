@@ -5,6 +5,8 @@ import { useUpdateRecord } from './hooks/useUpdateRecord';
 import { useRecord } from './hooks/useRecord';
 import { familyService } from '@/pages/families/services/families.service';
 import { useCategories } from '@/pages/categories/hooks/useCategories';
+import { SkeletonDetail } from '@/components/ui/Skeleton';
+import { useTokens } from '@/hooks/useTokens';
 
 export function RecordsEdit() {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ export function RecordsEdit() {
   const updateRecord = useUpdateRecord();
 
   const { data: item, isLoading } = useRecord(id);
+  const t = useTokens();
 
   const { data: families = [] } = useQuery({
     queryKey: ['families'],
@@ -25,8 +28,8 @@ export function RecordsEdit() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
+      <div className="max-w-4xl mx-auto py-6">
+        <SkeletonDetail t={t} />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { Target, Plus, Trash2, PlusCircle, Eye, TrendingUp, Calendar, Minus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -25,7 +26,9 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
   if (isLoading) {
     return (
       <Card title="Metas Financeiras">
-        <div className="text-center py-8 text-slate-400">Carregando...</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 0' }}>
+          {[1,2,3].map(i => <Skeleton key={i} height={120} borderRadius={14} />)}
+        </div>
       </Card>
     );
   }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Loader2, Trash2, Tag, TrendingDown, TrendingUp, Layers } from 'lucide-react';
+import { SkeletonList } from '@/components/ui/Skeleton';
 
 import { Input, Select } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -300,9 +301,7 @@ export function CategoriesList() {
 
           {/* Conteúdo da tab */}
           {activeLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
-              <Loader2 size={24} style={{ color: '#6366f1' }} className="animate-spin" />
-            </div>
+            <SkeletonList rows={5} t={t} />
           ) : activeData && activeData.data.length > 0 ? (
             <>
               <div>

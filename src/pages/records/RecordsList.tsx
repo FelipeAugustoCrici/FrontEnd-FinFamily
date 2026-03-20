@@ -8,6 +8,7 @@ import { ConfirmModal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { api } from '@/services/api.service';
+import { SkeletonTable } from '@/components/ui/Skeleton';
 import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye, Download, Plus } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 
@@ -171,9 +172,7 @@ export function RecordsList() {
         {/* Table */}
         <div className="overflow-x-auto">
           {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-            </div>
+            <SkeletonTable rows={8} t={t} />
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
