@@ -270,6 +270,15 @@
     color: #e2e8f0 !important;
   }
 
+  /* Exceção: QuickLaunch IA input */
+  .dark [data-quick-launch] input {
+    background-color: transparent !important;
+    border-color: transparent !important;
+  }
+  .dark [data-quick-launch] input::placeholder {
+    color: rgba(165,180,252,0.5) !important;
+  }
+
   .dark .hover\:bg-primary-50:hover       { background-color: rgba(255,255,255,0.05) !important; }
   .dark .hover\:bg-primary-50\/30:hover   { background-color: rgba(255,255,255,0.03) !important; }
   .dark .hover\:bg-primary-100:hover      { background-color: rgba(255,255,255,0.07) !important; }

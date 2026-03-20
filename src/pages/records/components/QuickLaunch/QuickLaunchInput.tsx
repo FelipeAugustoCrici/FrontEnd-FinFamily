@@ -153,7 +153,7 @@ export function QuickLaunchInput() {
     : 'none';
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%' }} data-quick-launch>
       {/* Main input card */}
       <div style={{
         background: isDark ? 'rgba(99,102,241,0.06)' : '#faf5ff',
@@ -204,11 +204,16 @@ export function QuickLaunchInput() {
             onBlur={() => setFocused(false)}
             onKeyDown={handleKeyDown}
             placeholder={`Ex: "${PLACEHOLDERS[placeholderIdx]}"`}
+            autoComplete="off"
             style={{
-              background: 'transparent', border: 'none', outline: 'none',
+              background: 'transparent',
+              WebkitBoxShadow: '0 0 0px 1000px transparent inset',
+              WebkitTextFillColor: t.text.primary,
+              border: 'none', outline: 'none',
               fontSize: 14, color: t.text.primary, width: '100%',
               fontWeight: text ? 500 : 400,
-            }}
+              caretColor: t.text.primary,
+            } as React.CSSProperties}
           />
         </div>
 
