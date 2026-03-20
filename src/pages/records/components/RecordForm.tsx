@@ -129,7 +129,7 @@ export function RecordForm({
               padding: 20,
               boxShadow: t.shadow.card,
             }}>
-              <SmartInput categories={categories} />
+              <SmartInput categories={categories} familyId={methods.watch('familyId')} />
             </section>
 
             {}

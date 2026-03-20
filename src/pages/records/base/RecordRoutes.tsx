@@ -1,9 +1,13 @@
-import { RecordsCreate, RecordsEdit, RecordsList, RecordsDetail } from '../';
+import { RecordsCreate, RecordsEdit, RecordsList, RecordsDetail, RecordChat } from '../';
 
 export const RecordRoutes = {
   record: {
     path: '/record',
     element: <RecordsList />,
+  },
+  recordChat: {
+    path: '/record/chat',
+    element: <RecordChat />,
   },
   recordCreate: {
     path: '/record/create',

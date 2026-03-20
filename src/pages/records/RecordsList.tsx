@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { api } from '@/services/api.service';
 import { SkeletonTable } from '@/components/ui/Skeleton';
-import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye, Download, Plus } from 'lucide-react';
+import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye, Download, Plus, MessageSquarePlus } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 import { ActionButton } from '@/components/ui/ActionButton';
 
@@ -140,6 +140,13 @@ queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
             </ActionButton>
             <ActionButton onClick={() => navigate('/record/create')}>
               Novo Lançamento
+            </ActionButton>
+            <ActionButton
+              variant="secondary"
+              onClick={() => navigate('/record/chat')}
+              icon={<MessageSquarePlus size={15} />}
+            >
+              Chat IA
             </ActionButton>
           </>
         }
