@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
+import { AIChatPanel } from './AIChatPanel';
 import {
   ClipboardList,
   ListOrdered,
@@ -18,6 +19,7 @@ import {
   PiggyBank,
   ChevronDown,
   Heart,
+  Sparkles,
 } from 'lucide-react';import { cn } from './ui/Button';
 import { logout } from '@/services/logout';
 import { PageHeader } from './ui/PageHeader';
@@ -121,8 +123,63 @@ const planningSubItems: SubItem[] = [
   { to: '/planning/budgets', icon: PiggyBank, label: 'Orçamentos' },
 ];
 
+interface AIChatFABProps {
+  onClick: () => void;
+  isOpen: boolean;
+}
+
+function AIChatFAB({ onClick, isOpen }: AIChatFABProps) {
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      title="Chat IA — Registrar com linguagem natural"
+      style={{
+        position: 'fixed',
+        bottom: 28,
+        right: 28,
+        zIndex: 201,
+        display: 'flex',
+        alignItems: 'center',
+        gap: hovered ? 10 : 0,
+        padding: hovered ? '14px 20px' : '14px',
+        borderRadius: 999,
+        border: 'none',
+        cursor: 'pointer',
+        background: isOpen
+          ? 'linear-gradient(135deg, #4f46e5, #7c3aed)'
+          : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+        boxShadow: hovered
+          ? '0 8px 32px rgba(99,102,241,0.5), 0 2px 8px rgba(0,0,0,0.2)'
+          : '0 4px 20px rgba(99,102,241,0.4), 0 2px 8px rgba(0,0,0,0.15)',
+        transform: hovered ? 'scale(1.06)' : 'scale(1)',
+        transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        maxWidth: hovered ? 200 : 52,
+      }}
+    >
+      <Sparkles size={20} color="#fff" style={{ flexShrink: 0 }} />
+      <span style={{
+        fontSize: 13, fontWeight: 700, color: '#fff',
+        opacity: hovered ? 1 : 0,
+        maxWidth: hovered ? 120 : 0,
+        transition: 'opacity 0.15s, max-width 0.2s',
+        overflow: 'hidden',
+      }}>
+        {isOpen ? 'Fechar' : 'Chat IA'}
+      </span>
+    </button>
+  );
+}
+
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
   const location = useLocation();
 
   const isPlanningActive = location.pathname.startsWith('/planning');
@@ -230,6 +287,10 @@ export const Layout = () => {
           </div>
         </div>
       )}
+
+      {/* FAB — Chat IA global */}
+      <AIChatFAB onClick={() => setIsChatOpen(o => !o)} isOpen={isChatOpen} />
+      <AIChatPanel open={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 };
