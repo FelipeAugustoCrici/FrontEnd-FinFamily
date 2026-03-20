@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -112,16 +112,16 @@ export function RecordForm({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: 900, margin: '0 auto' }}>
-        {/* Header com botões */}
+        {}
         <div style={{ marginBottom: 28 }}>
           <RecordFormHeader isEdit={!!initialData?.id} isLoading={!!isLoading} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'start' }}>
-          {/* Coluna principal */}
+          {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-          {/* 0. Preenchimento Inteligente */}
+          {}
             <section style={{
               background: isDark ? 'rgba(99,102,241,0.06)' : '#f5f3ff',
               border: `1.5px solid ${isDark ? 'rgba(99,102,241,0.20)' : '#ddd6fe'}`,
@@ -132,7 +132,7 @@ export function RecordForm({
               <SmartInput categories={categories} />
             </section>
 
-            {/* 1. Tipo de Registro */}
+            {}
             <section style={{
               background: t.bg.card,
               border: `1px solid ${t.border.default}`,
@@ -146,7 +146,7 @@ export function RecordForm({
               <RecordTypeSelector />
             </section>
 
-            {/* 2. Informações do Lançamento */}
+            {}
             <section style={{
               background: t.bg.card,
               border: `1px solid ${t.border.default}`,
@@ -160,7 +160,7 @@ export function RecordForm({
               <RecordDetailsForm categories={categories} />
             </section>
 
-            {/* 3. Opções adicionais */}
+            {}
             <section style={{
               background: t.bg.card,
               border: `1px solid ${t.border.default}`,
@@ -174,7 +174,7 @@ export function RecordForm({
               <RecurrenceSection />
             </section>
 
-            {/* 4. Família e Responsável */}
+            {}
             <section style={{
               background: t.bg.card,
               border: `1px solid ${t.border.default}`,
@@ -189,7 +189,7 @@ export function RecordForm({
             </section>
           </div>
 
-          {/* Coluna lateral — Resumo */}
+          {}
           <SummarySection people={people} />
         </div>
       </form>

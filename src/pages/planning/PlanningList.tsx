@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GoalsCard, BudgetsCard, CreditCardsCard } from './components';
 import { GoalFormModal, BudgetFormModal, CreditCardFormModal } from './components';
@@ -10,8 +10,7 @@ export function PlanningList() {
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
 
-  // Buscar família do usuário
-  const { data: families = [] } = useQuery({
+const { data: families = [] } = useQuery({
     queryKey: ['families'],
     queryFn: async () => {
       const { data } = await api.get('/finance/families');

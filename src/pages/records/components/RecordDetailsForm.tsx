@@ -1,4 +1,4 @@
-import { useFormContext, useWatch, Controller } from 'react-hook-form';
+﻿import { useFormContext, useWatch, Controller } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { DatePicker } from '@/components/ui/DatePicker';
@@ -32,7 +32,7 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Descrição */}
+      {}
       <Input
         label="Descrição"
         placeholder="Ex: Conta de luz, Supermercado, Salário mensal..."
@@ -41,7 +41,7 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
         icon={<FileText size={18} className="text-primary-400" />}
       />
 
-      {/* Valor em destaque */}
+      {}
       <Controller
         name="value"
         control={control}
@@ -57,7 +57,7 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
         )}
       />
 
-      {/* Categoria + Data */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         {type === 'expense' ? (
           <div>
@@ -108,7 +108,7 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
         />
       </div>
 
-      {/* Toggle compartilhado — apenas para despesas */}
+      {}
       {type === 'expense' && (
         <div
           style={{
@@ -145,7 +145,7 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
               </div>
             </div>
 
-            {/* Toggle switch */}
+            {}
             <button
               type="button"
               onClick={() => setValue('isShared', !isShared)}

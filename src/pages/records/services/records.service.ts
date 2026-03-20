@@ -1,7 +1,6 @@
-import { api } from '@/services/api.service';
+﻿import { api } from '@/services/api.service';
 import { Record, CreateRecordDTO, UpdateRecordDTO } from '../types/record.types';
 
-// Mapear tipo do formulário para rota da API (apenas para criação)
 const getRouteByFormType = (formType: string): string => {
   switch (formType) {
     case 'expense':
@@ -28,7 +27,7 @@ export const recordService = {
   },
 
   async getById(id: string, recordType?: 'expense' | 'income' | 'extra'): Promise<Record> {
-    // Tenta buscar em diferentes rotas baseado no tipo, se fornecido
+    
     if (recordType === 'income') {
       const { data } = await api.get(`/finance/incomes/${id}`);
       return data;
@@ -38,30 +37,27 @@ export const recordService = {
       return data;
     }
 
-    // Por padrão, busca em expenses
-    const { data } = await api.get(`/finance/expenses/${id}`);
+const { data } = await api.get(`/finance/expenses/${id}`);
     return data;
   },
 
   async create(data: CreateRecordDTO & { type: string }): Promise<Record> {
-    // Para criação, usamos o tipo do formulário para determinar a rota
+    
     const formType = (data as any).formType || 'expense';
     const route = getRouteByFormType(formType);
 
-    // Remove o formType antes de enviar
-    const { formType: _, ...payload } = data as any;
+const { formType: _, ...payload } = data as any;
 
     const response = await api.post(`/finance/${route}`, payload);
     return response.data;
   },
 
   async update(id: string, data: UpdateRecordDTO & { type: string }): Promise<Record> {
-    // Para atualização, usamos o tipo do formulário para determinar a rota
+    
     const formType = (data as any).formType || 'expense';
     const route = getRouteByFormType(formType);
 
-    // Remove o formType antes de enviar
-    const { formType: _, ...payload } = data as any;
+const { formType: _, ...payload } = data as any;
 
     const response = await api.put(`/finance/${route}/${id}`, payload);
     return response.data;

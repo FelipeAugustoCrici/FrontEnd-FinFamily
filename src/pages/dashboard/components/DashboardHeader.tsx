@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChevronLeft, ChevronRight, Sparkles, Moon, Sun } from 'lucide-react';
 import { useUserInfo, useUserFamily } from '@/hooks/useUserInfo';
 import { useTheme } from '@/hooks/useTheme';
@@ -42,7 +42,7 @@ export function DashboardHeader({ month, year, setMonth, setYear }: Props) {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      {/* Greeting */}
+      {}
       <div className="flex items-center gap-4">
         <div className="relative">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-700 to-primary-900 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary-900/20">
@@ -58,9 +58,9 @@ export function DashboardHeader({ month, year, setMonth, setYear }: Props) {
         </div>
       </div>
 
-      {/* Right side */}
+      {}
       <div className="flex items-center gap-3">
-        {/* Family badge */}
+        {}
         {family && (
           <div
             className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl shadow-soft"
@@ -74,7 +74,7 @@ export function DashboardHeader({ month, year, setMonth, setYear }: Props) {
           </div>
         )}
 
-        {/* Dark mode toggle */}
+        {}
         <button
           onClick={toggle}
           className="p-2.5 rounded-xl border transition-colors"
@@ -89,7 +89,7 @@ export function DashboardHeader({ month, year, setMonth, setYear }: Props) {
           {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
-        {/* Month selector */}
+        {}
         <div
           className="flex items-center rounded-xl shadow-soft overflow-hidden"
           style={{

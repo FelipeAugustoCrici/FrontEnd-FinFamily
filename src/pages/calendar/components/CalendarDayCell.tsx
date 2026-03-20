@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { cn } from '@/components/ui/Button';
 import { CalendarEventItem } from './CalendarEventItem';
 import type { CalendarDaySummary } from '../types/calendar.types';
@@ -33,7 +33,7 @@ export function CalendarDayCell({ day, month, year, summary, isToday, isCurrentM
         !isCurrentMonth && 'opacity-40',
       )}
     >
-      {/* Day number */}
+      {}
       <div className="flex items-center justify-between">
         <span className={cn(
           'text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full',
@@ -47,7 +47,7 @@ export function CalendarDayCell({ day, month, year, summary, isToday, isCurrentM
         </div>
       </div>
 
-      {/* Events */}
+      {}
       {hasEvents && (
         <div className="flex flex-col gap-0.5 flex-1">
           {summary.events.slice(0, MAX_VISIBLE).map((e) => (
@@ -61,7 +61,7 @@ export function CalendarDayCell({ day, month, year, summary, isToday, isCurrentM
         </div>
       )}
 
-      {/* Day balance */}
+      {}
       {hasEvents && (
         <div className={cn(
           'text-xs font-bold mt-auto pt-1 border-t border-primary-50',

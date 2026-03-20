@@ -1,4 +1,4 @@
-import { ArrowDownCircle, ArrowUpCircle, Calendar, Tag, User, DollarSign, FileText } from 'lucide-react';
+﻿import { ArrowDownCircle, ArrowUpCircle, Calendar, Tag, User, DollarSign, FileText } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 import type { ParsedLaunch } from './quickLaunch.parser';
 
@@ -25,7 +25,7 @@ export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel
       className="rounded-xl p-4 space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200"
       style={{ background: t.bg.cardSubtle, border: `1px solid ${t.border.default}` }}
     >
-      {/* Type badge */}
+      {}
       <div className="flex items-center gap-2 mb-1">
         <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: semantic.bgIcon }}>
           {isIncome
@@ -39,7 +39,7 @@ export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel
         )}
       </div>
 
-      {/* Description */}
+      {}
       <div className="flex items-center gap-2.5 text-sm">
         <FileText size={14} style={{ color: t.text.subtle }} className="shrink-0" />
         <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Descrição</span>
@@ -54,7 +54,7 @@ export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel
         />
       </div>
 
-      {/* Valor */}
+      {}
       <div className="flex items-center gap-2.5 text-sm">
         <DollarSign size={14} style={{ color: t.text.subtle }} className="shrink-0" />
         <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Valor</span>
@@ -63,21 +63,21 @@ export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel
         </span>
       </div>
 
-      {/* Data */}
+      {}
       <div className="flex items-center gap-2.5 text-sm">
         <Calendar size={14} style={{ color: t.text.subtle }} className="shrink-0" />
         <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Data</span>
         <span className="font-semibold" style={{ color: t.text.primary }}>{dateLabel}</span>
       </div>
 
-      {/* Categoria */}
+      {}
       <div className="flex items-center gap-2.5 text-sm">
         <Tag size={14} style={{ color: t.text.subtle }} className="shrink-0" />
         <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Categoria</span>
         <span className="font-semibold" style={{ color: categoryName ? t.text.primary : t.text.disabled }}>{categoryName ?? '—'}</span>
       </div>
 
-      {/* Responsável */}
+      {}
       <div className="flex items-center gap-2.5 text-sm">
         <User size={14} style={{ color: t.text.subtle }} className="shrink-0" />
         <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Responsável</span>

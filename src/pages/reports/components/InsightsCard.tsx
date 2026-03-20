@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/Card';
+﻿import { Card } from '@/components/ui/Card';
 import { TrendingUp, TrendingDown, Target, AlertCircle, Lightbulb } from 'lucide-react';
 import type { SummaryData } from '../types/reports.types';
 import { formatCurrency } from '../utils/reports-helpers';
@@ -18,7 +18,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
   return (
     <Card title="Insights e Recomendações">
       <div className="space-y-4">
-        {/* Resumo da IA */}
+        {}
         {aiReport?.summary && (
           <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <Lightbulb size={20} className="text-blue-600 mt-0.5 flex-shrink-0" />
@@ -29,7 +29,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Saldo Positivo/Negativo */}
+        {}
         {hasPositiveBalance ? (
           <div className="flex items-start gap-3 p-4 bg-success-50 border border-success-200 rounded-lg">
             <TrendingUp size={20} className="text-success-600 mt-0.5 flex-shrink-0" />
@@ -53,7 +53,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Mudança nas Receitas */}
+        {}
         {hasIncomeIncrease && Math.abs(comparison.incomeChange) > 0 && (
           <div className="flex items-start gap-3 p-4 bg-success-50 border border-success-200 rounded-lg">
             <TrendingUp size={20} className="text-success-600 mt-0.5 flex-shrink-0" />
@@ -67,7 +67,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Mudança nas Despesas */}
+        {}
         {hasExpenseIncrease && Math.abs(comparison.expenseChange) > 0 && (
           <div className="flex items-start gap-3 p-4 bg-warning-50 border border-warning-200 rounded-lg">
             <TrendingDown size={20} className="text-warning-600 mt-0.5 flex-shrink-0" />
@@ -81,7 +81,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Alertas de Orçamento */}
+        {}
         {hasAlerts && (
           <div className="flex items-start gap-3 p-4 bg-warning-50 border border-warning-200 rounded-lg">
             <AlertCircle size={20} className="text-warning-600 mt-0.5 flex-shrink-0" />
@@ -101,7 +101,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Insights da IA */}
+        {}
         {aiReport?.insights && aiReport.insights.length > 0 && (
           <div className="space-y-2">
             {aiReport.insights.map((insight, index) => (
@@ -116,7 +116,7 @@ export function InsightsCard({ summary }: InsightsCardProps) {
           </div>
         )}
 
-        {/* Recomendações da IA */}
+        {}
         {aiReport?.recommendations && aiReport.recommendations.length > 0 && (
           <div className="space-y-2">
             <p className="text-sm font-semibold text-primary-800">Recomendações:</p>

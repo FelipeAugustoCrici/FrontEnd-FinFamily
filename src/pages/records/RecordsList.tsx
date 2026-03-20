@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
@@ -11,6 +11,7 @@ import { api } from '@/services/api.service';
 import { SkeletonTable } from '@/components/ui/Skeleton';
 import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye, Download, Plus } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
+import { ActionButton } from '@/components/ui/ActionButton';
 
 import { RecordsFilters } from './components/RecordsFilters';
 import { StatusBadge } from './components/StatusBadge';
@@ -37,8 +38,7 @@ export function RecordsList() {
   const itemsPerPage = 10;
   const t = useTokens();
 
-  // Busca a família para obter o familyId
-  const { data: families = [] } = useQuery({
+const { data: families = [] } = useQuery({
     queryKey: ['families'],
     queryFn: () => familyService.list(),
   });
@@ -65,27 +65,25 @@ export function RecordsList() {
     ['desc'],
   );
 
-  // Usar paginação da API se não houver filtro de busca
-  const shouldUseFrontendPagination = filters.search.length > 0;
+const shouldUseFrontendPagination = filters.search.length > 0;
 
   let paginatedRecords = filteredRecords;
   let totalItems = pagination?.total || 0;
   let totalPages = pagination?.totalPages || 1;
 
   if (shouldUseFrontendPagination) {
-    // Paginação no frontend quando há busca
+    
     totalItems = filteredRecords.length;
     totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (filters.page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     paginatedRecords = filteredRecords.slice(startIndex, endIndex);
   } else {
-    // Usar dados já paginados da API
+    
     paginatedRecords = filteredRecords;
   }
 
-  // Atualizar página quando filtros mudarem
-  useEffect(() => {
+useEffect(() => {
     filters.setPage(1);
   }, [filters.month, filters.year, filters.status, filters.search]);
 
@@ -117,12 +115,11 @@ export function RecordsList() {
 
   const handleDeleteIncome = async (id: string, type: 'income' | 'extra') => {
     try {
-      // Usar a rota correta baseada no tipo
+      
       const route = type === 'income' ? 'incomes' : 'extras';
       await api.delete(`/finance/${route}/${id}`);
 
-      // Invalidar queries para atualizar os cards
-      queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
+queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
       queryClient.invalidateQueries({ queryKey: ['extras-summary'] });
     } catch (error) {
       console.error('Erro ao excluir:', error);
@@ -134,21 +131,25 @@ export function RecordsList() {
       <PageHeader
         actions={
           <>
-            <Button variant="secondary" onClick={() => window.print()}>
-              <Download size={16} className="mr-2" /> Exportar
-            </Button>
-            <Button onClick={() => navigate('/record/create')}>
-              <Plus size={16} className="mr-2" /> Novo Lançamento
-            </Button>
+            <ActionButton
+              variant="secondary"
+              onClick={() => window.print()}
+              icon={<Download size={15} />}
+            >
+              Exportar
+            </ActionButton>
+            <ActionButton onClick={() => navigate('/record/create')}>
+              Novo Lançamento
+            </ActionButton>
           </>
         }
       />
 
       <QuickLaunchInput />
 
-      {/* Cards de resumo de rendimentos por pessoa */}
+      {}
 
-      {/* Cards de resumo de rendimentos por pessoa */}
+      {}
       <IncomeSummaryCards
         month={filters.month}
         year={filters.year}
@@ -169,7 +170,7 @@ export function RecordsList() {
           onStatusChange={filters.setStatus}
         />
 
-        {/* Table */}
+        {}
         <div className="overflow-x-auto">
           {isLoading ? (
             <SkeletonTable rows={8} t={t} />
@@ -343,7 +344,7 @@ export function RecordsList() {
           )}
         </div>
 
-        {/* Paginação */}
+        {}
         {!isLoading && filteredRecords.length > 0 && (
           <Pagination
             currentPage={filters.page}
@@ -355,7 +356,7 @@ export function RecordsList() {
         )}
       </Card>
 
-      {/* Modal de confirmação de exclusão */}
+      {}
       <ConfirmModal
         isOpen={!!recordToDelete}
         onClose={() => setRecordToDelete(null)}

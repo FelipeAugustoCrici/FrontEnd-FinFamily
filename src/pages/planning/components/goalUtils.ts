@@ -1,4 +1,4 @@
-import { PiggyBank, CreditCard, ShoppingBag, TrendingUp } from 'lucide-react';
+﻿import { PiggyBank, CreditCard, ShoppingBag, TrendingUp } from 'lucide-react';
 import type { GoalContribution, GoalType } from '../types/planning.types';
 import moment from 'moment';
 
@@ -39,8 +39,6 @@ export function getProgressBarColor(pct: number): string {
 export const fmt = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-// ── Insights ─────────────────────────────────────────────────────────────────
-
 export interface GoalInsights {
   thisMonthTotal: number;
   remaining: number;
@@ -59,14 +57,12 @@ export function computeInsights(
 ): GoalInsights {
   const remaining = Math.max(targetValue - currentValue, 0);
 
-  // Contribuições do mês atual
-  const nowMonth = moment().format('YYYY-MM');
+const nowMonth = moment().format('YYYY-MM');
   const thisMonthTotal = contributions
     .filter((c) => moment(c.date).format('YYYY-MM') === nowMonth)
     .reduce((s, c) => s + c.value, 0);
 
-  // Agrupar por mês
-  const byMonth: Record<string, number> = {};
+const byMonth: Record<string, number> = {};
   for (const c of contributions) {
     const key = moment(c.date).format('YYYY-MM');
     byMonth[key] = (byMonth[key] ?? 0) + c.value;
@@ -78,8 +74,7 @@ export function computeInsights(
     value: byMonth[k],
   }));
 
-  // Média mensal (últimos 3 meses com contribuição, excluindo mês atual se incompleto)
-  const pastMonths = monthKeys.filter((k) => k < nowMonth).slice(-3);
+const pastMonths = monthKeys.filter((k) => k < nowMonth).slice(-3);
   const monthlyAvg =
     pastMonths.length > 0
       ? pastMonths.reduce((s, k) => s + byMonth[k], 0) / pastMonths.length
@@ -87,23 +82,20 @@ export function computeInsights(
         ? Object.values(byMonth).reduce((s, v) => s + v, 0) / monthKeys.length
         : null;
 
-  // Estimativa de meses para concluir
-  const estimatedMonths =
+const estimatedMonths =
     remaining <= 0
       ? 0
       : monthlyAvg && monthlyAvg > 0
         ? Math.ceil(remaining / monthlyAvg)
         : null;
 
-  // Sugestão baseada no prazo
-  let suggestedMonthly: number | null = null;
+let suggestedMonthly: number | null = null;
   if (deadlineDate && remaining > 0) {
     const monthsLeft = moment(deadlineDate).diff(moment(), 'months', true);
     if (monthsLeft > 0) suggestedMonthly = remaining / monthsLeft;
   }
 
-  // Melhor mês
-  const bestMonth =
+const bestMonth =
     monthKeys.length > 0
       ? (() => {
           const best = monthKeys.reduce((a, b) => (byMonth[a] >= byMonth[b] ? a : b));

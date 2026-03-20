@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+﻿import { useLocation, useNavigate } from 'react-router-dom';
 import { confirmSignIn, fetchAuthSession } from 'aws-amplify/auth';
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -20,7 +20,6 @@ const schema = z
 
 type FormValues = z.infer<typeof schema>;
 
-// Regras de força de senha
 const rules = [
   { label: 'Mínimo 8 caracteres', test: (v: string) => v.length >= 8 },
   { label: 'Letra maiúscula', test: (v: string) => /[A-Z]/.test(v) },
@@ -86,7 +85,7 @@ export function NewPassword() {
 
   return (
     <AuthLayout>
-      {/* Header */}
+      {}
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -107,7 +106,7 @@ export function NewPassword() {
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          {/* Nova senha */}
+          {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Nova senha</label>
             <div style={{ position: 'relative' }}>
@@ -137,7 +136,7 @@ export function NewPassword() {
               </button>
             </div>
 
-            {/* Indicador de força */}
+            {}
             {passwordValue.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 2 }}>
                 {rules.map((rule) => {
@@ -168,7 +167,7 @@ export function NewPassword() {
             )}
           </div>
 
-          {/* Confirmar senha */}
+          {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Confirmar senha</label>
             <div style={{ position: 'relative' }}>

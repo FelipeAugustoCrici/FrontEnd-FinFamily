@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+﻿import { useState, useRef, useEffect, useCallback } from 'react';
 import { Zap, Loader2, X, ChevronDown } from 'lucide-react';
 import moment from 'moment';
 import { cn } from '@/components/ui/Button';
@@ -111,15 +111,14 @@ export function QuickLaunchInput() {
     if (e.key === 'Escape') { setText(''); setOpen(false); inputRef.current?.blur(); }
   };
 
-  // ── theme tokens ──────────────────────────────────────────────
-  const qi = t.quickInput;
+const qi = t.quickInput;
   const wrapBdr    = focused ? qi.borderFocus : qi.border;
   const wrapShadow = focused ? qi.shadow : 'none';
   const zapBg      = focused ? qi.zapBgFocus : qi.zapBg;
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* Input bar */}
+      {}
       <div
         className="flex items-center gap-3 px-5 rounded-2xl border-2 transition-all duration-200"
         style={{ minHeight: '56px', background: qi.bg, borderColor: wrapBdr, boxShadow: wrapShadow }}
@@ -172,7 +171,7 @@ export function QuickLaunchInput() {
         </button>
       </div>
 
-      {/* Dropdown */}
+      {}
       {open && text.length > 0 && (
         <div
           className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl p-4 space-y-4"

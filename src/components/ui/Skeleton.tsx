@@ -1,4 +1,4 @@
-import { useTokens } from '@/hooks/useTokens';
+﻿import { useTokens } from '@/hooks/useTokens';
 
 interface SkeletonProps {
   width?: string | number;
@@ -29,9 +29,6 @@ export function Skeleton({ width = '100%', height = 16, borderRadius = 8, style 
   );
 }
 
-// ─── Skeletons compostos por contexto ────────────────────────────────────────
-
-/** Linha de tabela skeleton */
 export function SkeletonTableRow({ cols = 8, t }: { cols?: number; t: any }) {
   return (
     <tr style={{ borderBottom: `1px solid ${t.border.subtle}` }}>
@@ -44,7 +41,6 @@ export function SkeletonTableRow({ cols = 8, t }: { cols?: number; t: any }) {
   );
 }
 
-/** Card skeleton genérico */
 export function SkeletonCard({ lines = 3, t }: { lines?: number; t: any }) {
   return (
     <div style={{
@@ -65,7 +61,6 @@ export function SkeletonCard({ lines = 3, t }: { lines?: number; t: any }) {
   );
 }
 
-/** Grid de cards skeleton (ex: dashboard summary cards) */
 export function SkeletonCardGrid({ count = 4, t }: { count?: number; t: any }) {
   return (
     <>
@@ -76,7 +71,6 @@ export function SkeletonCardGrid({ count = 4, t }: { count?: number; t: any }) {
   );
 }
 
-/** Skeleton para lista de itens (categorias, famílias, etc.) */
 export function SkeletonList({ rows = 5, t }: { rows?: number; t: any }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const }}>
@@ -99,11 +93,10 @@ export function SkeletonList({ rows = 5, t }: { rows?: number; t: any }) {
   );
 }
 
-/** Skeleton para página de detalhes (RecordsDetail, CreditCardDetail) */
 export function SkeletonDetail({ t }: { t: any }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 20 }}>
-      {/* Topbar */}
+      {}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Skeleton width={36} height={36} borderRadius={10} />
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 6 }}>
@@ -111,7 +104,7 @@ export function SkeletonDetail({ t }: { t: any }) {
           <Skeleton height={12} width={140} borderRadius={6} />
         </div>
       </div>
-      {/* Main grid */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16 }}>
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 16 }}>
           <SkeletonCard lines={4} t={t} />
@@ -126,18 +119,17 @@ export function SkeletonDetail({ t }: { t: any }) {
   );
 }
 
-/** Skeleton para dashboard completo */
 export function SkeletonDashboard({ t }: { t: any }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 24 }}>
-      {/* Balance + summary cards */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
         <SkeletonCard lines={4} t={t} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {[1,2,3,4].map(i => <SkeletonCard key={i} lines={2} t={t} />)}
         </div>
       </div>
-      {/* Transactions + members */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
         <SkeletonCard lines={6} t={t} />
         <SkeletonCard lines={4} t={t} />
@@ -146,7 +138,6 @@ export function SkeletonDashboard({ t }: { t: any }) {
   );
 }
 
-/** Skeleton para tabela de lançamentos */
 export function SkeletonTable({ rows = 8, t }: { rows?: number; t: any }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -168,7 +159,6 @@ export function SkeletonTable({ rows = 8, t }: { rows?: number; t: any }) {
   );
 }
 
-/** Skeleton para cartões de crédito */
 export function SkeletonCreditCards({ count = 3, t }: { count?: number; t: any }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
@@ -182,7 +172,6 @@ export function SkeletonCreditCards({ count = 3, t }: { count?: number; t: any }
   );
 }
 
-/** Skeleton para relatórios */
 export function SkeletonReports({ t }: { t: any }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 20 }}>

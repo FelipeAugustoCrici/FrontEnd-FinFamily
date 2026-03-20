@@ -1,4 +1,4 @@
-import * as ToastPrimitive from '@radix-ui/react-toast';
+﻿import * as ToastPrimitive from '@radix-ui/react-toast';
 import { X, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -16,7 +16,7 @@ export function Toaster() {
     <ToastPrimitive.Provider duration={4000}>
       {toasts.map(({ id, title, description, variant }) => (
         <ToastRoot key={id}>
-          {/* Icon */}
+          {}
           <div className="mt-1">
             {variant === 'success' ? (
               <CheckCircle2 className="text-success-500" size={20} />

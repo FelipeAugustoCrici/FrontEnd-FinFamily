@@ -1,4 +1,4 @@
-import type { RecordKind, RecordStatus, RecordOrigin } from '@/pages/records/types/record.types';
+﻿import type { RecordKind, RecordStatus, RecordOrigin } from '@/pages/records/types/record.types';
 
 export interface CalendarFinancialEvent {
   id: string;
@@ -15,7 +15,7 @@ export interface CalendarFinancialEvent {
 }
 
 export interface CalendarDaySummary {
-  date: string; // YYYY-MM-DD
+  date: string; 
   totalIncome: number;
   totalExpense: number;
   balance: number;

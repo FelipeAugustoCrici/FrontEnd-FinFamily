@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+﻿import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { coupleModeService } from '../services/couple-mode.service'
 import { CoupleModeConfig } from '../types/couple-mode.types'
 
@@ -15,7 +15,7 @@ export function useCoupleModeResult(familyId?: string, month?: number, year?: nu
     queryKey: ['couple-mode-result', familyId, month, year],
     queryFn: () => coupleModeService.getResult(familyId!, month!, year!),
     enabled: !!familyId && !!month && !!year,
-    placeholderData: undefined, // não mantém dados do período anterior
+    placeholderData: undefined, 
   })
 }
 

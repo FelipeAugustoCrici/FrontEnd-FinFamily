@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 export const api = axios.create({
@@ -16,7 +16,7 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch {
-      // usuário não logado → segue sem token
+      
     }
 
     return config;

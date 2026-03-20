@@ -1,8 +1,9 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Loader2, Trash2, Tag, TrendingDown, TrendingUp, Layers } from 'lucide-react';
 import { SkeletonList } from '@/components/ui/Skeleton';
+import { ActionButton } from '@/components/ui/ActionButton';
 
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -108,13 +109,13 @@ export function CategoriesList() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <PageHeader
         actions={
-          <Button onClick={() => document.getElementById('category-form-name')?.focus()}>
-            <Plus size={16} style={{ marginRight: 6 }} /> Nova Categoria
-          </Button>
+          <ActionButton onClick={() => document.getElementById('category-form-name')?.focus()}>
+            Nova Categoria
+          </ActionButton>
         }
       />
 
-      {/* Resumo */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
         {[
           { label: 'Total de Categorias', value: totalExpenses + totalIncomes, icon: Layers, color: '#6366f1', bg: isDark ? 'rgba(99,102,241,0.10)' : '#eef2ff', border: isDark ? 'rgba(99,102,241,0.20)' : '#c7d2fe' },
@@ -142,10 +143,10 @@ export function CategoriesList() {
         ))}
       </div>
 
-      {/* Layout principal */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 16, alignItems: 'start' }}>
 
-        {/* Form de criação */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,
@@ -159,7 +160,7 @@ export function CategoriesList() {
             Criar nova categoria
           </p>
 
-          {/* Feedback de sucesso */}
+          {}
           {createSuccess && (
             <div style={{
               background: isDark ? 'rgba(16,185,129,0.12)' : '#dcfce7',
@@ -197,7 +198,7 @@ export function CategoriesList() {
                 onChange={(val) => setValue('type', val as 'expense' | 'income')}
               />
 
-              {/* Sugestões rápidas */}
+              {}
               <div>
                 <p style={{ fontSize: 10, fontWeight: 600, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
                   Sugestões
@@ -255,7 +256,7 @@ export function CategoriesList() {
           </FormProvider>
         </div>
 
-        {/* Lista com tabs */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,
@@ -263,7 +264,7 @@ export function CategoriesList() {
           boxShadow: t.shadow.card,
           overflow: 'hidden',
         }}>
-          {/* Tabs */}
+          {}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -301,7 +302,7 @@ export function CategoriesList() {
             </button>
           </div>
 
-          {/* Conteúdo da tab */}
+          {}
           {activeLoading ? (
             <SkeletonList rows={5} t={t} />
           ) : activeData && activeData.data.length > 0 ? (
@@ -348,7 +349,7 @@ export function CategoriesList() {
                         </div>
                       </div>
 
-                      {/* Ação excluir — aparece no hover */}
+                      {}
                       <button
                         onClick={() => setCategoryToDelete(cat)}
                         style={{
@@ -385,7 +386,7 @@ export function CategoriesList() {
               </div>
             </>
           ) : (
-            /* Empty state */
+            
             <div style={{ padding: '48px 24px', textAlign: 'center' }}>
               <div style={{
                 width: 56,

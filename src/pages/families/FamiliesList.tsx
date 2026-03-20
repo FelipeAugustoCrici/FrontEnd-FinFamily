@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -127,22 +127,22 @@ export function FamiliesList() {
 
   return (
     <>
+      <PageHeader
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => navigate(`/family/edit/${family.id}`)}>
+              <Edit size={16} className="mr-2" /> Editar
+            </Button>
+            <Button variant="ghost" onClick={() => setDeleteModalOpen(true)}>
+              <Trash2 size={16} className="mr-2 text-red-500" />
+              <span className="text-red-500">Excluir</span>
+            </Button>
+          </>
+        }
+      />
       <div style={{ maxWidth: 896, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <PageHeader
-          actions={
-            <>
-              <Button variant="secondary" onClick={() => navigate(`/family/edit/${family.id}`)}>
-                <Edit size={16} className="mr-2" /> Editar
-              </Button>
-              <Button variant="ghost" onClick={() => setDeleteModalOpen(true)}>
-                <Trash2 size={16} className="mr-2 text-red-500" />
-                <span className="text-red-500">Excluir</span>
-              </Button>
-            </>
-          }
-        />
 
-        {/* Resumo no topo */}
+        {}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
@@ -178,7 +178,7 @@ export function FamiliesList() {
           ))}
         </div>
 
-        {/* Lista de membros */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,
@@ -186,7 +186,7 @@ export function FamiliesList() {
           boxShadow: t.shadow.card,
           overflow: 'hidden',
         }}>
-          {/* Header do card */}
+          {}
           <div style={{
             padding: '18px 24px',
             borderBottom: `1px solid ${t.border.divider}`,
@@ -204,7 +204,7 @@ export function FamiliesList() {
             </div>
           </div>
 
-          {/* Itens */}
+          {}
           {members.length > 0 ? (
             <div>
               {members.map((member: any, idx: number) => {
@@ -226,7 +226,7 @@ export function FamiliesList() {
                     onMouseEnter={e => (e.currentTarget.style.background = t.bg.muted)}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    {/* Avatar */}
+                    {}
                     <div style={{
                       width: 44, height: 44, borderRadius: 14, flexShrink: 0,
                       background: isDark ? 'rgba(99,102,241,0.18)' : 'rgba(99,102,241,0.10)',
@@ -237,7 +237,7 @@ export function FamiliesList() {
                       {initials}
                     </div>
 
-                    {/* Info */}
+                    {}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: 14, fontWeight: 600, color: t.text.primary }}>{member.name}</p>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
@@ -270,7 +270,7 @@ export function FamiliesList() {
                       </div>
                     </div>
 
-                    {/* Menu de ações */}
+                    {}
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                       <button
                         onClick={() => setOpenMenuId(isMenuOpen ? null : member.id)}
@@ -289,7 +289,7 @@ export function FamiliesList() {
 
                       {isMenuOpen && (
                         <>
-                          {/* Overlay para fechar */}
+                          {}
                           <div
                             style={{ position: 'fixed', inset: 0, zIndex: 10 }}
                             onClick={() => setOpenMenuId(null)}
@@ -347,7 +347,7 @@ export function FamiliesList() {
             </div>
           )}
 
-          {/* CTA adicionar membro */}
+          {}
           <div style={{
             padding: '16px 24px',
             borderTop: `1px solid ${t.border.divider}`,
@@ -394,7 +394,7 @@ export function FamiliesList() {
         <AddMemberModal familyId={family.id} isOpen={addMemberOpen} onClose={() => setAddMemberOpen(false)} />
       )}
 
-      {/* Modal exclusão da família */}
+      {}
       <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Confirmar Exclusão">
         <div className="space-y-4">
           <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -423,7 +423,7 @@ export function FamiliesList() {
         </div>
       </Modal>
 
-      {/* Modal exclusão de membro */}
+      {}
       <Modal
         isOpen={deleteMemberModalOpen}
         onClose={() => { setDeleteMemberModalOpen(false); setSelectedMemberId(null); }}

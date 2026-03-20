@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { X } from 'lucide-react';
 import { cn } from './Button';
 
@@ -21,17 +21,17 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+      {}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
+      {}
       <div
         className={cn(
           'relative bg-white rounded-xl shadow-2xl w-full mx-4 animate-in fade-in zoom-in-95 duration-200',
           sizeClasses[size],
         )}
       >
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h3 className="text-xl font-bold text-primary-800">{title}</h3>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
@@ -39,7 +39,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="p-6">{children}</div>
       </div>
     </div>

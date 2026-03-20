@@ -1,4 +1,4 @@
-import { api } from '@/services/api.service';
+﻿import { api } from '@/services/api.service';
 import type { SummaryData } from '../types/reports.types';
 
 export const reportsService = {
@@ -24,6 +24,6 @@ export const reportsService = {
     }
 
     const results = await Promise.all(promises);
-    return results.reverse(); // Ordem cronológica
+    return results.reverse(); 
   },
 };

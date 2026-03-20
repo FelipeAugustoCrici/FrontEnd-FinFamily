@@ -1,4 +1,4 @@
-import { signUp, confirmSignUp, signIn, fetchAuthSession } from 'aws-amplify/auth';
+﻿import { signUp, confirmSignUp, signIn, fetchAuthSession } from 'aws-amplify/auth';
 import { api } from '@/services/api.service';
 
 export async function registerUser(email: string, password: string, name: string) {
@@ -32,13 +32,11 @@ export async function setupUserAfterConfirmation(
   await signIn({ username: email, password });
   await fetchAuthSession({ forceRefresh: true });
 
-  // Cria a família padrão
-  const { data: family } = await api.post('/finance/families', {
+const { data: family } = await api.post('/finance/families', {
     name: `Família de ${name}`,
   });
 
-  // Cria o person — userId vem do token JWT via backend
-  await api.post('/finance/persons', {
+await api.post('/finance/persons', {
     name,
     familyId: family.id,
     email,

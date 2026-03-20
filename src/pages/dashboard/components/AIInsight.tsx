@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+﻿import { Sparkles } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 
 type Props = {
@@ -67,7 +67,7 @@ export function AIInsight(props: Props) {
         marginTop: '8px',
       }}
     >
-      {/* Glow decorativo */}
+      {}
       <div
         className="absolute top-0 right-0 w-56 h-56 rounded-full pointer-events-none"
         style={{

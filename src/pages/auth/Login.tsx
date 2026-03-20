@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { login } from '@/services/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Loader2, Sparkles, Sun, Moon } from 'lucide-react';
@@ -67,7 +67,7 @@ export function Login() {
         ? 'radial-gradient(ellipse at 60% 0%, rgba(99,102,241,0.12) 0%, #020617 55%)'
         : 'radial-gradient(ellipse at 60% 0%, rgba(99,102,241,0.07) 0%, #f1f5f9 55%)',
     }}>
-      {/* Botão dark mode */}
+      {}
       <button
         onClick={toggle}
         title={isDark ? 'Modo claro' : 'Modo escuro'}
@@ -86,7 +86,7 @@ export function Login() {
       </button>
       <div style={{ width: '100%', maxWidth: 420 }}>
 
-        {/* Logo / Brand */}
+        {}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -105,7 +105,7 @@ export function Login() {
           </p>
         </div>
 
-        {/* Card */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,
@@ -122,7 +122,7 @@ export function Login() {
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-            {/* Email */}
+            {}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Email</label>
               <div style={{ position: 'relative' }}>
@@ -144,7 +144,7 @@ export function Login() {
               </div>
             </div>
 
-            {/* Senha */}
+            {}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Senha</label>
@@ -182,7 +182,7 @@ export function Login() {
               </div>
             </div>
 
-            {/* Erro */}
+            {}
             {error && (
               <div style={{
                 padding: '10px 14px', borderRadius: 10,
@@ -194,7 +194,7 @@ export function Login() {
               </div>
             )}
 
-            {/* Botão */}
+            {}
             <button
               type="submit"
               disabled={isLoading}
@@ -214,7 +214,7 @@ export function Login() {
               {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Entrando...</> : 'Entrar'}
             </button>
 
-            {/* Link cadastro */}
+            {}
             <p style={{ textAlign: 'center', fontSize: 13, color: t.text.muted, margin: 0 }}>
               Não tem uma conta?{' '}
               <Link to="/register" style={{ color: t.text.link, fontWeight: 600, textDecoration: 'none' }}>

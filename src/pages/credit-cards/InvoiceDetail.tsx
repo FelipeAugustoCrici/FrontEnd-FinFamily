@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -74,7 +74,7 @@ export function InvoiceDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Lista de compras */}
+        {}
         <div className="lg:col-span-2">
           <Card title="Compras e Parcelas">
             {!invoice.installments?.length ? (
@@ -106,7 +106,7 @@ export function InvoiceDetail() {
           </Card>
         </div>
 
-        {/* Resumos */}
+        {}
         <div className="space-y-4">
           <Card title="Por Categoria">
             <div className="space-y-2">

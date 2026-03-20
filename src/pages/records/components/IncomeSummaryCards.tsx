@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { financeService } from '@/services/api';
@@ -107,7 +107,7 @@ export function IncomeSummaryCards({
               }}
             >
               <div className="p-5">
-                {/* Topo: avatar + nome + toggle */}
+                {}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div
@@ -147,7 +147,7 @@ export function IncomeSummaryCards({
                   )}
                 </div>
 
-                {/* Total em destaque */}
+                {}
                 <div className="mb-4">
                   <p className="text-2xl font-black" style={{ color: t.income.text }}>
                     {fmt(total)}
@@ -157,7 +157,7 @@ export function IncomeSummaryCards({
                   </p>
                 </div>
 
-                {/* Barra de participação */}
+                {}
                 <div
                   className="w-full h-1.5 rounded-full overflow-hidden mb-4"
                   style={{ background: t.bg.mutedStrong }}
@@ -171,7 +171,7 @@ export function IncomeSummaryCards({
                   />
                 </div>
 
-                {/* Composição resumida (sempre visível) */}
+                {}
                 <div className="flex items-center gap-3">
                   {salary > 0 && (
                     <div className="flex items-center gap-1.5">
@@ -204,7 +204,7 @@ export function IncomeSummaryCards({
                 </div>
               </div>
 
-              {/* Seção expandida: lançamentos individuais */}
+              {}
               {isExpanded && hasItems && (
                 <div
                   className="px-5 pb-4 pt-3 space-y-1"

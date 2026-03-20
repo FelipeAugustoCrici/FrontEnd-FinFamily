@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { api } from '@/services/api.service';
 
@@ -20,8 +20,7 @@ export function useUserInfo() {
       const attributes = await fetchUserAttributes();
       const name = attributes.name || attributes.email || 'Usuário';
 
-      // Gerar iniciais do nome
-      const nameParts = name.split(' ');
+const nameParts = name.split(' ');
       const initials =
         nameParts.length >= 2
           ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase()
@@ -33,7 +32,7 @@ export function useUserInfo() {
         initials,
       };
     },
-    staleTime: 1000 * 60 * 10, // 10 minutos
+    staleTime: 1000 * 60 * 10, 
   });
 }
 
@@ -54,6 +53,6 @@ export function useUserFamily() {
         return null;
       }
     },
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 5, 
   });
 }

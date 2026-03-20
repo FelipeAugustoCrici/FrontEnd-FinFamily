@@ -1,4 +1,4 @@
-import { api } from '@/services/api.service';
+﻿import { api } from '@/services/api.service';
 import type {
   CreditCard,
   CreditCardInvoice,
@@ -10,7 +10,7 @@ import type {
 const BASE = '/finance/credit-cards';
 
 export const creditCardsService = {
-  // Cards
+  
   list: async (familyId?: string): Promise<CreditCard[]> => {
     const params = familyId ? `?familyId=${familyId}` : '';
     const { data } = await api.get(`${BASE}${params}`);
@@ -36,8 +36,7 @@ export const creditCardsService = {
     await api.delete(`${BASE}/${id}`);
   },
 
-  // Purchases
-  createPurchase: async (dto: CreatePurchaseDTO): Promise<CreditCardPurchase> => {
+createPurchase: async (dto: CreatePurchaseDTO): Promise<CreditCardPurchase> => {
     const { data } = await api.post(`${BASE}/purchases`, dto);
     return data;
   },
@@ -47,8 +46,7 @@ export const creditCardsService = {
     return data;
   },
 
-  // Invoices
-  getInvoices: async (cardId: string): Promise<CreditCardInvoice[]> => {
+getInvoices: async (cardId: string): Promise<CreditCardInvoice[]> => {
     const { data } = await api.get(`${BASE}/${cardId}/invoices`);
     return data;
   },

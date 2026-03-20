@@ -7,10 +7,8 @@ import type {
 } from '../types/calendar.types';
 
 function toDateKey(record: any): string {
-  // month e year vem do banco — sempre corretos independente de timezone
-  // Para o dia: pega os chars 8-9 da ISO string (nunca converte timezone)
-  // Ex: "2026-04-15T03:00:00.000Z" -> dia = "15"
-  const m = String(record.month).padStart(2, '0');
+
+const m = String(record.month).padStart(2, '0');
   const y = String(record.year);
   const day = String(record.date).substring(8, 10);
   return `${y}-${m}-${day}`;

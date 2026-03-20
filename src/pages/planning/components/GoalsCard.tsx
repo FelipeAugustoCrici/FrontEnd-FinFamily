@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Target, Plus, Trash2, PlusCircle, Eye, TrendingUp, Calendar, Minus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -74,7 +74,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    {/* Header */}
+                    {}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${meta.bg}`}>
@@ -97,7 +97,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                       </div>
                     </div>
 
-                    {/* Progress */}
+                    {}
                     <div className="space-y-1.5 mb-3">
                       <div className="flex justify-between items-center">
                         <span className="text-2xl font-bold text-slate-800">{pct.toFixed(0)}%</span>
@@ -112,7 +112,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                       <p className="text-xs text-slate-400 italic">{motivation}</p>
                     </div>
 
-                    {/* Insights */}
+                    {}
                     {!completed && (
                       <div className="grid grid-cols-3 gap-2 mb-3">
                         <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
@@ -144,7 +144,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                       </div>
                     )}
 
-                    {/* Monthly avg insight */}
+                    {}
                     {!completed && insights.monthlyAvg !== null && insights.monthlyAvg > 0 && (
                       <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-sky-50 border border-sky-100 rounded-lg mb-3">
                         <TrendingUp size={11} className="text-sky-500 shrink-0" />
@@ -156,7 +156,7 @@ export function GoalsCard({ onCreateNew }: { onCreateNew: () => void }) {
                       </div>
                     )}
 
-                    {/* Suggested monthly based on deadline */}
+                    {}
                     {!completed && insights.suggestedMonthly !== null && insights.suggestedMonthly > 0 && (
                       <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-violet-50 border border-violet-100 rounded-lg mb-3">
                         <Calendar size={11} className="text-violet-500 shrink-0" />

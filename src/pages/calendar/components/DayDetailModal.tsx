@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { X, ArrowUpCircle, ArrowDownCircle, CheckCircle } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
 import { CalendarEventItem } from './CalendarEventItem';
@@ -35,7 +35,7 @@ export function DayDetailModal({ daySummary, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-5 border-b border-primary-100">
           <div>
             <h3 className="text-base font-bold text-primary-800 capitalize">{dateLabel}</h3>
@@ -46,7 +46,7 @@ export function DayDetailModal({ daySummary, onClose }: Props) {
           </button>
         </div>
 
-        {/* Summary row */}
+        {}
         <div className="grid grid-cols-3 gap-3 px-5 py-3 bg-primary-50/50 border-b border-primary-100">
           <div className="text-center">
             <p className="text-xs text-primary-500">Entradas</p>
@@ -64,7 +64,7 @@ export function DayDetailModal({ daySummary, onClose }: Props) {
           </div>
         </div>
 
-        {/* Events list */}
+        {}
         <div className="flex-1 overflow-y-auto p-5 space-y-2">
           {daySummary.events.length === 0 ? (
             <p className="text-center text-primary-400 py-8 text-sm">Nenhum lançamento neste dia.</p>

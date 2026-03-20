@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   SummaryData,
   MonthlyData,
   CategoryExpense,
@@ -52,8 +52,7 @@ export function transformToCategoryExpenses(summary: SummaryData): CategoryExpen
 
   const categoryMap = new Map<string, number>();
 
-  // Agrupar despesas por categoria
-  summary.details.expenses.forEach((expense: any) => {
+summary.details.expenses.forEach((expense: any) => {
     const categoryName = expense.category?.name || expense.categoryName || 'Outros';
     const currentValue = categoryMap.get(categoryName) || 0;
     categoryMap.set(categoryName, currentValue + expense.value);
@@ -71,8 +70,7 @@ export function transformToCategoryExpenses(summary: SummaryData): CategoryExpen
     });
   });
 
-  // Ordenar por valor decrescente
-  return categories.sort((a, b) => b.value - a.value);
+return categories.sort((a, b) => b.value - a.value);
 }
 
 export function transformToPersonExpenses(summary: SummaryData): PersonExpense[] {
@@ -95,8 +93,7 @@ export function transformToRecurringExpenses(summary: SummaryData): RecurringExp
     return [];
   }
 
-  // Filtrar despesas recorrentes (fixas)
-  const recurringExpenses = summary.details.expenses.filter(
+const recurringExpenses = summary.details.expenses.filter(
     (expense: any) => expense.type === 'fixed' || expense.recurringId,
   );
 

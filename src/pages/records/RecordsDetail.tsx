@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+﻿import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -144,7 +144,7 @@ export function RecordsDetail() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* Topbar */}
+      {}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <button
@@ -166,16 +166,15 @@ export function RecordsDetail() {
           </div>
         </div>
 
+</div>
 
-      </div>
-
-      {/* Layout principal */}
+      {}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start' }}>
 
-        {/* Coluna esquerda */}
+        {}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Card principal */}
+          {}
           <div style={{
             background: t.bg.card,
             border: `1px solid ${t.border.default}`,
@@ -183,11 +182,11 @@ export function RecordsDetail() {
             boxShadow: t.shadow.card,
             overflow: 'hidden',
           }}>
-            {/* Barra de acento colorida */}
+            {}
             <div style={{ height: 4, background: type.accentBar }} />
 
             <div style={{ padding: '20px 22px' }}>
-              {/* Topo: ícone + descrição + badges + valor */}
+              {}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                   <div style={{
@@ -203,7 +202,7 @@ export function RecordsDetail() {
                       {record.description}
                     </h3>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {/* Badge tipo */}
+                      {}
                       <span style={{
                         fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 999,
                         background: type.bg(isDark), color: type.text(isDark),
@@ -211,7 +210,7 @@ export function RecordsDetail() {
                       }}>
                         {type.label}
                       </span>
-                      {/* Badge status */}
+                      {}
                       {statusCfg && StatusIcon && (
                         <span style={{
                           fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 999,
@@ -222,7 +221,7 @@ export function RecordsDetail() {
                           {statusCfg.label}
                         </span>
                       )}
-                      {/* Badge categoria */}
+                      {}
                       {record.category && (
                         <span style={{
                           fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
@@ -232,7 +231,7 @@ export function RecordsDetail() {
                           {record.category.name}
                         </span>
                       )}
-                      {/* Badge recorrente */}
+                      {}
                       {record.recurringId && (
                         <span style={{
                           fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
@@ -244,7 +243,7 @@ export function RecordsDetail() {
                           Recorrente
                         </span>
                       )}
-                      {/* Badge compartilhado */}
+                      {}
                       {record.isShared && (
                         <span style={{
                           fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
@@ -259,7 +258,7 @@ export function RecordsDetail() {
                   </div>
                 </div>
 
-                {/* Valor */}
+                {}
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <p style={{ fontSize: 10, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
                     Valor
@@ -270,10 +269,10 @@ export function RecordsDetail() {
                 </div>
               </div>
 
-              {/* Divider */}
+              {}
               <div style={{ height: 1, background: t.border.divider, marginBottom: 16 }} />
 
-              {/* Grid de informações */}
+              {}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
                 <InfoRow label="Data" value={formatMediumDate(record.date)} icon={Calendar} t={t} />
                 {record.person && <InfoRow label="Responsável" value={record.person.name} icon={User} t={t} />}
@@ -285,7 +284,7 @@ export function RecordsDetail() {
             </div>
           </div>
 
-          {/* Informações do Lançamento */}
+          {}
           <div style={{
             background: t.bg.card,
             border: `1px solid ${t.border.default}`,
@@ -310,7 +309,7 @@ export function RecordsDetail() {
             </div>
           </div>
 
-          {/* Histórico */}
+          {}
           <div style={{
             background: t.bg.card,
             border: `1px solid ${t.border.default}`,
@@ -322,7 +321,7 @@ export function RecordsDetail() {
               Histórico
             </p>
             <div style={{ position: 'relative', paddingLeft: 20 }}>
-              {/* Linha vertical */}
+              {}
               <div style={{
                 position: 'absolute', left: 6, top: 8,
                 width: 2, background: t.border.default,
@@ -330,7 +329,7 @@ export function RecordsDetail() {
                 height: hasHistory ? undefined : 0,
               }} />
 
-              {/* Evento criação */}
+              {}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: hasHistory ? 16 : 0 }}>
                 <div style={{
                   width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
@@ -346,7 +345,7 @@ export function RecordsDetail() {
                 </div>
               </div>
 
-              {/* Evento atualização */}
+              {}
               {hasHistory && (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginTop: 16 }}>
                   <div style={{
@@ -366,10 +365,10 @@ export function RecordsDetail() {
           </div>
         </div>
 
-        {/* Coluna direita */}
+        {}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Ações */}
+          {}
           <div style={{
             background: t.bg.card,
             border: `1px solid ${t.border.default}`,
@@ -410,7 +409,7 @@ export function RecordsDetail() {
             </div>
           </div>
 
-          {/* Contexto / Insight */}
+          {}
           <div style={{
             background: isDark ? 'rgba(99,102,241,0.08)' : '#eef2ff',
             border: `1px solid ${isDark ? 'rgba(99,102,241,0.20)' : '#c7d2fe'}`,

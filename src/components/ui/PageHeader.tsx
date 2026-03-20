@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Moon, Sun, Sparkles } from 'lucide-react';
+﻿import { ChevronLeft, ChevronRight, Moon, Sun, Sparkles } from 'lucide-react';
 import { useUserInfo, useUserFamily } from '@/hooks/useUserInfo';
 import { useTheme } from '@/hooks/useTheme';
 import { useTokens } from '@/hooks/useTokens';
@@ -16,9 +16,9 @@ function getGreeting() {
 }
 
 export interface PageHeaderProps {
-  /** Actions rendered on the right side (buttons, etc.) */
+  
   actions?: React.ReactNode;
-  /** Show month/year navigator */
+  
   showPeriod?: boolean;
   month?: number;
   year?: number;
@@ -51,7 +51,7 @@ export function PageHeader({
       className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-2"
       style={{ borderBottom: `1px solid ${t.border.divider}` }}
     >
-      {/* Left: avatar + greeting */}
+      {}
       <div className="flex items-center gap-4">
         <div className="relative shrink-0">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-700 to-primary-900 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-primary-900/20">
@@ -67,7 +67,7 @@ export function PageHeader({
         </div>
       </div>
 
-      {/* Right: family badge + theme toggle + period + actions */}
+      {}
       <div className="flex items-center gap-2 flex-wrap">
         {family && (
           <div

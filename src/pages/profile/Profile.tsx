@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -29,8 +29,7 @@ export function Profile() {
   const { showToast } = useToast();
   const t = useTokens();
 
-  // Buscar dados do usuário do Cognito
-  const { data: userAttributes, isLoading } = useQuery({
+const { data: userAttributes, isLoading } = useQuery({
     queryKey: ['user-profile'],
     queryFn: async () => {
       const attributes = await fetchUserAttributes();
@@ -38,19 +37,17 @@ export function Profile() {
     },
   });
 
-  // Mutation para atualizar atributos no Cognito
-  const updateProfileMutation = useMutation({
+const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
       const attributes: Record<string, string> = {
         name: data.name,
       };
 
       if (data.phone) {
-        // Formatar telefone para o formato E.164 (+55XXXXXXXXXXX)
-        let phone = data.phone.replace(/\D/g, ''); // Remove tudo que não é número
+        
+        let phone = data.phone.replace(/\D/g, ''); 
 
-        // Se não começar com código do país, adiciona +55 (Brasil)
-        if (!phone.startsWith('55')) {
+if (!phone.startsWith('55')) {
           phone = '55' + phone;
         }
 
@@ -84,18 +81,16 @@ export function Profile() {
     },
   });
 
-  // Função para formatar telefone para exibição
-  const formatPhoneForDisplay = (phone?: string) => {
+const formatPhoneForDisplay = (phone?: string) => {
     if (!phone) return '';
 
-    // Remove +55 e formata
-    const cleaned = phone.replace('+55', '').replace(/\D/g, '');
+const cleaned = phone.replace('+55', '').replace(/\D/g, '');
 
     if (cleaned.length <= 10) {
-      // Formato: (00) 0000-0000
+      
       return cleaned.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
     } else {
-      // Formato: (00) 00000-0000
+      
       return cleaned.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
     }
   };
@@ -143,7 +138,7 @@ export function Profile() {
         actions={!isEditing ? <Button onClick={() => setIsEditing(true)}>Editar Perfil</Button> : undefined}
       />
 
-      {/* Avatar e informações principais */}
+      {}
       <Card>
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <div className="w-24 h-24 rounded-full bg-primary-100 flex items-center justify-center">
@@ -168,11 +163,11 @@ export function Profile() {
         </div>
       </Card>
 
-      {/* Formulário de informações */}
+      {}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card title="Informações Pessoais">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Nome */}
+            {}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-primary-700 mb-2">
                 <div className="flex items-center gap-2">
@@ -188,7 +183,7 @@ export function Profile() {
               />
             </div>
 
-            {/* Email */}
+            {}
             <div>
               <label className="block text-sm font-medium text-primary-700 mb-2">
                 <div className="flex items-center gap-2">
@@ -199,14 +194,14 @@ export function Profile() {
               <Input
                 {...register('email')}
                 type="email"
-                disabled={true} // Email não pode ser editado
+                disabled={true} 
                 placeholder="seu@email.com"
                 error={errors.email?.message}
               />
               <p className="text-xs text-primary-500 mt-1">O email não pode ser alterado</p>
             </div>
 
-            {/* Telefone */}
+            {}
             <div>
               <label className="block text-sm font-medium text-primary-700 mb-2">
                 <div className="flex items-center gap-2">
@@ -225,15 +220,15 @@ export function Profile() {
                   error={errors.phone?.message}
                   maxLength={15}
                   onChange={(e) => {
-                    // Aplicar máscara de telefone
+                    
                     let value = e.target.value.replace(/\D/g, '');
 
                     if (value.length <= 11) {
                       if (value.length <= 10) {
-                        // Formato: (00) 0000-0000
+                        
                         value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
                       } else {
-                        // Formato: (00) 00000-0000
+                        
                         value = value.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
                       }
                     }
@@ -245,7 +240,7 @@ export function Profile() {
               </div>
             </div>
 
-            {/* Data de Nascimento */}
+            {}
             <div className="md:col-span-2">
               <Controller
                 name="birthDate"
@@ -263,7 +258,7 @@ export function Profile() {
             </div>
           </div>
 
-          {/* Botões de ação */}
+          {}
           {isEditing && (
             <div className="flex gap-3 mt-6 pt-6 border-t border-primary-100">
               <Button
@@ -296,7 +291,7 @@ export function Profile() {
         </Card>
       </form>
 
-      {/* Informações da conta */}
+      {}
       <Card title="Informações da Conta">
         <div className="space-y-4">
           <div className="flex justify-between items-center py-3 border-b border-primary-100">
@@ -331,7 +326,7 @@ export function Profile() {
         </div>
       </Card>
 
-      {/* Segurança */}
+      {}
       <Card title="Segurança">
         <div className="space-y-4">
           <div className="flex justify-between items-center py-3">

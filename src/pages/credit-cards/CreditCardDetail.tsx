@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -58,7 +58,7 @@ export function CreditCardDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Card visual + limite */}
+        {}
         <div className="space-y-4">
           <CardVisual card={card} />
           <Card>
@@ -110,7 +110,7 @@ export function CreditCardDetail() {
           )}
         </div>
 
-        {/* Faturas */}
+        {}
         <div className="lg:col-span-2 space-y-4">
           <Card title="Histórico de Faturas" description="Todas as faturas do cartão">
             {invoices.length === 0 ? (
@@ -154,7 +154,7 @@ export function CreditCardDetail() {
             )}
           </Card>
 
-          {/* Compras parceladas em andamento */}
+          {}
           {openInvoice?.installments && openInvoice.installments.length > 0 && (
             <Card title="Compras na Fatura Atual">
               <div className="space-y-2">

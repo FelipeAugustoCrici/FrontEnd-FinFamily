@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSignUp } from './hooks/useSignUp';
 import { AuthLayout } from './components/AuthLayout';
@@ -39,7 +39,7 @@ export function ConfirmSignUp() {
 
   return (
     <AuthLayout>
-      {/* Ícone */}
+      {}
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -59,7 +59,7 @@ export function ConfirmSignUp() {
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {/* Campo de código — estilo OTP visual */}
+        {}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Código de verificação</label>
           <input

@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+﻿import { useSearchParams } from 'react-router-dom';
 
 interface UseUrlFiltersOptions {
   defaultMonth?: number;
@@ -20,8 +20,7 @@ export function useUrlFilters(options: UseUrlFiltersOptions = {}) {
     page: options.defaultPage ?? 1,
   };
 
-  // Obter valores dos params ou usar defaults
-  const month = parseInt(searchParams.get('month') || String(defaults.month));
+const month = parseInt(searchParams.get('month') || String(defaults.month));
   const year = parseInt(searchParams.get('year') || String(defaults.year));
   const search = searchParams.get('search') || defaults.search;
   const status = searchParams.get('status') || defaults.status;
@@ -33,8 +32,7 @@ export function useUrlFilters(options: UseUrlFiltersOptions = {}) {
     Object.entries(updates).forEach(([key, value]) => {
       const stringValue = String(value);
 
-      // Remove param se for valor default ou vazio
-      if (
+if (
         stringValue === '' ||
         stringValue === 'ALL' ||
         (key === 'page' && stringValue === '1') ||

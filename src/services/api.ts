@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import { ExtraIncome, Income, Expense, Goal, Budget, CreditCard, Family, Category } from '@/types';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
@@ -20,14 +20,13 @@ api.interceptors.request.use(async (config) => {
 const prefix = '/finance';
 
 export const financeService = {
-  // Categorias
+  
   async getCategories() {
     const response = await api.get<Category[]>(`${prefix}/categories`);
     return response.data;
   },
 
-  // Famílias e Pessoas
-  async getFamilies() {
+async getFamilies() {
     const response = await api.get<Family[]>(`${prefix}/families`);
     return response.data;
   },
@@ -39,8 +38,7 @@ export const financeService = {
     return response.data;
   },
 
-  // Incomes (Novo modelo)
-  async addIncome(data: Income & { isRecurring?: boolean; durationMonths?: number }) {
+async addIncome(data: Income & { isRecurring?: boolean; durationMonths?: number }) {
     const response = await api.post(`${prefix}/incomes`, data);
     return response.data;
   },
@@ -52,8 +50,7 @@ export const financeService = {
     return response.data;
   },
 
-  // Gastos
-  async addExpense(data: Expense) {
+async addExpense(data: Expense) {
     const response = await api.post(`${prefix}/expenses`, data);
     return response.data;
   },
@@ -79,7 +76,7 @@ export const financeService = {
     }>(url);
     return response.data;
   },
-  // Metas
+  
   async addGoal(data: Partial<Goal>) {
     const response = await api.post(`${prefix}/goals`, data);
     return response.data;
@@ -89,8 +86,7 @@ export const financeService = {
     return response.data;
   },
 
-  // Orçamentos
-  async saveBudget(data: Budget) {
+async saveBudget(data: Budget) {
     const response = await api.post(`${prefix}/budgets`, data);
     return response.data;
   },

@@ -1,4 +1,4 @@
-import { ArrowUpCircle, ArrowDownCircle, ArrowRight, Receipt } from 'lucide-react';
+﻿import { ArrowUpCircle, ArrowDownCircle, ArrowRight, Receipt } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatShortDate } from '@/common/utils/date';
 import { useTokens } from '@/hooks/useTokens';
@@ -23,7 +23,7 @@ export function TransactionsList({ transactions }: Props) {
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: t.bg.card, border: `1px solid ${t.border.default}`, boxShadow: t.shadow.card }}>
-      {/* Header */}
+      {}
       <div className="px-6 py-5" style={{ borderBottom: `1px solid ${t.border.divider}` }}>
         <div className="flex items-center justify-between">
           <div>
@@ -36,7 +36,7 @@ export function TransactionsList({ transactions }: Props) {
         </div>
       </div>
 
-      {/* List */}
+      {}
       <div>
         {transactions.length === 0 ? (
           <div className="py-12 text-center">
@@ -76,7 +76,7 @@ export function TransactionsList({ transactions }: Props) {
         )}
       </div>
 
-      {/* Footer */}
+      {}
       <div className="px-6 py-4" style={{ borderTop: `1px solid ${t.border.divider}` }}>
         <button
           onClick={() => navigate('/record')}

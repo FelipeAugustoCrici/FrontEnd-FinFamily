@@ -1,4 +1,4 @@
-import { Users } from 'lucide-react';
+﻿import { Users } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
 import { useTokens } from '@/hooks/useTokens';
 import { useTheme } from '@/hooks/useTheme';
@@ -38,7 +38,7 @@ export function MembersContribution({ perPerson }: Props) {
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: t.bg.card, border: `1px solid ${t.border.default}`, boxShadow: t.shadow.card }}>
-      {/* Header */}
+      {}
       <div className="px-6 py-5" style={{ borderBottom: `1px solid ${t.border.divider}` }}>
         <div className="flex items-center justify-between">
           <div>
@@ -78,7 +78,7 @@ export function MembersContribution({ perPerson }: Props) {
           );
         })}
 
-        {/* Sugestão proporcional */}
+        {}
         <div className="pt-4 mt-2 space-y-3" style={{ borderTop: `1px solid ${t.border.divider}` }}>
           <p className="text-xs font-bold uppercase tracking-wider" style={{ color: t.text.subtle }}>Sugestão proporcional</p>
           {perPerson.map((p, idx) => (

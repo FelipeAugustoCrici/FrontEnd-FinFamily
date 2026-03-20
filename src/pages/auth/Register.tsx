@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSignUp } from './hooks/useSignUp';
 import {
@@ -33,11 +33,9 @@ export function Register() {
     e.preventDefault();
     setError(null);
 
-    // Step 1 → 2
-    if (step === 1) { setStep(2); return; }
+if (step === 1) { setStep(2); return; }
 
-    // Step 2 → chama signUp e vai para step 3
-    if (step === 2) {
+if (step === 2) {
       try {
         const result = await signUp(email, password, name);
         if (result?.nextStep?.signUpStep === 'CONFIRM_SIGN_UP') {
@@ -51,8 +49,7 @@ export function Register() {
       return;
     }
 
-    // Step 3 → confirma código
-    try {
+try {
       await confirm(email, code, password, name, phone, cpf, birthDate);
       navigate('/', { replace: true });
     } catch (err: unknown) {
@@ -87,7 +84,7 @@ export function Register() {
         ? 'radial-gradient(ellipse at 40% 0%, rgba(99,102,241,0.12) 0%, #020617 55%)'
         : 'radial-gradient(ellipse at 40% 0%, rgba(99,102,241,0.07) 0%, #f1f5f9 55%)',
     }}>
-      {/* Botão dark mode */}
+      {}
       <button
         onClick={toggle}
         title={isDark ? 'Modo claro' : 'Modo escuro'}
@@ -106,7 +103,7 @@ export function Register() {
       </button>
       <div style={{ width: '100%', maxWidth: 440 }}>
 
-        {/* Brand */}
+        {}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -125,7 +122,7 @@ export function Register() {
           </p>
         </div>
 
-        {/* Card */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,
@@ -134,7 +131,7 @@ export function Register() {
           boxShadow: t.shadow.cardLg,
         }}>
 
-          {/* Steps indicator */}
+          {}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
             {STEPS.map((label, i) => {
               const idx = i + 1;
@@ -143,7 +140,7 @@ export function Register() {
               const isLast = idx === STEPS.length;
               return (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', flex: isLast ? 'none' : 1 }}>
-                  {/* Dot + label */}
+                  {}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{
                       width: 26, height: 26, borderRadius: '50%',
@@ -169,7 +166,7 @@ export function Register() {
                       {label}
                     </span>
                   </div>
-                  {/* Linha conectora */}
+                  {}
                   {!isLast && (
                     <div style={{
                       flex: 1, height: 1, margin: '0 8px',
@@ -184,7 +181,7 @@ export function Register() {
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-            {/* ── Step 1: Dados pessoais ── */}
+            {}
             {step === 1 && (
               <>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -246,7 +243,7 @@ export function Register() {
               </>
             )}
 
-            {/* ── Step 2: Contato ── */}
+            {}
             {step === 2 && (
               <>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -311,10 +308,10 @@ export function Register() {
               </>
             )}
 
-            {/* ── Step 3: Confirmação de código ── */}
+            {}
             {step === 3 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {/* Ícone + texto */}
+                {}
                 <div style={{ textAlign: 'center', padding: '4px 0 8px' }}>
                   <div style={{
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -332,7 +329,7 @@ export function Register() {
                   </p>
                 </div>
 
-                {/* Input OTP */}
+                {}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>
                     Código de verificação
@@ -361,7 +358,7 @@ export function Register() {
               </div>
             )}
 
-            {/* Erro */}
+            {}
             {error && (
               <div style={{
                 padding: '10px 14px', borderRadius: 10,
@@ -373,7 +370,7 @@ export function Register() {
               </div>
             )}
 
-            {/* Botões */}
+            {}
             <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
               {step > 1 && step < 3 && (
                 <button

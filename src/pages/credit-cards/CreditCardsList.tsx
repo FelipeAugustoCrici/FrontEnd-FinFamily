@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api.service';
@@ -19,11 +19,11 @@ import {
   Plus, Eye, Trash2, CreditCard as CreditCardIcon,
   ShoppingBag, Receipt, TrendingUp, AlertCircle,
 } from 'lucide-react';
+import { ActionButton } from '@/components/ui/ActionButton';
 
 const fmt = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-// ─── Card enriquecido individual ─────────────────────────────────────────────
 function CreditCardItem({
   card,
   onDelete,
@@ -84,12 +84,12 @@ function CreditCardItem({
           (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
         }}
       >
-        {/* Card visual */}
+        {}
         <div style={{ padding: '16px 16px 0' }}>
           <CardVisual card={card} />
         </div>
 
-        {/* Uso do limite */}
+        {}
         <div style={{ padding: '16px 18px 0' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ fontSize: 11, color: t.text.muted, fontWeight: 500 }}>Uso do limite</span>
@@ -126,7 +126,7 @@ function CreditCardItem({
           </div>
         </div>
 
-        {/* Resumo do ciclo */}
+        {}
         {openInvoice && (
           <div style={{
             margin: '14px 18px 0',
@@ -159,7 +159,7 @@ function CreditCardItem({
           </div>
         )}
 
-        {/* Últimas compras */}
+        {}
         {recentInstallments.length > 0 && (
           <div style={{ padding: '12px 18px 0' }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
@@ -195,7 +195,7 @@ function CreditCardItem({
           </div>
         )}
 
-        {/* Ações */}
+        {}
         <div style={{
           padding: '14px 18px 16px',
           marginTop: 'auto',
@@ -271,7 +271,6 @@ function CreditCardItem({
   );
 }
 
-// ─── Lista principal ──────────────────────────────────────────────────────────
 export function CreditCardsList() {
   const navigate = useNavigate();
   const t = useTokens();
@@ -301,12 +300,16 @@ export function CreditCardsList() {
       <PageHeader
         actions={
           <>
-            <Button variant="secondary" onClick={() => { setPurchaseCardId(undefined); setPurchaseModalOpen(true); }}>
-              <ShoppingBag size={16} className="mr-2" /> Nova Compra
-            </Button>
-            <Button onClick={() => setCardModalOpen(true)}>
-              <Plus size={16} className="mr-2" /> Novo Cartão
-            </Button>
+            <ActionButton
+              variant="secondary"
+              onClick={() => { setPurchaseCardId(undefined); setPurchaseModalOpen(true); }}
+              icon={<ShoppingBag size={15} />}
+            >
+              Nova Compra
+            </ActionButton>
+            <ActionButton onClick={() => setCardModalOpen(true)}>
+              Novo Cartão
+            </ActionButton>
           </>
         }
       />
@@ -340,7 +343,7 @@ export function CreditCardsList() {
         </div>
       ) : (
         <>
-          {/* Resumo geral */}
+          {}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {[
               {
@@ -389,7 +392,7 @@ export function CreditCardsList() {
             ))}
           </div>
 
-          {/* Grid de cartões */}
+          {}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',

@@ -1,4 +1,4 @@
-import { CreditCard as CreditCardIcon } from 'lucide-react';
+﻿import { CreditCard as CreditCardIcon } from 'lucide-react';
 import type { CreditCard } from '../types/credit-card.types';
 
 interface CardVisualProps {
@@ -28,7 +28,7 @@ export function CardVisual({ card, compact = false }: CardVisualProps) {
       className={`rounded-xl text-white shadow-lg relative overflow-hidden ${compact ? 'p-4' : 'p-5'}`}
       style={{ background: `linear-gradient(135deg, ${card.color || '#334155'}, ${card.color || '#334155'}cc)` }}
     >
-      {/* Decorative circles */}
+      {}
       <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10" />
       <div className="absolute -bottom-8 -left-4 w-32 h-32 rounded-full bg-white/5" />
 

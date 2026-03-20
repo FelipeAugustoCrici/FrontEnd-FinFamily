@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown } from 'lucide-react';
+﻿import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useCountUp } from '@/hooks/useCountUp';
 
@@ -13,6 +13,12 @@ type Props = {
 
 const fmt = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+const fmtCompact = (v: number) => {
+  if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(v) >= 1_000) return `${(v / 1_000).toFixed(1)}k`;
+  return v.toFixed(0);
+};
 
 type ColorSet = {
   bg: string; border: string; shadow: string;
@@ -46,32 +52,82 @@ export function SummaryCardNew({ title, value, type, icon: Icon, change, subtitl
 
   return (
     <div
-      className="rounded-2xl p-5 border transition-all duration-200 hover:-translate-y-0.5"
+      className="rounded-2xl border transition-all duration-200 hover:-translate-y-0.5"
       style={{
         background: cfg.bg,
         borderColor: cfg.border,
         boxShadow: `0 4px 20px ${cfg.shadow}, 0 1px 4px rgba(0,0,0,0.06)`,
+        padding: 'clamp(10px, 3vw, 20px)',
       }}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: cfg.iconBg }}>
+      {}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6, marginBottom: 10 }}>
+        <div
+          style={{
+            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: cfg.iconBg,
+          }}
+        >
           <span style={{ color: cfg.iconColor, display: 'flex' }}>
-            <Icon size={20} />
+            <Icon size={17} />
           </span>
         </div>
+
         {hasChange && (
           <div
-            className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full"
-            style={{ backgroundColor: changeBg, color: changeColor }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 3,
+              fontSize: 10, fontWeight: 700,
+              padding: '3px 7px', borderRadius: 999, flexShrink: 0,
+              backgroundColor: changeBg, color: changeColor,
+              maxWidth: '55%', overflow: 'hidden',
+            }}
           >
-            {isPositiveChange ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-            {fmt(Math.abs(change!))}
+            {isPositiveChange ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+            {}
+            <span className="hidden sm:inline" style={{ whiteSpace: 'nowrap' }}>
+              {fmt(Math.abs(change!))}
+            </span>
+            <span className="sm:hidden" style={{ whiteSpace: 'nowrap' }}>
+              R${fmtCompact(Math.abs(change!))}
+            </span>
           </div>
         )}
       </div>
-      <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: cfg.labelColor }}>{title}</p>
-      <p className="text-2xl font-black" style={{ color: cfg.valueColor }}>{fmt(animatedValue)}</p>
-      {subtitle && <p className="text-xs mt-1" style={{ color: cfg.subtitleColor }}>{subtitle}</p>}
+
+      {}
+      <p
+        style={{
+          fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+          letterSpacing: '0.05em', color: cfg.labelColor,
+          marginBottom: 4,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}
+      >
+        {title}
+      </p>
+
+      {}
+      <p
+        style={{
+          color: cfg.valueColor,
+          fontWeight: 900,
+          lineHeight: 1.1,
+          fontSize: 'clamp(0.9rem, 3.5vw, 1.4rem)',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {fmt(animatedValue)}
+      </p>
+
+      {subtitle && (
+        <p style={{ fontSize: 10, marginTop: 3, color: cfg.subtitleColor }}>
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }

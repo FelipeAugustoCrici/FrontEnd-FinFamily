@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { TrendingUp, TrendingDown, Wallet, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -74,7 +74,7 @@ export function BalanceCard({ balance, incomes, expenses }: Props) {
       className="relative overflow-hidden rounded-3xl p-8 h-full"
       style={cardStyle}
     >
-      {/* Radial glow sutil */}
+      {}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -93,7 +93,7 @@ export function BalanceCard({ balance, incomes, expenses }: Props) {
       />
 
       <div className="relative z-10">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div
@@ -119,7 +119,7 @@ export function BalanceCard({ balance, incomes, expenses }: Props) {
           </button>
         </div>
 
-        {/* Balance */}
+        {}
         <div className="mb-8">
           <div
             className="text-5xl font-black tracking-tight transition-all duration-300"
@@ -136,7 +136,7 @@ export function BalanceCard({ balance, incomes, expenses }: Props) {
           </div>
         </div>
 
-        {/* Indicators */}
+        {}
         <div className="grid grid-cols-2 gap-3">
           <div
             className="rounded-2xl p-4 border transition-all duration-200"

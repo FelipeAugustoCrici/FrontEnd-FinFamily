@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
   ClipboardList,
@@ -140,7 +140,7 @@ export const Layout = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      {/* Sidebar Desktop */}
+      {}
       <aside className="hidden md:flex flex-col w-64 bg-primary-900 p-6 text-white fixed h-full shadow-2xl z-20">
         <div className="flex flex-col items-center mb-5 px-2">
           <img src={LogoSvg} alt="FinFamily" style={{ width: 118, height: 118 }} className="invert" />
@@ -180,7 +180,7 @@ export const Layout = () => {
       </aside>
 
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen">
-        {/* Mobile menu button — só aparece em telas pequenas */}
+        {}
         <div className="md:hidden flex items-center px-4 py-3 bg-white border-b border-primary-100">
           <button
             className="p-2 text-primary-600"

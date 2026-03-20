@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+﻿import { useState, useRef, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Sparkles, Zap, ChevronRight, X } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
@@ -68,8 +68,7 @@ export function SmartInput({ categories }: SmartInputProps) {
 
   const clear = () => { setText(''); setParsed(null); setApplied(false); };
 
-  // Cores do container
-  const containerBg   = isDark ? 'rgba(99,102,241,0.07)' : '#f5f3ff';
+const containerBg   = isDark ? 'rgba(99,102,241,0.07)' : '#f5f3ff';
   const containerBorder = isDark
     ? (focused || parsed ? 'rgba(99,102,241,0.40)' : 'rgba(99,102,241,0.18)')
     : (focused || parsed ? '#a5b4fc' : '#ddd6fe');
@@ -88,7 +87,7 @@ export function SmartInput({ categories }: SmartInputProps) {
       padding: '14px 14px 12px',
       transition: 'border-color 0.2s',
     }}>
-      {/* Header */}
+      {}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
         <Zap size={12} color="#6366f1" />
         <span style={{
@@ -107,7 +106,7 @@ export function SmartInput({ categories }: SmartInputProps) {
         </span>
       </div>
 
-      {/* Input */}
+      {}
       <div style={{ position: 'relative' }}>
         <div style={{
           position: 'absolute', left: 12, top: '50%',
@@ -155,7 +154,7 @@ export function SmartInput({ categories }: SmartInputProps) {
         )}
       </div>
 
-      {/* Sugestão */}
+      {}
       {parsed && !applied && (
         <div style={{
           marginTop: 10,
@@ -165,9 +164,9 @@ export function SmartInput({ categories }: SmartInputProps) {
           gap: 10,
           flexWrap: 'wrap',
         }}>
-          {/* Pills */}
+          {}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', flex: 1 }}>
-            {/* Tipo */}
+            {}
             <span style={{
               fontSize: 11, fontWeight: 700,
               padding: '4px 10px', borderRadius: 999,
@@ -179,7 +178,7 @@ export function SmartInput({ categories }: SmartInputProps) {
               {TYPE_LABEL[parsed.type]?.label}
             </span>
 
-            {/* Categoria */}
+            {}
             {parsed.suggestedCategoryName && (
               <span style={{
                 fontSize: 11, fontWeight: 600,
@@ -193,7 +192,7 @@ export function SmartInput({ categories }: SmartInputProps) {
               </span>
             )}
 
-            {/* Valor */}
+            {}
             {parsed.value && (
               <span style={{
                 fontSize: 11, fontWeight: 700,
@@ -205,7 +204,7 @@ export function SmartInput({ categories }: SmartInputProps) {
               </span>
             )}
 
-            {/* Confiança */}
+            {}
             <span style={{
               fontSize: 10, fontWeight: 600,
               color: CONFIDENCE_LABEL[parsed.confidence].color,
@@ -214,7 +213,7 @@ export function SmartInput({ categories }: SmartInputProps) {
             </span>
           </div>
 
-          {/* Botão Aplicar */}
+          {}
           <button
             type="button"
             onClick={applyParsed}
@@ -234,7 +233,7 @@ export function SmartInput({ categories }: SmartInputProps) {
         </div>
       )}
 
-      {/* Feedback aplicado */}
+      {}
       {applied && (
         <div style={{
           marginTop: 10, fontSize: 12, fontWeight: 600,

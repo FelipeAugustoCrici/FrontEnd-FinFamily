@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { resetPassword, confirmResetPassword } from 'aws-amplify/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthLayout } from './components/AuthLayout';
@@ -66,7 +66,7 @@ export function ForgotPassword() {
 
   return (
     <AuthLayout>
-      {/* Header */}
+      {}
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -138,7 +138,7 @@ export function ForgotPassword() {
         </form>
       ) : (
         <form onSubmit={handleConfirm} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Código */}
+          {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Código de verificação</label>
             <input
@@ -163,7 +163,7 @@ export function ForgotPassword() {
             />
           </div>
 
-          {/* Nova senha */}
+          {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary }}>Nova senha</label>
             <div style={{ position: 'relative' }}>

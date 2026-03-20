@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { CalendarDayCell } from './CalendarDayCell';
 import type { CalendarDaySummary } from '../types/calendar.types';
 
@@ -17,28 +17,24 @@ export function CalendarGrid({ month, year, days, onDayClick }: Props) {
 
   const dayMap = new Map(days.map((d) => [d.date, d]));
 
-  // First day of month (0=Sun)
-  const firstDay = new Date(year, month - 1, 1).getDay();
+const firstDay = new Date(year, month - 1, 1).getDay();
   const daysInMonth = new Date(year, month, 0).getDate();
   const daysInPrevMonth = new Date(year, month - 1, 0).getDate();
 
   const cells: { day: number; month: number; year: number; current: boolean }[] = [];
 
-  // Prev month padding
-  for (let i = firstDay - 1; i >= 0; i--) {
+for (let i = firstDay - 1; i >= 0; i--) {
     const d = daysInPrevMonth - i;
     const m = month === 1 ? 12 : month - 1;
     const y = month === 1 ? year - 1 : year;
     cells.push({ day: d, month: m, year: y, current: false });
   }
 
-  // Current month
-  for (let d = 1; d <= daysInMonth; d++) {
+for (let d = 1; d <= daysInMonth; d++) {
     cells.push({ day: d, month, year, current: true });
   }
 
-  // Next month padding to fill grid
-  const remaining = 42 - cells.length;
+const remaining = 42 - cells.length;
   for (let d = 1; d <= remaining; d++) {
     const m = month === 12 ? 1 : month + 1;
     const y = month === 12 ? year + 1 : year;
@@ -47,7 +43,7 @@ export function CalendarGrid({ month, year, days, onDayClick }: Props) {
 
   return (
     <div>
-      {/* Weekday headers */}
+      {}
       <div className="grid grid-cols-7 gap-2 mb-2">
         {WEEKDAYS.map((w) => (
           <div key={w} className="text-center text-xs font-bold text-primary-400 uppercase py-2">
@@ -56,7 +52,7 @@ export function CalendarGrid({ month, year, days, onDayClick }: Props) {
         ))}
       </div>
 
-      {/* Day cells */}
+      {}
       <div className="grid grid-cols-7 gap-2">
         {cells.map((cell, idx) => {
           const dateKey = `${cell.year}-${String(cell.month).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;

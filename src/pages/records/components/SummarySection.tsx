@@ -1,4 +1,4 @@
-import _ from 'lodash';
+﻿import _ from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Person } from '@/types';
 import { formatMonthYear } from '@/common/utils/date';
@@ -50,12 +50,12 @@ export function SummarySection({ people }: SummarySectionProps) {
       flexDirection: 'column',
       gap: 0,
     }}>
-      {/* Header */}
+      {}
       <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>
         Prévia do Lançamento
       </p>
 
-      {/* Tipo */}
+      {}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -70,7 +70,7 @@ export function SummarySection({ people }: SummarySectionProps) {
         <span style={{ fontSize: 13, fontWeight: 700, color: typeInfo.color }}>{typeInfo.label}</span>
       </div>
 
-      {/* Valor em destaque */}
+      {}
       <div style={{ marginBottom: 20 }}>
         <p style={{ fontSize: 11, color: t.text.muted, marginBottom: 4 }}>Valor total</p>
         <p style={{
@@ -84,10 +84,10 @@ export function SummarySection({ people }: SummarySectionProps) {
         </p>
       </div>
 
-      {/* Divider */}
+      {}
       <div style={{ height: 1, background: t.border.divider, marginBottom: 16 }} />
 
-      {/* Detalhes */}
+      {}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
           <span style={{ fontSize: 12, color: t.text.muted, flexShrink: 0 }}>Descrição</span>

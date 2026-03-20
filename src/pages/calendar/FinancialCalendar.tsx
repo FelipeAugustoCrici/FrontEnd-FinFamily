@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -56,13 +56,13 @@ export function FinancialCalendar() {
         onNextMonth={nextMonth}
       />
 
-      {/* Filters */}
+      {}
       <CalendarFilters filter={filter} onChange={setFilter} />
 
-      {/* Summary cards */}
+      {}
       {data?.summary && <MonthlySummaryCards summary={data.summary} />}
 
-      {/* Calendar grid */}
+      {}
       {isLoading ? (
         <div style={{
           background: t.bg.card,
@@ -74,13 +74,13 @@ export function FinancialCalendar() {
           flexDirection: 'column',
           gap: 12,
         }}>
-          {/* Day headers */}
+          {}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
             {Array.from({ length: 7 }).map((_, i) => (
               <Skeleton key={i} height={12} borderRadius={4} />
             ))}
           </div>
-          {/* Calendar rows */}
+          {}
           {Array.from({ length: 5 }).map((_, row) => (
             <div key={row} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
               {Array.from({ length: 7 }).map((_, col) => (
@@ -100,7 +100,7 @@ export function FinancialCalendar() {
         </div>
       )}
 
-      {/* Day detail modal */}
+      {}
       <DayDetailModal daySummary={selectedDay} onClose={() => setSelectedDay(null)} />
     </div>
   );

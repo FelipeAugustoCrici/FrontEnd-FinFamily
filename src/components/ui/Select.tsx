@@ -1,46 +1,46 @@
-import React, { useState, useRef, useEffect, useId } from 'react';
+﻿import React, { useState, useRef, useEffect, useId } from 'react';
 import { ChevronDown, Check, Search, X } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 
 export interface SelectOption {
   value: string | number;
   label: string;
-  /** Ponto colorido opcional ao lado do label */
+  
   dot?: string;
-  /** Ícone React opcional */
+  
   icon?: React.ReactNode;
-  /** Desabilitar opção individualmente */
+  
   disabled?: boolean;
 }
 
 export interface SelectProps {
-  /** Opções do select */
+  
   options: SelectOption[];
-  /** Valor selecionado */
+  
   value?: string | number | null;
-  /** Callback ao selecionar */
+  
   onChange?: (value: string | number) => void;
-  /** Label acima do campo */
+  
   label?: string;
-  /** Placeholder quando nada selecionado */
+  
   placeholder?: string;
-  /** Habilitar campo de busca interno */
+  
   searchable?: boolean;
-  /** Placeholder do campo de busca */
+  
   searchPlaceholder?: string;
-  /** Mensagem quando nenhum resultado */
+  
   emptyMessage?: string;
-  /** Desabilitar o select */
+  
   disabled?: boolean;
-  /** Mensagem de erro */
+  
   error?: string | { message?: string };
-  /** Texto auxiliar abaixo */
+  
   helperText?: string;
-  /** Largura total */
+  
   fullWidth?: boolean;
-  /** Tamanho */
+  
   size?: 'sm' | 'md' | 'lg';
-  /** Abrir para cima */
+  
   dropUp?: boolean;
   className?: string;
 }
@@ -94,8 +94,7 @@ export function Select({
     ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
     : options;
 
-  // Fechar ao clicar fora
-  useEffect(() => {
+useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
@@ -106,8 +105,7 @@ export function Select({
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Focar busca ao abrir
-  useEffect(() => {
+useEffect(() => {
     if (open && searchable) {
       setTimeout(() => searchRef.current?.focus(), 50);
     }
@@ -144,7 +142,7 @@ export function Select({
       style={{ width: fullWidth ? '100%' : 'auto', display: 'flex', flexDirection: 'column', gap: 6, position: 'relative' }}
       className={className}
     >
-      {/* Label */}
+      {}
       {label && (
         <label
           htmlFor={id}
@@ -154,7 +152,7 @@ export function Select({
         </label>
       )}
 
-      {/* Trigger */}
+      {}
       <div
         id={id}
         role="combobox"
@@ -186,7 +184,7 @@ export function Select({
           position: 'relative',
         }}
       >
-        {/* Dot / icon do selecionado */}
+        {}
         {selected?.dot && (
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: selected.dot, flexShrink: 0 }} />
         )}
@@ -196,12 +194,12 @@ export function Select({
           </span>
         )}
 
-        {/* Label selecionado ou placeholder */}
+        {}
         <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {selected ? selected.label : placeholder}
         </span>
 
-        {/* Clear + chevron */}
+        {}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
           {selected && !disabled && (
             <span
@@ -231,7 +229,7 @@ export function Select({
         </div>
       </div>
 
-      {/* Dropdown */}
+      {}
       {open && (
         <div
           role="listbox"
@@ -253,7 +251,7 @@ export function Select({
             overflow: 'hidden',
           }}
         >
-          {/* Campo de busca */}
+          {}
           {searchable && (
             <div style={{
               padding: '10px 12px 10px',
@@ -306,7 +304,7 @@ export function Select({
             </div>
           )}
 
-          {/* Lista de opções */}
+          {}
           <div style={{ maxHeight: 240, overflowY: 'auto', padding: '6px 0' }}>
             {filtered.length === 0 ? (
               <div style={{
@@ -368,7 +366,7 @@ export function Select({
         </div>
       )}
 
-      {/* Erro / helper */}
+      {}
       {(errorMessage || helperText) && (
         <p style={{
           fontSize: 11, marginLeft: 2,

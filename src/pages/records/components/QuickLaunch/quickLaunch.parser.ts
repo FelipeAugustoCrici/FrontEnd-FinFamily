@@ -1,4 +1,4 @@
-import moment from 'moment';
+﻿import moment from 'moment';
 
 export type QuickLaunchType = 'expense' | 'income' | 'salary';
 
@@ -13,8 +13,6 @@ export interface ParsedLaunch {
   missingFields: string[];
 }
 
-// ─── utils ────────────────────────────────────────────────────────────────────
-
 function localDate(offsetDays = 0): string {
   return moment().add(offsetDays, 'days').format('YYYY-MM-DD');
 }
@@ -22,8 +20,6 @@ function localDate(offsetDays = 0): string {
 export function norm(s: string): string {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
-
-// ─── vocabulário ──────────────────────────────────────────────────────────────
 
 const DATE_WORDS: Record<string, number> = { hoje: 0, ontem: -1, amanha: 1 };
 
@@ -41,12 +37,10 @@ const SALARY_HINTS = [
 
 const TRANSFER_HINTS = ['pix', 'transferencia', 'ted', 'doc'];
 
-// preposições que indicam origem (receita)
 const FROM_PREPS = ['do', 'da', 'de', 'dos', 'das'];
-// preposições que indicam destino (despesa)
+
 const TO_PREPS = ['para', 'pro', 'pra', 'pras', 'pros', 'ao', 'a'];
 
-// familiares canônicos: chave = variações normalizadas, valor = label exibido
 const FAMILY_LABELS: Record<string, string> = {
   pai: 'meu pai',
   mae: 'minha mãe',
@@ -67,7 +61,6 @@ const FAMILY_LABELS: Record<string, string> = {
   filha: 'minha filha',
 };
 
-// variações que mapeiam para a chave canônica
 const FAMILY_ALIASES: Record<string, string> = {
   pai: 'pai',
   'meu pai': 'pai',
@@ -149,8 +142,6 @@ const CATEGORY_MAP: Record<string, string> = {
   pix: 'Transferência',
 };
 
-// ─── extração de valor ────────────────────────────────────────────────────────
-
 function extractAmount(text: string): { amount: number | null; rest: string } {
   const match = text.match(/\b(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)\b/);
   if (!match) return { amount: null, rest: text };
@@ -160,8 +151,6 @@ function extractAmount(text: string): { amount: number | null; rest: string } {
     text.slice(0, match.index).trim() + ' ' + text.slice(match.index! + match[0].length).trim();
   return { amount: isNaN(amount) ? null : amount, rest: rest.trim() };
 }
-
-// ─── extração de data ─────────────────────────────────────────────────────────
 
 function extractDate(tokens: string[]): { date: string; usedIndices: Set<number> } {
   const used = new Set<number>();
@@ -194,8 +183,6 @@ function extractDate(tokens: string[]): { date: string; usedIndices: Set<number>
   return { date, usedIndices: used };
 }
 
-// ─── limpeza de texto para descrição ─────────────────────────────────────────
-
 function cleanForDescription(text: string): string {
   return text
     .replace(/\d[\d.,]*/g, '')
@@ -206,24 +193,20 @@ function cleanForDescription(text: string): string {
     .trim();
 }
 
-// ─── resolução de familiar ────────────────────────────────────────────────────
-
 function resolveFamilyLabel(n: string): string | null {
-  // tenta match com "meu pai", "minha mãe" etc (2 palavras)
+  
   const twoWord = n.match(/\b(meu|minha)\s+(\w+)\b/);
   if (twoWord) {
     const key = norm(`${twoWord[1]} ${twoWord[2]}`);
     const canonical = FAMILY_ALIASES[key];
     if (canonical) return FAMILY_LABELS[canonical] ?? null;
   }
-  // tenta match com palavra simples
+  
   for (const [alias, canonical] of Object.entries(FAMILY_ALIASES)) {
     if (n.includes(alias)) return FAMILY_LABELS[canonical] ?? null;
   }
   return null;
 }
-
-// ─── extração de origem/destino ───────────────────────────────────────────────
 
 interface PersonContext {
   label: string;
@@ -235,16 +218,14 @@ function extractOrigin(
   n: string,
   members: { id: string; name: string }[],
 ): PersonContext | null {
-  // membro cadastrado
+  
   const member = members.find((m) => n.includes(norm(m.name)));
   if (member) return { label: member.name, memberId: member.id, isFamilyRelative: false };
 
-  // familiar
-  const familyLabel = resolveFamilyLabel(n);
+const familyLabel = resolveFamilyLabel(n);
   if (familyLabel) return { label: familyLabel, memberId: null, isFamilyRelative: true };
 
-  // "de [nome próprio]" — captura nome após preposição
-  const fromMatch = n.match(/\b(?:do|da|de|dos|das)\s+([a-záéíóúãõâêîôûç]+(?:\s+[a-záéíóúãõâêîôûç]+)?)\b/);
+const fromMatch = n.match(/\b(?:do|da|de|dos|das)\s+([a-záéíóúãõâêîôûç]+(?:\s+[a-záéíóúãõâêîôûç]+)?)\b/);
   if (fromMatch) {
     const name = fromMatch[1].replace(/\b\w/g, (c) => c.toUpperCase());
     if (!['meu', 'minha', 'seu', 'sua', 'um', 'uma'].includes(fromMatch[1])) {
@@ -259,16 +240,14 @@ function extractDestination(
   n: string,
   members: { id: string; name: string }[],
 ): PersonContext | null {
-  // membro cadastrado
+  
   const member = members.find((m) => n.includes(norm(m.name)));
   if (member) return { label: member.name, memberId: member.id, isFamilyRelative: false };
 
-  // familiar
-  const familyLabel = resolveFamilyLabel(n);
+const familyLabel = resolveFamilyLabel(n);
   if (familyLabel) return { label: familyLabel, memberId: null, isFamilyRelative: true };
 
-  // "para [nome]" / "pro [nome]" / "pra [nome]"
-  const toMatch = n.match(/\b(?:para|pro|pra|pras|pros|ao|a)\s+([a-záéíóúãõâêîôûç]+(?:\s+[a-záéíóúãõâêîôûç]+)?)\b/);
+const toMatch = n.match(/\b(?:para|pro|pra|pras|pros|ao|a)\s+([a-záéíóúãõâêîôûç]+(?:\s+[a-záéíóúãõâêîôûç]+)?)\b/);
   if (toMatch) {
     const name = toMatch[1].replace(/\b\w/g, (c) => c.toUpperCase());
     if (!['meu', 'minha', 'seu', 'sua', 'um', 'uma', 'o', 'a'].includes(toMatch[1])) {
@@ -278,8 +257,6 @@ function extractDestination(
 
   return null;
 }
-
-// ─── parser natural ───────────────────────────────────────────────────────────
 
 interface NaturalMatch {
   type: QuickLaunchType;
@@ -297,16 +274,14 @@ function tryNaturalLanguage(
   const n = norm(raw);
   const { amount } = extractAmount(raw);
 
-  // detecta verbo
-  const incomeVerb = INCOME_VERBS.find(
+const incomeVerb = INCOME_VERBS.find(
     (v) => n.startsWith(v + ' ') || n.includes(' ' + v + ' ') || n === v,
   );
   const expenseVerb = EXPENSE_VERBS.find(
     (v) => n.startsWith(v + ' ') || n.includes(' ' + v + ' ') || n === v,
   );
 
-  // padrão "X me deu / me pagou" — sujeito antes do verbo
-  const subjectVerbMatch =
+const subjectVerbMatch =
     !incomeVerb && !expenseVerb
       ? n.match(/^(.+?)\s+(me\s+deu|me\s+pagou|me\s+mandou)\b/)
       : null;
@@ -316,15 +291,13 @@ function tryNaturalLanguage(
 
   if (!isIncome && !isExpense) return null;
 
-  // ── receita ──────────────────────────────────────────────────────────────────
-  if (isIncome) {
-    // salário
+if (isIncome) {
+    
     if (SALARY_HINTS.some((h) => n.includes(h))) {
       return { type: 'salary', description: 'Salário', categoryName: 'Salário', amount, personName: null, personId: null };
     }
 
-    // "X me deu" — sujeito é a origem
-    if (subjectVerbMatch) {
+if (subjectVerbMatch) {
       const subjectRaw = subjectVerbMatch[1];
       const origin = extractOrigin(subjectRaw, members);
       const label = origin?.label ?? subjectRaw.replace(/\b\w/g, (c) => c.toUpperCase()).trim();
@@ -339,8 +312,7 @@ function tryNaturalLanguage(
       };
     }
 
-    // "recebi/ganhei ... de/do/da ..."
-    const origin = extractOrigin(n, members);
+const origin = extractOrigin(n, members);
     if (origin) {
       const prep = origin.label.toLowerCase().startsWith('minha') ? 'da' : 'do';
       return {
@@ -353,8 +325,7 @@ function tryNaturalLanguage(
       };
     }
 
-    // receita genérica
-    const cleaned = cleanForDescription(
+const cleaned = cleanForDescription(
       raw.replace(new RegExp(incomeVerb ?? '', 'i'), ''),
     );
     return {
@@ -367,8 +338,7 @@ function tryNaturalLanguage(
     };
   }
 
-  // ── despesa ───────────────────────────────────────────────────────────────────
-  const destination = extractDestination(n, members);
+const destination = extractDestination(n, members);
   const hasTransfer = TRANSFER_HINTS.some((h) => n.includes(h));
 
   if (destination) {
@@ -397,8 +367,6 @@ function tryNaturalLanguage(
     personId: null,
   };
 }
-
-// ─── parser principal ─────────────────────────────────────────────────────────
 
 export function parseQuickLaunch(
   text: string,
@@ -453,8 +421,7 @@ export function parseQuickLaunch(
     };
   }
 
-  // ── fallback: parsing por tokens ──────────────────────────────────────────────
-  const used = new Set(usedIndices);
+const used = new Set(usedIndices);
 
   let amount: number | null = null;
   for (let i = 0; i < tokens.length; i++) {
@@ -511,8 +478,6 @@ export function parseQuickLaunch(
 
   return { description, amount, date, type, categoryHint, personHint, confidence, missingFields };
 }
-
-// ─── helpers exportados ───────────────────────────────────────────────────────
 
 function resolveCategory(name: string, categories: { id: string; name: string }[]): string | null {
   const found = categories.find((c) => norm(c.name) === norm(name));

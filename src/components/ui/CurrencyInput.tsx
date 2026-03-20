@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef } from 'react';
+﻿import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { Input } from './Input';
 
 interface CurrencyInputProps extends Omit<
@@ -42,8 +42,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
     const [displayValue, setDisplayValue] = useState(() => numericToDisplay(value));
     const isFocused = useRef(false);
 
-    // Sincroniza valor externo quando o campo não está em foco
-    useEffect(() => {
+useEffect(() => {
       if (!isFocused.current) {
         setDisplayValue(numericToDisplay(value));
       }

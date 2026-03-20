@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import { api } from '@/services/api.service';
@@ -99,9 +99,9 @@ export function CreditCardsSummary({ month, year }: Props) {
       }
     >
       <div className="space-y-6">
-        {/* Métricas em grid — mesmo padrão de Previsibilidade de Renda */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* Limite usado */}
+          {}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-primary-500 font-medium">Limite Usado</span>
@@ -113,7 +113,7 @@ export function CreditCardsSummary({ month, year }: Props) {
             <p className="text-xs text-primary-400">de {fmt(totalLimit)} disponível</p>
           </div>
 
-          {/* Faturas em aberto */}
+          {}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-primary-500 font-medium">Faturas em Aberto</span>
@@ -128,7 +128,7 @@ export function CreditCardsSummary({ month, year }: Props) {
             </p>
           </div>
 
-          {/* Parcelamentos futuros */}
+          {}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-primary-500 font-medium">Parcelamentos Futuros</span>
@@ -141,7 +141,7 @@ export function CreditCardsSummary({ month, year }: Props) {
           </div>
         </div>
 
-        {/* Índice de uso */}
+        {}
         <div className="pt-4" style={{ borderTop: `1px solid ${dividerClr}` }}>
           <p className="text-xs text-primary-400 uppercase font-bold tracking-wider mb-2">
             Índice de Utilização
@@ -157,7 +157,7 @@ export function CreditCardsSummary({ month, year }: Props) {
           </p>
         </div>
 
-        {/* Alertas inline */}
+        {}
         {(daysUntilDue !== null || usedPercent > 70 || futureInstallments > 0) && (
           <div className="space-y-2 pt-2" style={{ borderTop: `1px solid ${dividerClr}` }}>
             {daysUntilDue !== null && daysUntilDue <= 7 && (

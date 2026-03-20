@@ -1,18 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+﻿import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/useToast';
 import { recordService } from '../services/records.service';
 import type { RecordFormData } from '../components/RecordForm';
 
-// Mapear tipo do formulário para tipo do backend
 const mapFormTypeToBackendType = (formType: string, isRecurring: boolean): string => {
   if (formType === 'expense') {
     return isRecurring ? 'fixed' : 'variable';
   }
   if (formType === 'salary') {
-    return 'fixed'; // Salários são sempre fixos
+    return 'fixed'; 
   }
   if (formType === 'income') {
-    return 'temporary'; // Extras/bônus são temporários
+    return 'temporary'; 
   }
   return 'variable';
 };
@@ -27,8 +26,8 @@ export function useUpdateRecord() {
 
       const data: any = {
         ...formData,
-        formType: formData.type, // Mantém o tipo do formulário para determinar a rota
-        type: backendType, // Tipo do backend
+        formType: formData.type, 
+        type: backendType, 
         value: Number(formData.value),
         durationMonths: formData.durationMonths ? Number(formData.durationMonths) : undefined,
       };

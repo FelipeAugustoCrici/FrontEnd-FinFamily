@@ -1,9 +1,10 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Target, Plus, Trash2, PlusCircle, Eye, TrendingUp, Calendar, Minus } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import { GoalFormModal } from '../components/GoalFormModal';
 import { GoalContributionModal } from '../components/GoalContributionModal';
 import { GoalDetailModal } from '../components/GoalDetailModal';
@@ -14,9 +15,20 @@ import {
   GOAL_TYPE_META, computeInsights,
 } from '../components/goalUtils';
 import { api } from '@/services/api.service';
+import { useTokens } from '@/hooks/useTokens';
 import type { Goal } from '../types/planning.types';
 
+const PROGRESS_COLORS: Record<string, { from: string; to: string; glow: string }> = {
+  'from-emerald-400 to-emerald-600': { from: '#34d399', to: '#059669', glow: 'rgba(52,211,153,0.35)' },
+  'from-amber-400 to-amber-500':     { from: '#fbbf24', to: '#f59e0b', glow: 'rgba(251,191,36,0.35)'  },
+  'from-sky-400 to-sky-600':         { from: '#38bdf8', to: '#0284c7', glow: 'rgba(56,189,248,0.35)'  },
+  'from-primary-400 to-primary-600': { from: '#818cf8', to: '#6366f1', glow: 'rgba(99,102,241,0.35)'  },
+};
+
 export function GoalsPage() {
+  const t = useTokens();
+  const isDark = t.bg.page === '#020617';
+
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [contributeGoal, setContributeGoal] = useState<Goal | null>(null);
@@ -31,43 +43,71 @@ export function GoalsPage() {
   const { data: goals = [], isLoading } = useGoals();
   const deleteGoal = useDeleteGoal();
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Metas Financeiras</h1>
-          <p className="text-primary-500 text-sm mt-1">Acompanhe e gerencie seus objetivos financeiros</p>
-        </div>
-        <Button onClick={() => setModalOpen(true)}>
-          <Plus size={16} className="mr-2" /> Nova Meta
-        </Button>
-      </div>
+  const active = goals.filter(g => g.status !== 'archived' && (g.currentValue / g.targetValue) < 1);
+  const completed = goals.filter(g => g.status === 'completed' || (g.currentValue / g.targetValue) >= 1);
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => <div key={i} className="h-56 bg-primary-100 rounded-xl animate-pulse" />)}
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      <PageHeader
+        actions={
+          <ActionButton onClick={() => setModalOpen(true)}>Nova Meta</ActionButton>
+        }
+      />
+
+      {}
+      {isLoading && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} style={{
+              height: 220, borderRadius: 16,
+              background: t.bg.muted,
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }} />
+          ))}
         </div>
-      ) : goals.length === 0 ? (
-        <Card>
-          <div className="text-center py-16">
-            <Target size={48} className="mx-auto mb-4 text-primary-300" />
-            <h3 className="text-lg font-semibold text-primary-700 mb-2">Nenhuma meta cadastrada</h3>
-            <p className="text-primary-500 text-sm mb-6">Crie sua primeira meta financeira e comece a acompanhar seu progresso</p>
-            <Button onClick={() => setModalOpen(true)}>
-              <Plus size={16} className="mr-2" /> Criar Meta
-            </Button>
+      )}
+
+      {}
+      {!isLoading && goals.length === 0 && (
+        <div style={{
+          background: t.bg.card,
+          border: `1px solid ${t.border.default}`,
+          borderRadius: 20,
+          padding: '56px 24px',
+          textAlign: 'center',
+          boxShadow: t.shadow.card,
+        }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 64, height: 64, borderRadius: 20,
+            background: isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff',
+            marginBottom: 16,
+          }}>
+            <Target size={28} color="#6366f1" />
           </div>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {goals.map((goal) => {
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: t.text.primary, marginBottom: 8 }}>
+            Nenhuma meta cadastrada
+          </h3>
+          <p style={{ fontSize: 13, color: t.text.muted, marginBottom: 24, maxWidth: 320, margin: '0 auto 24px' }}>
+            Crie sua primeira meta financeira e comece a acompanhar seu progresso
+          </p>
+          <ActionButton onClick={() => setModalOpen(true)}>Criar primeira meta</ActionButton>
+        </div>
+      )}
+
+      {}
+      {!isLoading && goals.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+          {goals.map(goal => {
             const pct = Math.min((goal.currentValue / goal.targetValue) * 100, 100);
             const badge = getBadge(pct);
             const motivation = getMotivation(pct);
-            const barColor = getProgressBarColor(pct);
+            const barColorKey = getProgressBarColor(pct);
+            const barColors = PROGRESS_COLORS[barColorKey] ?? PROGRESS_COLORS['from-primary-400 to-primary-600'];
             const meta = GOAL_TYPE_META[goal.type ?? 'savings'];
             const Icon = meta.icon;
-            const completed = goal.status === 'completed' || pct >= 100;
+            const isCompleted = goal.status === 'completed' || pct >= 100;
             const insights = computeInsights(
               goal.contributions ?? [],
               goal.targetValue,
@@ -75,119 +115,207 @@ export function GoalsPage() {
               goal.deadline,
             );
 
+const cardAccent = isCompleted
+              ? { border: isDark ? 'rgba(52,211,153,0.25)' : '#a7f3d0', glow: 'rgba(52,211,153,0.06)' }
+              : { border: t.border.default, glow: 'transparent' };
+
             return (
-              <Card key={goal.id} className={completed ? '!border-emerald-200 !bg-emerald-50/40' : ''}>
-                <div className="space-y-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${meta.bg}`}>
-                        <Icon size={18} className={meta.color} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-slate-800 truncate">{goal.description}</p>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${badge.color}`}>
-                          {badge.label}
-                        </span>
-                      </div>
+              <div
+                key={goal.id}
+                style={{
+                  background: t.bg.card,
+                  border: `1px solid ${cardAccent.border}`,
+                  borderRadius: 18,
+                  padding: '20px',
+                  boxShadow: `${t.shadow.card}, 0 0 0 0 ${cardAccent.glow}`,
+                  display: 'flex', flexDirection: 'column', gap: 16,
+                  transition: 'transform 0.18s, box-shadow 0.18s',
+                  cursor: 'default',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = `${t.shadow.cardLg}`;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = t.shadow.card;
+                }}
+              >
+                {}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
+                    {}
+                    <div style={{
+                      width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: isDark ? `${barColors.glow}` : (meta.bg.replace('bg-', '') === 'emerald-50' ? '#ecfdf5' : meta.bg.includes('rose') ? '#fff1f2' : meta.bg.includes('violet') ? '#f5f3ff' : '#f0f9ff'),
+                    }}>
+                      <Icon size={18} style={{ color: barColors.from }} />
                     </div>
-                    <div className="flex items-center gap-1 ml-2 shrink-0">
-                      <button onClick={() => setDetailGoal(goal)} className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors">
-                        <Eye size={15} />
-                      </button>
-                      <button onClick={() => setDeleteId(goal.id)} className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors">
-                        <Trash2 size={15} />
-                      </button>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: t.text.primary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {goal.description}
+                      </p>
+                      {}
+                      <span style={{
+                        display: 'inline-block', fontSize: 10, fontWeight: 700,
+                        padding: '2px 8px', borderRadius: 999, marginTop: 3,
+                        background: isDark ? `${barColors.glow}` : undefined,
+                        color: barColors.from,
+                        border: `1px solid ${isDark ? barColors.glow : barColors.from + '40'}`,
+                      }}>
+                        {badge.label}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Progress */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold text-slate-800">{pct.toFixed(0)}%</span>
-                      <span className="text-xs text-slate-500">{fmt(goal.currentValue)} / {fmt(goal.targetValue)}</span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className={`bg-gradient-to-r ${barColor} h-full rounded-full transition-all duration-700`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-slate-400 italic">{motivation}</p>
-                  </div>
-
-                  {/* Insights */}
-                  {!completed && (
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
-                        <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
-                          <Plus size={9} /> Este mês
-                        </p>
-                        <p className={`text-xs font-bold ${insights.thisMonthTotal > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
-                          {insights.thisMonthTotal > 0 ? `+${fmt(insights.thisMonthTotal)}` : '—'}
-                        </p>
-                      </div>
-                      <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
-                        <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
-                          <Minus size={9} /> Falta
-                        </p>
-                        <p className="text-xs font-bold text-rose-500">{fmt(insights.remaining)}</p>
-                      </div>
-                      <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-center">
-                        <p className="text-xs text-slate-400 mb-0.5 flex items-center justify-center gap-0.5">
-                          <Calendar size={9} /> Previsão
-                        </p>
-                        <p className="text-xs font-bold text-amber-600">
-                          {insights.estimatedMonths === null ? '—'
-                            : insights.estimatedMonths === 0 ? 'Concluída'
-                            : `~${insights.estimatedMonths}m`}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Avg insight */}
-                  {!completed && insights.monthlyAvg !== null && insights.monthlyAvg > 0 && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-sky-50 border border-sky-100 rounded-lg">
-                      <TrendingUp size={11} className="text-sky-500 shrink-0" />
-                      <p className="text-xs text-sky-700">
-                        Média {fmt(insights.monthlyAvg)}/mês
-                        {insights.estimatedMonths !== null && insights.estimatedMonths > 0 &&
-                          ` → conclui em ${insights.estimatedMonths} ${insights.estimatedMonths === 1 ? 'mês' : 'meses'}`}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Suggested monthly */}
-                  {!completed && insights.suggestedMonthly !== null && insights.suggestedMonthly > 0 && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-violet-50 border border-violet-100 rounded-lg">
-                      <Calendar size={11} className="text-violet-500 shrink-0" />
-                      <p className="text-xs text-violet-700">
-                        Guardar {fmt(insights.suggestedMonthly)}/mês para bater o prazo
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Action */}
-                  {!completed ? (
+                  {}
+                  <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
                     <button
-                      onClick={() => setContributeGoal(goal)}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-100 transition-colors"
+                      onClick={() => setDetailGoal(goal)}
+                      style={{ width: 28, height: 28, borderRadius: 8, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: t.text.muted, transition: 'background 0.15s, color 0.15s' }}
+                      onMouseEnter={e => { (e.currentTarget.style.background = t.bg.muted); (e.currentTarget.style.color = t.text.primary); }}
+                      onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = t.text.muted); }}
                     >
-                      <PlusCircle size={13} /> Adicionar valor
+                      <Eye size={14} />
                     </button>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-semibold">
-                      🎉 Meta concluída!
-                    </div>
-                  )}
+                    <button
+                      onClick={() => setDeleteId(goal.id)}
+                      style={{ width: 28, height: 28, borderRadius: 8, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: t.text.muted, transition: 'background 0.15s, color 0.15s' }}
+                      onMouseEnter={e => { (e.currentTarget.style.background = isDark ? 'rgba(252,165,165,0.1)' : '#fff1f2'); (e.currentTarget.style.color = isDark ? '#fca5a5' : '#e11d48'); }}
+                      onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = t.text.muted); }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
-              </Card>
+
+                {}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <span style={{ fontSize: 32, fontWeight: 900, color: barColors.from, lineHeight: 1 }}>
+                      {pct.toFixed(0)}%
+                    </span>
+                    <span style={{ fontSize: 11, color: t.text.muted, textAlign: 'right' }}>
+                      {fmt(goal.currentValue)}<br />
+                      <span style={{ color: t.text.subtle }}>de {fmt(goal.targetValue)}</span>
+                    </span>
+                  </div>
+
+                  {}
+                  <div style={{
+                    width: '100%', height: 8, borderRadius: 999,
+                    background: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                    overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      height: '100%', borderRadius: 999,
+                      width: `${pct}%`,
+                      background: `linear-gradient(90deg, ${barColors.from}, ${barColors.to})`,
+                      boxShadow: `0 0 8px ${barColors.glow}`,
+                      transition: 'width 0.7s ease',
+                    }} />
+                  </div>
+
+                  <p style={{ fontSize: 11, color: t.text.muted, fontStyle: 'italic' }}>{motivation}</p>
+                </div>
+
+                {}
+                {!isCompleted && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                    {[
+                      { icon: <Plus size={9} />, label: 'Este mês', value: insights.thisMonthTotal > 0 ? `+${fmt(insights.thisMonthTotal)}` : '—', color: insights.thisMonthTotal > 0 ? (isDark ? '#6ee7b7' : '#166534') : t.text.muted },
+                      { icon: <Minus size={9} />, label: 'Falta', value: fmt(insights.remaining), color: isDark ? '#fca5a5' : '#be123c' },
+                      { icon: <Calendar size={9} />, label: 'Previsão', value: insights.estimatedMonths === null ? '—' : insights.estimatedMonths === 0 ? 'Pronto' : `~${insights.estimatedMonths}m`, color: isDark ? '#fcd34d' : '#92400e' },
+                    ].map(item => (
+                      <div key={item.label} style={{
+                        padding: '8px 6px', borderRadius: 10, textAlign: 'center',
+                        background: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+                        border: `1px solid ${t.border.subtle}`,
+                      }}>
+                        <p style={{ fontSize: 9, color: t.text.subtle, marginBottom: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                          {item.icon} {item.label}
+                        </p>
+                        <p style={{ fontSize: 11, fontWeight: 700, color: item.color }}>{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {}
+                {!isCompleted && insights.monthlyAvg !== null && insights.monthlyAvg > 0 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 12px', borderRadius: 10,
+                    background: isDark ? 'rgba(56,189,248,0.08)' : '#f0f9ff',
+                    border: `1px solid ${isDark ? 'rgba(56,189,248,0.15)' : '#bae6fd'}`,
+                  }}>
+                    <TrendingUp size={12} style={{ color: isDark ? '#38bdf8' : '#0284c7', flexShrink: 0 }} />
+                    <p style={{ fontSize: 11, color: isDark ? '#7dd3fc' : '#0369a1' }}>
+                      Média {fmt(insights.monthlyAvg)}/mês
+                      {insights.estimatedMonths !== null && insights.estimatedMonths > 0 &&
+                        ` · conclui em ${insights.estimatedMonths} ${insights.estimatedMonths === 1 ? 'mês' : 'meses'}`}
+                    </p>
+                  </div>
+                )}
+
+                {}
+                {!isCompleted && insights.suggestedMonthly !== null && insights.suggestedMonthly > 0 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 12px', borderRadius: 10,
+                    background: isDark ? 'rgba(167,139,250,0.08)' : '#f5f3ff',
+                    border: `1px solid ${isDark ? 'rgba(167,139,250,0.15)' : '#ddd6fe'}`,
+                  }}>
+                    <Calendar size={12} style={{ color: isDark ? '#a78bfa' : '#7c3aed', flexShrink: 0 }} />
+                    <p style={{ fontSize: 11, color: isDark ? '#c4b5fd' : '#5b21b6' }}>
+                      Guardar {fmt(insights.suggestedMonthly)}/mês para bater o prazo
+                    </p>
+                  </div>
+                )}
+
+                {}
+                {!isCompleted ? (
+                  <button
+                    onClick={() => setContributeGoal(goal)}
+                    style={{
+                      width: '100%', padding: '10px 0', borderRadius: 12,
+                      border: `1.5px solid ${isDark ? 'rgba(99,102,241,0.3)' : '#c7d2fe'}`,
+                      background: isDark ? 'rgba(99,102,241,0.08)' : '#eef2ff',
+                      color: isDark ? '#a5b4fc' : '#4338ca',
+                      fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      transition: 'background 0.15s, border-color 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget.style.background = isDark ? 'rgba(99,102,241,0.15)' : '#e0e7ff');
+                      (e.currentTarget.style.borderColor = isDark ? 'rgba(99,102,241,0.5)' : '#a5b4fc');
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget.style.background = isDark ? 'rgba(99,102,241,0.08)' : '#eef2ff');
+                      (e.currentTarget.style.borderColor = isDark ? 'rgba(99,102,241,0.3)' : '#c7d2fe');
+                    }}
+                  >
+                    <PlusCircle size={14} /> Adicionar valor
+                  </button>
+                ) : (
+                  <div style={{
+                    padding: '10px 0', borderRadius: 12, textAlign: 'center',
+                    background: isDark ? 'rgba(52,211,153,0.10)' : '#ecfdf5',
+                    border: `1px solid ${isDark ? 'rgba(52,211,153,0.2)' : '#a7f3d0'}`,
+                    color: isDark ? '#6ee7b7' : '#166534',
+                    fontSize: 13, fontWeight: 700,
+                  }}>
+                    🎉 Meta concluída!
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
       )}
 
+      {}
       <GoalFormModal isOpen={modalOpen} onClose={() => setModalOpen(false)} familyId={familyId} />
 
       {contributeGoal && (
@@ -203,10 +331,14 @@ export function GoalsPage() {
       )}
 
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title="Confirmar Exclusão">
-        <p className="text-slate-600 mb-6">Tem certeza que deseja excluir esta meta?</p>
-        <div className="flex gap-3 justify-end">
+        <p style={{ color: t.text.secondary, marginBottom: 24, fontSize: 14 }}>
+          Tem certeza que deseja excluir esta meta? Esta ação não pode ser desfeita.
+        </p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
           <Button variant="ghost" onClick={() => setDeleteId(null)}>Cancelar</Button>
-          <Button variant="primary" onClick={() => { if (deleteId) { deleteGoal.mutate(deleteId); setDeleteId(null); } }}>Confirmar</Button>
+          <Button variant="primary" onClick={() => { if (deleteId) { deleteGoal.mutate(deleteId); setDeleteId(null); } }}>
+            Excluir
+          </Button>
         </div>
       </Modal>
     </div>

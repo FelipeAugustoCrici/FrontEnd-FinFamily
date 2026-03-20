@@ -4,6 +4,7 @@ import { useCreateRecord } from './hooks/useCreateRecord';
 import { familyService } from '@/pages/families/services/families.service';
 import { useCategories } from '@/pages/categories/hooks/useCategories';
 import { useQuery } from '@tanstack/react-query';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export function RecordsCreate() {
   const navigate = useNavigate();
@@ -19,7 +20,9 @@ export function RecordsCreate() {
   const people = families[0]?.members || [];
 
   return (
-    <RecordForm
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <PageHeader />
+      <RecordForm
       families={families}
       categories={categories}
       people={people}
@@ -30,5 +33,6 @@ export function RecordsCreate() {
       }
       isLoading={createRecord.isPending}
     />
+    </div>
   );
 }

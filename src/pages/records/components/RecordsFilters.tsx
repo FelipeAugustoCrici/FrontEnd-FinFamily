@@ -1,4 +1,4 @@
-import { Calendar, Search, ChevronDown, Check } from 'lucide-react';
+﻿import { Calendar, Search, ChevronDown, Check } from 'lucide-react';
 import _ from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import { useTokens } from '@/hooks/useTokens';
@@ -59,7 +59,7 @@ export function RecordsFilters({
         borderBottom: `1px solid ${t.border.subtle}`,
       }}
     >
-      {/* ── Search ── */}
+      {}
       <div className="relative flex-1 min-w-0">
         <Search
           size={15}
@@ -86,10 +86,10 @@ export function RecordsFilters({
         />
       </div>
 
-      {/* ── Right filters ── */}
+      {}
       <div className="flex items-center gap-2">
 
-        {/* Period pill — mês + ano como bloco único */}
+        {}
         <div className="relative" ref={periodRef}>
           <button
             onClick={() => { setPeriodOpen((v) => !v); setStatusOpen(false); }}
@@ -174,7 +174,7 @@ export function RecordsFilters({
           )}
         </div>
 
-        {/* Status pill */}
+        {}
         <div className="relative" ref={statusRef}>
           <button
             onClick={() => { setStatusOpen((v) => !v); setPeriodOpen(false); }}

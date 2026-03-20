@@ -1,4 +1,9 @@
 export { MonthlyEvolution } from './MonthlyEvolution';
+export { PeriodComparison } from './PeriodComparison';
+export { ConsistencyIndicator } from './ConsistencyIndicator';
+export { CategoryTrends } from './CategoryTrends';
+export { TopExpenses } from './TopExpenses';
+export { SmartInsights } from './SmartInsights';
 export { CategoryExpenses } from './CategoryExpenses';
 export { PersonExpenses } from './PersonExpenses';
 export { RecurringExpensesList } from './RecurringExpensesList';

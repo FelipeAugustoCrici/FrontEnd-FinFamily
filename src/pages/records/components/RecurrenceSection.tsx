@@ -1,4 +1,4 @@
-import { useFormContext, useWatch } from 'react-hook-form';
+﻿import { useFormContext, useWatch } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Repeat } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
@@ -47,7 +47,7 @@ export function RecurrenceSection() {
           </p>
         </div>
 
-        {/* Toggle switch */}
+        {}
         <div style={{ flexShrink: 0 }}>
           <input
             type="checkbox"
@@ -83,7 +83,7 @@ export function RecurrenceSection() {
         </div>
       </div>
 
-      {/* Campo de duração com transição suave */}
+      {}
       <div style={{
         overflow: 'hidden',
         maxHeight: isRecurring ? 120 : 0,

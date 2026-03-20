@@ -1,10 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 
-/**
- * Animates a number from 0 (or previous value) to `target`.
- * @param target  Final value
- * @param duration Animation duration in ms (default 700)
- */
 export function useCountUp(target: number, duration = 700): number {
   const [display, setDisplay] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -22,7 +17,7 @@ export function useCountUp(target: number, duration = 700): number {
       if (startRef.current === null) startRef.current = timestamp;
       const elapsed = timestamp - startRef.current;
       const progress = Math.min(elapsed / duration, 1);
-      // ease-out cubic
+      
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(from + delta * eased);
       if (progress < 1) {

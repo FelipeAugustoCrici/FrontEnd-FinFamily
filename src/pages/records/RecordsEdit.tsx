@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+﻿import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { RecordForm } from './components/RecordForm';
 import { useUpdateRecord } from './hooks/useUpdateRecord';
@@ -7,6 +7,7 @@ import { familyService } from '@/pages/families/services/families.service';
 import { useCategories } from '@/pages/categories/hooks/useCategories';
 import { SkeletonDetail } from '@/components/ui/Skeleton';
 import { useTokens } from '@/hooks/useTokens';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export function RecordsEdit() {
   const navigate = useNavigate();
@@ -23,8 +24,7 @@ export function RecordsEdit() {
 
   const { data: categories = [] } = useCategories();
 
-  // Pega apenas os membros da primeira família (sistema permite apenas uma família)
-  const people = families[0]?.members || [];
+const people = families[0]?.members || [];
 
   if (isLoading) {
     return (
@@ -43,7 +43,9 @@ export function RecordsEdit() {
   }
 
   return (
-    <RecordForm
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <PageHeader />
+      <RecordForm
       initialData={item}
       families={families}
       categories={categories}
@@ -57,6 +59,7 @@ export function RecordsEdit() {
         )
       }
       isLoading={updateRecord.isPending}
-    />
+      />
+    </div>
   );
 }

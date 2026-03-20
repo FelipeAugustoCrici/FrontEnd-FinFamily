@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+﻿import { ReactNode } from 'react';
 import { Sparkles, Sun, Moon } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 import { useTheme } from '@/hooks/useTheme';
@@ -25,7 +25,7 @@ export function AuthLayout({ children, maxWidth = 420 }: AuthLayoutProps) {
         ? 'radial-gradient(ellipse at 60% 0%, rgba(99,102,241,0.12) 0%, #020617 55%)'
         : 'radial-gradient(ellipse at 60% 0%, rgba(99,102,241,0.07) 0%, #f1f5f9 55%)',
     }}>
-      {/* Botão dark mode */}
+      {}
       <button
         onClick={toggle}
         title={isDark ? 'Modo claro' : 'Modo escuro'}
@@ -53,7 +53,7 @@ export function AuthLayout({ children, maxWidth = 420 }: AuthLayoutProps) {
         {isDark ? <Sun size={16} /> : <Moon size={16} />}
       </button>
       <div style={{ width: '100%', maxWidth }}>
-        {/* Brand */}
+        {}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -69,7 +69,7 @@ export function AuthLayout({ children, maxWidth = 420 }: AuthLayoutProps) {
           </h1>
         </div>
 
-        {/* Card */}
+        {}
         <div style={{
           background: t.bg.card,
           border: `1px solid ${t.border.default}`,

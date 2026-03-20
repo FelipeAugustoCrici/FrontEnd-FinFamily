@@ -1,4 +1,4 @@
-import { ShieldCheck } from 'lucide-react';
+﻿import { ShieldCheck } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 
 type Props = {
@@ -12,8 +12,7 @@ export function FinancialHealth({ score, incomes, expenses }: Props) {
   const isGood = score > 70;
   const isMid = score > 40;
 
-  // Cores do score/track via inline style para reagir ao isDark
-  const scoreColor = isGood
+const scoreColor = isGood
     ? (isDark ? '#6ee7b7' : '#166534')
     : isMid
       ? (isDark ? '#fcd34d' : '#92400e')
@@ -79,7 +78,7 @@ export function FinancialHealth({ score, incomes, expenses }: Props) {
 
       <div className="p-6">
         <div className="flex items-center gap-6">
-          {/* Circular score */}
+          {}
           <div className="relative inline-flex items-center justify-center shrink-0">
             <svg className="w-28 h-28 -rotate-90" viewBox="0 0 80 80">
               <circle strokeWidth="7" stroke={trackBg} fill="transparent" r="34" cx="40" cy="40" />
@@ -99,7 +98,7 @@ export function FinancialHealth({ score, incomes, expenses }: Props) {
             </div>
           </div>
 
-          {/* Info */}
+          {}
           <div className="flex-1 space-y-3">
             <span className="text-xs font-bold px-3 py-1.5 rounded-full inline-block" style={badgeStyle}>
               {label}
@@ -115,7 +114,7 @@ export function FinancialHealth({ score, incomes, expenses }: Props) {
           </div>
         </div>
 
-        {/* Mini metrics */}
+        {}
         <div className="grid grid-cols-2 gap-3 mt-5 pt-5" style={{ borderTop: `1px solid ${dividerClr}` }}>
           <div className="rounded-xl p-3 space-y-1" style={{ background: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'}` }}>
             <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: isDark ? '#64748b' : '#94a3b8' }}>Taxa de Gastos</p>

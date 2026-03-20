@@ -1,4 +1,4 @@
-import { api } from '@/services/api.service';
+﻿import { api } from '@/services/api.service';
 import type {
   Goal,
   Budget,
@@ -9,7 +9,7 @@ import type {
 } from '../types/planning.types';
 
 export const planningService = {
-  // Goals
+  
   getGoals: async (familyId?: string): Promise<Goal[]> => {
     const params = familyId ? `?familyId=${familyId}` : '';
     const { data } = await api.get(`/finance/goals${params}`);
@@ -70,8 +70,7 @@ export const planningService = {
     await api.delete(`/finance/budgets/${id}`);
   },
 
-  // Credit Cards
-  getCreditCards: async (): Promise<CreditCard[]> => {
+getCreditCards: async (): Promise<CreditCard[]> => {
     const { data } = await api.get('/finance/credit-cards');
     return data;
   },

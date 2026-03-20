@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import {
@@ -60,14 +60,12 @@ export function CoupleModeList() {
   const monthLabel = new Date(year, month - 1).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
   const hasData = result && result.totalShared > 0
 
-  // Calcula desequilíbrio máximo
-  const maxImbalance = hasData
+const maxImbalance = hasData
     ? Math.max(...(result?.participants ?? []).map((p) => Math.abs(p.balance)))
     : 0
   const isBalanced = maxImbalance < 0.01
 
-  // Sugestões pendentes (sem ajuste registrado)
-  const pendingSuggestions = result?.suggestions.filter((s) =>
+const pendingSuggestions = result?.suggestions.filter((s) =>
     !result.adjustments.some(
       (a) => a.fromPersonId === s.fromPersonId && a.toPersonId === s.toPersonId
     )
@@ -89,7 +87,7 @@ export function CoupleModeList() {
         }
       />
 
-      {/* Navegação de mês */}
+      {}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <button
           onClick={prevMonth}
@@ -116,7 +114,7 @@ export function CoupleModeList() {
         </button>
       </div>
 
-      {/* Modo não configurado */}
+      {}
       {!config?.isActive && (
         <div style={{
           background: t.bg.card, border: `1px solid ${t.border.default}`,
@@ -153,7 +151,7 @@ export function CoupleModeList() {
             </div>
           ) : (
             <>
-              {/* Card de resumo do período */}
+              {}
               <div style={{
                 background: t.bg.card, border: `1px solid ${t.border.default}`,
                 borderRadius: 18, padding: '20px 22px', boxShadow: t.shadow.card,
@@ -174,7 +172,7 @@ export function CoupleModeList() {
                   </p>
                 </div>
 
-                {/* Status de equilíbrio */}
+                {}
                 <div style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6,
                 }}>
@@ -235,7 +233,7 @@ export function CoupleModeList() {
 
               {hasData && !result.incomeRequired && (
                 <>
-                  {/* Cards de participantes */}
+                  {}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                     {result.participants.map((p, idx) => {
                       const color = PERSON_COLORS[idx % PERSON_COLORS.length]
@@ -273,7 +271,7 @@ export function CoupleModeList() {
                           flexDirection: 'column',
                           gap: 14,
                         }}>
-                          {/* Topo: avatar + nome + status */}
+                          {}
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div style={{
                               width: 40, height: 40, borderRadius: 12, flexShrink: 0,
@@ -295,7 +293,7 @@ export function CoupleModeList() {
                             {isEven && <Minus size={16} color={t.text.muted} />}
                           </div>
 
-                          {/* Status direto: deve / recebe */}
+                          {}
                           <div style={{
                             background: statusBg,
                             border: `1.5px solid ${statusBorder}`,
@@ -315,7 +313,7 @@ export function CoupleModeList() {
                             </p>
                           </div>
 
-                          {/* Pagou / Ideal */}
+                          {}
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                             <div style={{
                               background: t.bg.muted, border: `1px solid ${t.border.default}`,
@@ -342,7 +340,7 @@ export function CoupleModeList() {
                             </div>
                           </div>
 
-                          {/* Barra de participação com textos */}
+                          {}
                           <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                               <span style={{ fontSize: 11, color: t.text.muted }}>
@@ -365,7 +363,7 @@ export function CoupleModeList() {
                                 background: color,
                                 transition: 'width 0.6s ease',
                               }} />
-                              {/* Marcador ideal */}
+                              {}
                               <div style={{
                                 position: 'absolute', top: 0, bottom: 0, width: 2,
                                 background: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.25)',
@@ -374,7 +372,7 @@ export function CoupleModeList() {
                             </div>
                           </div>
 
-                          {/* Renda informada (proporcional) */}
+                          {}
                           {result.splitType === 'proportional' && p.configuredIncome > 0 && (
                             <div style={{
                               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -395,7 +393,7 @@ export function CoupleModeList() {
                     })}
                   </div>
 
-                  {/* Sugestão de equilíbrio */}
+                  {}
                   {pendingSuggestions.length > 0 && (
                     <div style={{
                       background: isDark ? 'rgba(99,102,241,0.08)' : '#f5f3ff',
@@ -451,7 +449,7 @@ export function CoupleModeList() {
                     </div>
                   )}
 
-                  {/* Ajustes registrados */}
+                  {}
                   {result.adjustments.length > 0 && (
                     <div style={{
                       background: t.bg.card, border: `1px solid ${t.border.default}`,
