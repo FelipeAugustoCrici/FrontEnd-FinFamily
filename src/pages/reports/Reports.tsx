@@ -2,7 +2,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SkeletonReports } from '@/components/ui/Skeleton';
-import { Download, Loader2, Calendar } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
+import { Download, Calendar } from 'lucide-react';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import { useReportsSummary } from './hooks/useReportsSummary';
 import {
@@ -21,6 +22,7 @@ import {
 
 export function Reports() {
   const filters = useUrlFilters({ defaultPage: 1 });
+  const t = useTokens();
 
   // Obter período da URL ou usar 6 como padrão
   const selectedPeriod = (parseInt(filters.search) || 6) as 3 | 6 | 12;
@@ -32,7 +34,7 @@ export function Reports() {
     return (
       <div className="space-y-6">
         <PageHeader actions={<Button variant="outline" size="sm"><Download size={16} className="mr-2" /> Exportar PDF</Button>} />
-        <SkeletonReports t={{ bg: { card: '#ffffff', muted: '#f1f5f9' }, border: { default: 'rgba(0,0,0,0.06)', divider: 'rgba(0,0,0,0.04)' }, shadow: { card: '0 8px 24px rgba(0,0,0,0.06)' } }} />
+        <SkeletonReports t={t} />
       </div>
     );
   }
