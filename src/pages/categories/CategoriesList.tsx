@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Loader2, Trash2, Tag, TrendingDown, TrendingUp, Layers } from 'lucide-react';
 import { SkeletonList } from '@/components/ui/Skeleton';
 
-import { Input, Select } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { Pagination } from '@/components/ui/Pagination';
@@ -188,11 +189,12 @@ export function CategoriesList() {
               />
               <Select
                 label="Tipo"
-                {...register('type')}
                 options={[
                   { value: 'expense', label: '💸 Despesa' },
                   { value: 'income', label: '💰 Receita' },
                 ]}
+                value={selectedType}
+                onChange={(val) => setValue('type', val as 'expense' | 'income')}
               />
 
               {/* Sugestões rápidas */}

@@ -1,7 +1,9 @@
 import { useFormContext, useWatch, Controller } from 'react-hook-form';
-import { Input, Select } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { DatePicker } from '@/components/ui/DatePicker';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
-import { FileText, DollarSign, Calendar, Tag, Users } from 'lucide-react';
+import { FileText, DollarSign, Tag, Users } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 import _ from 'lodash';
 
@@ -9,20 +11,16 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
   const { register, setValue, formState, control } = useFormContext();
   const type = useWatch({ name: 'type' });
   const isShared = useWatch({ name: 'isShared' });
+  const categoryId = useWatch({ name: 'categoryId' });
   const t = useTokens();
   const isDark = t.bg.page === '#020617';
 
   const expenseCategories = categories.filter((c) => c.type === 'expense');
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryId = e.target.value;
-    setValue('categoryId', categoryId);
-    if (categoryId) {
-      const selected = _.find(categories, { id: categoryId });
-      setValue('categoryName', selected?.name || '');
-    } else {
-      setValue('categoryName', '');
-    }
+  const handleCategoryChange = (val: string | number) => {
+    setValue('categoryId', val);
+    const selected = _.find(categories, { id: val });
+    setValue('categoryName', selected?.name || '');
   };
 
   const sharedActiveBg = isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff';
@@ -65,19 +63,13 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
           <div>
             <Select
               label="Categoria"
-              {...register('categoryId')}
-              options={[
-                {
-                  value: '',
-                  label: expenseCategories.length > 0
-                    ? 'Selecione uma categoria'
-                    : 'Nenhuma categoria cadastrada',
-                },
-                ...expenseCategories.map((c) => ({ value: c.id, label: c.name })),
-              ]}
+              placeholder={expenseCategories.length > 0 ? 'Selecione uma categoria' : 'Nenhuma categoria cadastrada'}
+              options={expenseCategories.map((c) => ({ value: c.id, label: c.name }))}
+              value={categoryId}
               onChange={handleCategoryChange}
               error={formState.errors.categoryId?.message as string}
               disabled={expenseCategories.length === 0}
+              searchable={expenseCategories.length > 5}
             />
             {expenseCategories.length === 0 && (
               <p style={{ fontSize: 11, color: '#d97706', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -102,12 +94,17 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
           </div>
         )}
 
-        <Input
-          label="Data"
-          type="date"
-          {...register('date')}
-          error={formState.errors.date?.message as string}
-          icon={<Calendar size={18} className="text-primary-400" />}
+        <Controller
+          name="date"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              label="Data"
+              value={field.value}
+              onChange={field.onChange}
+              error={formState.errors.date?.message as string}
+            />
+          )}
         />
       </div>
 

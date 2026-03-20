@@ -2,7 +2,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Modal } from '@/components/ui/Modal';
-import { Input, Select } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { useCreateBudget } from '../hooks/useCreateBudget';
@@ -39,6 +40,7 @@ export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalPr
     formState: { errors },
     reset,
     setValue,
+    watch,
     control,
   } = useForm<BudgetFormData>({
     resolver: zodResolver(budgetSchema),
@@ -61,10 +63,9 @@ export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalPr
     });
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryId = e.target.value;
-    const category = categories.find((c: any) => c.id === categoryId);
-    setValue('categoryId', categoryId);
+  const handleCategoryChange = (val: string | number) => {
+    const category = categories.find((c: any) => c.id === val);
+    setValue('categoryId', String(val));
     setValue('categoryName', category?.name || '');
   };
 
@@ -73,13 +74,12 @@ export function BudgetFormModal({ isOpen, onClose, familyId }: BudgetFormModalPr
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Select
           label="Categoria"
-          {...register('categoryId')}
-          options={[
-            { value: '', label: 'Selecione uma categoria' },
-            ...expenseCategories.map((c: any) => ({ value: c.id, label: c.name })),
-          ]}
+          placeholder="Selecione uma categoria"
+          options={expenseCategories.map((c: any) => ({ value: c.id, label: c.name }))}
+          value={watch('categoryId')}
           onChange={handleCategoryChange}
           error={errors.categoryId?.message}
+          searchable={expenseCategories.length > 5}
         />
 
         <Controller

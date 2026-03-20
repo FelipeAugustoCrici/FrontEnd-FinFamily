@@ -1,5 +1,5 @@
-import { useFormContext, useWatch } from 'react-hook-form';
-import { Select } from '@/components/ui/Input';
+import { useFormContext, useWatch, Controller } from 'react-hook-form';
+import { Select } from '@/components/ui/Select';
 import { useEffect } from 'react';
 import { useTokens } from '@/hooks/useTokens';
 import { Users } from 'lucide-react';
@@ -56,20 +56,20 @@ export function FamilySelector({ families }: { families: any[] }) {
         </div>
       )}
 
-      <Select
-        label="Responsável"
-        {...register('personId')}
-        options={[
-          {
-            value: '',
-            label: people.length > 0
-              ? 'Selecione um responsável'
-              : 'Nenhum membro cadastrado na família',
-          },
-          ...people.map((p: { id: string; name: string }) => ({ value: p.id, label: p.name })),
-        ]}
-        disabled={people.length === 0}
-        error={formState.errors.personId?.message as string}
+      <Controller
+        name="personId"
+        control={useFormContext().control}
+        render={({ field }) => (
+          <Select
+            label="Responsável"
+            placeholder={people.length > 0 ? 'Selecione um responsável' : 'Nenhum membro cadastrado'}
+            options={people.map((p: { id: string; name: string }) => ({ value: p.id, label: p.name }))}
+            value={field.value}
+            onChange={field.onChange}
+            disabled={people.length === 0}
+            error={formState.errors.personId?.message as string}
+          />
+        )}
       />
 
       {people.length === 0 && (

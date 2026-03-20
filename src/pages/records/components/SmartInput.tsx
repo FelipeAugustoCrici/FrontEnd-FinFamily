@@ -11,14 +11,14 @@ interface SmartInputProps {
 
 const CONFIDENCE_LABEL = {
   high: { text: 'Padrão seu', color: '#10b981' },
-  medium: { text: 'Sugestão', color: '#6366f1' },
+  medium: { text: 'Sugestão', color: '#94a3b8' },
   low: { text: 'Sem categoria', color: '#f59e0b' },
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  expense: '💸 Despesa',
-  salary: '💰 Salário',
-  income: '✨ Extra',
+const TYPE_LABEL: Record<string, { label: string; emoji: string }> = {
+  expense: { label: 'Despesa', emoji: '💸' },
+  salary:  { label: 'Salário', emoji: '💰' },
+  income:  { label: 'Extra',   emoji: '✨' },
 };
 
 export function SmartInput({ categories }: SmartInputProps) {
@@ -31,7 +31,6 @@ export function SmartInput({ categories }: SmartInputProps) {
   const [applied, setApplied] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  // Debounce parse para não travar o input
   const debouncedParse = useRef(
     _.debounce((val: string) => {
       setParsed(parseSmartInput(val));
@@ -48,12 +47,9 @@ export function SmartInput({ categories }: SmartInputProps) {
 
   const applyParsed = () => {
     if (!parsed) return;
-
     setValue('description', parsed.description);
     if (parsed.value) setValue('value', parsed.value);
     setValue('type', parsed.type);
-
-    // Tenta encontrar a categoria pelo nome (case-insensitive)
     if (parsed.suggestedCategoryName) {
       const match = categories.find(
         (c) => c.name.toLowerCase() === parsed.suggestedCategoryName.toLowerCase()
@@ -62,45 +58,50 @@ export function SmartInput({ categories }: SmartInputProps) {
       if (match) {
         setValue('categoryId', match.id);
         setValue('categoryName', match.name);
-        // Salva padrão do usuário para aprendizado
         saveUserPattern(parsed.description.toLowerCase(), match.name, parsed.type);
       }
     }
-
     setApplied(true);
     setText('');
     setParsed(null);
   };
 
-  const clear = () => {
-    setText('');
-    setParsed(null);
-    setApplied(false);
-  };
+  const clear = () => { setText(''); setParsed(null); setApplied(false); };
 
-  const borderColor = focused
+  // Cores do container
+  const containerBg   = isDark ? 'rgba(99,102,241,0.07)' : '#f5f3ff';
+  const containerBorder = isDark
+    ? (focused || parsed ? 'rgba(99,102,241,0.40)' : 'rgba(99,102,241,0.18)')
+    : (focused || parsed ? '#a5b4fc' : '#ddd6fe');
+
+  const inputBg = isDark ? 'rgba(255,255,255,0.05)' : '#ffffff';
+  const inputBorder = focused
     ? '#6366f1'
-    : parsed
-      ? (isDark ? 'rgba(99,102,241,0.35)' : '#c7d2fe')
-      : t.border.input;
-
-  const glowShadow = focused ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none';
+    : isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0';
+  const inputShadow = focused ? '0 0 0 3px rgba(99,102,241,0.18)' : 'none';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      {/* Label */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-        <Zap size={13} color="#6366f1" />
-        <span style={{ fontSize: 11, fontWeight: 700, color: isDark ? '#a5b4fc' : '#4338ca', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+    <div style={{
+      background: containerBg,
+      border: `1.5px solid ${containerBorder}`,
+      borderRadius: 16,
+      padding: '14px 14px 12px',
+      transition: 'border-color 0.2s',
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+        <Zap size={12} color="#6366f1" />
+        <span style={{
+          fontSize: 10, fontWeight: 800,
+          color: isDark ? '#a5b4fc' : '#4338ca',
+          textTransform: 'uppercase', letterSpacing: '0.09em',
+        }}>
           Preenchimento Inteligente
         </span>
         <span style={{
-          fontSize: 10,
-          padding: '1px 7px',
-          borderRadius: 999,
-          background: isDark ? 'rgba(99,102,241,0.15)' : '#e0e7ff',
+          fontSize: 9, padding: '2px 7px', borderRadius: 999, fontWeight: 700,
+          background: isDark ? 'rgba(99,102,241,0.20)' : '#e0e7ff',
           color: isDark ? '#a5b4fc' : '#4338ca',
-          fontWeight: 600,
         }}>
           Beta
         </span>
@@ -109,13 +110,10 @@ export function SmartInput({ categories }: SmartInputProps) {
       {/* Input */}
       <div style={{ position: 'relative' }}>
         <div style={{
-          position: 'absolute',
-          left: 12,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          pointerEvents: 'none',
+          position: 'absolute', left: 12, top: '50%',
+          transform: 'translateY(-50%)', pointerEvents: 'none',
         }}>
-          <Sparkles size={16} color={focused || parsed ? '#6366f1' : t.text.muted} />
+          <Sparkles size={15} color={focused || parsed ? '#6366f1' : t.text.muted} />
         </div>
 
         <input
@@ -125,18 +123,18 @@ export function SmartInput({ categories }: SmartInputProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyParsed(); } }}
-          placeholder='Ex: iFood 45, Salário 3500, Gasolina 150...'
+          placeholder="Ex: iFood 45, Salário 3500, Gasolina 150..."
           style={{
             width: '100%',
-            padding: '11px 40px 11px 38px',
-            borderRadius: 12,
-            border: `1.5px solid ${borderColor}`,
-            background: t.bg.input,
+            padding: '10px 36px 10px 36px',
+            borderRadius: 10,
+            border: `1.5px solid ${inputBorder}`,
+            background: inputBg,
             color: t.text.primary,
             fontSize: 13,
             outline: 'none',
-            boxShadow: glowShadow,
-            transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
+            boxShadow: inputShadow,
+            transition: 'border-color 0.18s, box-shadow 0.18s',
             boxSizing: 'border-box',
           }}
         />
@@ -146,64 +144,51 @@ export function SmartInput({ categories }: SmartInputProps) {
             type="button"
             onClick={clear}
             style={{
-              position: 'absolute',
-              right: 10,
-              top: '50%',
+              position: 'absolute', right: 10, top: '50%',
               transform: 'translateY(-50%)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: t.text.muted,
-              display: 'flex',
-              alignItems: 'center',
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: t.text.muted, display: 'flex', alignItems: 'center', padding: 2,
             }}
           >
-            <X size={14} />
+            <X size={13} />
           </button>
         )}
       </div>
 
-      {/* Preview da sugestão */}
+      {/* Sugestão */}
       {parsed && !applied && (
         <div style={{
-          marginTop: 8,
-          background: isDark ? 'rgba(99,102,241,0.08)' : '#f5f3ff',
-          border: `1px solid ${isDark ? 'rgba(99,102,241,0.20)' : '#ddd6fe'}`,
-          borderRadius: 12,
-          padding: '10px 14px',
+          marginTop: 10,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: 12,
-          animation: 'fadeIn 0.15s ease',
+          gap: 10,
+          flexWrap: 'wrap',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', flex: 1 }}>
+          {/* Pills */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', flex: 1 }}>
             {/* Tipo */}
             <span style={{
-              fontSize: 11,
-              fontWeight: 700,
-              padding: '3px 9px',
-              borderRadius: 999,
-              background: isDark ? 'rgba(99,102,241,0.15)' : '#ede9fe',
-              color: isDark ? '#a5b4fc' : '#5b21b6',
+              fontSize: 11, fontWeight: 700,
+              padding: '4px 10px', borderRadius: 999,
+              background: isDark ? 'rgba(255,255,255,0.08)' : '#ede9fe',
+              color: isDark ? '#e2e8f0' : '#5b21b6',
+              display: 'flex', alignItems: 'center', gap: 4,
             }}>
-              {TYPE_LABEL[parsed.type]}
+              <span>{TYPE_LABEL[parsed.type]?.emoji}</span>
+              {TYPE_LABEL[parsed.type]?.label}
             </span>
 
-            {/* Categoria sugerida */}
+            {/* Categoria */}
             {parsed.suggestedCategoryName && (
               <span style={{
-                fontSize: 11,
-                fontWeight: 600,
-                padding: '3px 9px',
-                borderRadius: 999,
+                fontSize: 11, fontWeight: 600,
+                padding: '4px 10px', borderRadius: 999,
                 background: isDark ? 'rgba(16,185,129,0.12)' : '#d1fae5',
                 color: isDark ? '#6ee7b7' : '#065f46',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
+                display: 'flex', alignItems: 'center', gap: 5,
               }}>
-                <span style={{ fontSize: 9, fontWeight: 700, opacity: 0.7 }}>CATEGORIA</span>
+                <span style={{ fontSize: 9, fontWeight: 800, opacity: 0.65, letterSpacing: '0.05em' }}>CATEGORIA</span>
                 {parsed.suggestedCategoryName}
               </span>
             )}
@@ -211,11 +196,9 @@ export function SmartInput({ categories }: SmartInputProps) {
             {/* Valor */}
             {parsed.value && (
               <span style={{
-                fontSize: 11,
-                fontWeight: 700,
-                padding: '3px 9px',
-                borderRadius: 999,
-                background: isDark ? 'rgba(245,158,11,0.12)' : '#fef9c3',
+                fontSize: 11, fontWeight: 700,
+                padding: '4px 10px', borderRadius: 999,
+                background: isDark ? 'rgba(245,158,11,0.14)' : '#fef9c3',
                 color: isDark ? '#fcd34d' : '#92400e',
               }}>
                 R$ {Number(parsed.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -224,50 +207,39 @@ export function SmartInput({ categories }: SmartInputProps) {
 
             {/* Confiança */}
             <span style={{
-              fontSize: 10,
+              fontSize: 10, fontWeight: 600,
               color: CONFIDENCE_LABEL[parsed.confidence].color,
-              fontWeight: 600,
-              opacity: 0.8,
             }}>
               {CONFIDENCE_LABEL[parsed.confidence].text}
             </span>
           </div>
 
-          {/* Botão aplicar */}
+          {/* Botão Aplicar */}
           <button
             type="button"
             onClick={applyParsed}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-              padding: '7px 14px',
-              borderRadius: 8,
-              border: 'none',
-              background: '#6366f1',
-              color: '#ffffff',
-              fontSize: 12,
-              fontWeight: 700,
-              cursor: 'pointer',
-              flexShrink: 0,
-              transition: 'opacity 0.15s ease',
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '7px 16px', borderRadius: 10,
+              border: 'none', background: '#6366f1',
+              color: '#ffffff', fontSize: 12, fontWeight: 700,
+              cursor: 'pointer', flexShrink: 0,
+              transition: 'opacity 0.15s',
             }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
           >
             Aplicar <ChevronRight size={13} />
           </button>
         </div>
       )}
 
-      {/* Feedback de aplicado */}
+      {/* Feedback aplicado */}
       {applied && (
         <div style={{
-          marginTop: 8,
-          fontSize: 12,
+          marginTop: 10, fontSize: 12, fontWeight: 600,
           color: isDark ? '#6ee7b7' : '#166534',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
+          display: 'flex', alignItems: 'center', gap: 6,
         }}>
           ✓ Campos preenchidos automaticamente
         </div>

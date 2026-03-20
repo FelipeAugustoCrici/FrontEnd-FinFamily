@@ -3,10 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
+import { DatePicker } from '@/components/ui/DatePicker';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { Button } from '@/components/ui/Button';
 import { useCreateGoal } from '../hooks/useCreateGoal';
-import { FileText, Calendar } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { GOAL_TYPE_META } from './goalUtils';
 import type { GoalType } from '../types/planning.types';
 
@@ -90,12 +91,17 @@ export function GoalFormModal({ isOpen, onClose, familyId }: Props) {
           )}
         />
 
-        <Input
-          label="Prazo (opcional)"
-          type="date"
-          {...register('deadline')}
-          error={errors.deadline?.message}
-          icon={<Calendar size={16} className="text-primary-400" />}
+        <Controller
+          name="deadline"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              label="Prazo (opcional)"
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.deadline?.message}
+            />
+          )}
         />
 
         <div className="flex gap-3 justify-end pt-2">

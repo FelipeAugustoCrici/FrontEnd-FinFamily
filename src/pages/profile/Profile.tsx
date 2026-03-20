@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { DatePicker } from '@/components/ui/DatePicker';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTokens } from '@/hooks/useTokens';
-import { User, Mail, Phone, Calendar, Save, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, Save, Loader2 } from 'lucide-react';
 import { fetchUserAttributes, updateUserAttributes } from 'aws-amplify/auth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/useToast';
@@ -104,6 +105,7 @@ export function Profile() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    control,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     values: {
@@ -245,17 +247,18 @@ export function Profile() {
 
             {/* Data de Nascimento */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-primary-700 mb-2">
-                <div className="flex items-center gap-2">
-                  <Calendar size={16} />
-                  Data de Nascimento
-                </div>
-              </label>
-              <Input
-                {...register('birthDate')}
-                type="date"
-                disabled={!isEditing}
-                error={errors.birthDate?.message}
+              <Controller
+                name="birthDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    label="Data de Nascimento"
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={!isEditing}
+                    error={errors.birthDate?.message}
+                  />
+                )}
               />
             </div>
           </div>

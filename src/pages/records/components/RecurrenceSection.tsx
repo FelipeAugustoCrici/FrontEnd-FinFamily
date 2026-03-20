@@ -23,7 +23,7 @@ export function RecurrenceSection() {
         transition: 'all 0.18s ease',
       }}
     >
-      <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
           width: 34,
           height: 34,
@@ -48,10 +48,7 @@ export function RecurrenceSection() {
         </div>
 
         {/* Toggle switch */}
-        <div
-          onClick={(e) => e.preventDefault()}
-          style={{ flexShrink: 0 }}
-        >
+        <div style={{ flexShrink: 0 }}>
           <input
             type="checkbox"
             {...register('isRecurring')}
@@ -84,7 +81,7 @@ export function RecurrenceSection() {
             }} />
           </label>
         </div>
-      </label>
+      </div>
 
       {/* Campo de duração com transição suave */}
       <div style={{

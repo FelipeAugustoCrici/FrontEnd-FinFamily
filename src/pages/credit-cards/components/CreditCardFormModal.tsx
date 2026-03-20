@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { useCreateCreditCard } from '../hooks/useCreditCards';
@@ -63,12 +64,18 @@ export function CreditCardFormModal({ isOpen, onClose, familyId, ownerId }: Prop
 
         <div className="grid grid-cols-2 gap-4">
           <Input label="Banco/Emissor" placeholder="Ex: Nubank" {...register('bank')} icon={<Building2 size={18} className="text-primary-400" />} />
-          <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Bandeira</label>
-            <select {...register('brand')} className="w-full border border-primary-200 rounded-lg px-3 py-2 text-sm text-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500">
-              {CARD_BRANDS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
-            </select>
-          </div>
+          <Controller
+            name="brand"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="Bandeira"
+                options={CARD_BRANDS.map((b) => ({ value: b.value, label: b.label }))}
+                value={field.value}
+                onChange={(val) => field.onChange(val)}
+              />
+            )}
+          />
         </div>
 
         <Controller

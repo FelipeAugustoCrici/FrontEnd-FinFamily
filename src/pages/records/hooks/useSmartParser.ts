@@ -56,11 +56,17 @@ export function saveUserPattern(keyword: string, category: string, type: 'expens
 
 // ─── Extração de valor numérico ──────────────────────────────────────────────
 function extractValue(text: string): string {
-  // Aceita: 1500, 1.500, 1500,50, 1.500,50
-  const match = text.match(/(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)/);
-  if (!match) return '';
-  const raw = match[0].replace(/\.(?=\d{3})/g, '').replace(',', '.');
-  const num = parseFloat(raw);
+  // Captura o número mais longo: 1000, 1.500, 1500,50, 1.500,50
+  // Ordena candidatos por comprimento para pegar o maior match
+  const matches = [...text.matchAll(/\d+(?:[.,]\d+)*/g)];
+  if (!matches.length) return '';
+  // Pega o match mais longo (maior valor provável)
+  const raw = matches.reduce((a, b) => (b[0].length > a[0].length ? b : a))[0];
+  // Remove separador de milhar (ponto antes de 3 dígitos) e normaliza vírgula decimal
+  const normalized = raw
+    .replace(/\.(?=\d{3}(?!\d))/g, '') // remove ponto de milhar
+    .replace(',', '.');                  // vírgula → ponto decimal
+  const num = parseFloat(normalized);
   return isNaN(num) ? '' : num.toString();
 }
 

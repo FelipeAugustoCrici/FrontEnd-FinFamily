@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { DatePicker } from '@/components/ui/DatePicker';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
-import { Calendar, MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { useAddContribution } from '../hooks/useAddContribution';
 import { useUserFamily } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
@@ -69,12 +70,10 @@ export function GoalContributionModal({ goal, isOpen, onClose }: Props) {
           onChange={(v) => setValue(v)}
         />
 
-        <Input
+        <DatePicker
           label="Data"
-          type="date"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
-          icon={<Calendar size={16} className="text-primary-400" />}
+          onChange={(v) => setDate(v)}
         />
 
         <Input
