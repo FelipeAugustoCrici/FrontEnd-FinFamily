@@ -1,1 +1,1 @@
-export { Dashboard } from './Dashboard';
+export { DashboardNew as Dashboard } from './DashboardNew';

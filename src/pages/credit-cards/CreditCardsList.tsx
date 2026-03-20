@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api.service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { useCreditCards, useDeleteCreditCard } from './hooks/useCreditCards';
 import { CardVisual } from './components/CardVisual';
 import { CreditCardFormModal } from './components/CreditCardFormModal';
@@ -31,20 +32,18 @@ export function CreditCardsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Cartões de Crédito</h1>
-          <p className="text-primary-500 text-sm mt-1">Gerencie seus cartões, faturas e compras</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="secondary" onClick={() => setPurchaseModalOpen(true)}>
-            <ShoppingBag size={16} className="mr-2" /> Nova Compra
-          </Button>
-          <Button onClick={() => setCardModalOpen(true)}>
-            <Plus size={16} className="mr-2" /> Novo Cartão
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => setPurchaseModalOpen(true)}>
+              <ShoppingBag size={16} className="mr-2" /> Nova Compra
+            </Button>
+            <Button onClick={() => setCardModalOpen(true)}>
+              <Plus size={16} className="mr-2" /> Novo Cartão
+            </Button>
+          </>
+        }
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

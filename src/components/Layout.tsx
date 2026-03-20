@@ -18,13 +18,9 @@ import {
   PiggyBank,
   ChevronDown,
   Heart,
-} from 'lucide-react';
-import { cn } from './ui/Button';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
+} from 'lucide-react';import { cn } from './ui/Button';
 import { logout } from '@/services/logout';
-import { useUserInfo, useUserFamily } from '@/hooks/useUserInfo';
-import { formatLongDate } from '@/common/utils/date';
+import { PageHeader } from './ui/PageHeader';
 import LogoSvg from '@/common/icons/logo.svg';
 
 interface SidebarItemProps {
@@ -128,14 +124,11 @@ const planningSubItems: SubItem[] = [
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const location = useLocation();
-  const { data: userInfo } = useUserInfo();
-  const { data: family } = useUserFamily();
-  const { isDark, toggle } = useTheme();
 
   const isPlanningActive = location.pathname.startsWith('/planning');
 
   const menuItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/', icon: LayoutDashboard, label: 'Painel Geral' },
     { to: '/record', icon: ListOrdered, label: 'Lançamentos' },
     { to: '/calendar', icon: CalendarDays, label: 'Calendário' },
     { to: '/credit-cards', icon: CreditCard, label: 'Cartões' },
@@ -149,8 +142,8 @@ export const Layout = () => {
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-primary-900 p-6 text-white fixed h-full shadow-2xl z-20">
-        <div className="flex flex-col items-center gap-2 mb-10 px-2">
-          <img src={LogoSvg} alt="FinFamily" className="w-16 h-16 invert" />
+        <div className="flex flex-col items-center mb-5 px-2">
+          <img src={LogoSvg} alt="FinFamily" style={{ width: 118, height: 118 }} className="invert" />
           <span className="text-xl font-bold tracking-tight">FinFamily AI</span>
         </div>
 
@@ -187,44 +180,15 @@ export const Layout = () => {
       </aside>
 
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen">
-        <header className="h-20 bg-white border-b border-primary-100 flex items-center justify-between px-6 sticky top-0 z-10">
+        {/* Mobile menu button — só aparece em telas pequenas */}
+        <div className="md:hidden flex items-center px-4 py-3 bg-white border-b border-primary-100">
           <button
-            className="md:hidden p-2 text-primary-600"
+            className="p-2 text-primary-600"
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu size={24} />
           </button>
-
-          <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-primary-800">
-              {isPlanningActive
-                ? planningSubItems.find((i) => location.pathname === i.to)?.label ?? 'Planejamento'
-                : menuItems.find((item) => location.pathname === item.to || location.pathname.startsWith(item.to + '/'))?.label || 'Bem-vindo'}
-            </h1>
-            <p className="text-xs text-primary-500 hidden sm:block">{formatLongDate(new Date())}</p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggle}
-              className="p-2 rounded-lg text-primary-500 hover:bg-primary-100 transition-colors"
-              aria-label="Alternar tema"
-            >
-              {isDark ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-semibold text-primary-800">
-                {userInfo?.name || 'Carregando...'}
-              </span>
-              <span className="text-xs text-primary-600 font-medium">
-                {family?.name || 'Sem família'}
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-primary-200 border-2 border-white shadow-sm flex items-center justify-center text-primary-700 font-bold">
-              {userInfo?.initials || '?'}
-            </div>
-          </div>
-        </header>
+        </div>
 
         <div className="p-6 md:p-8 animate-in fade-in duration-500">
           <Outlet />

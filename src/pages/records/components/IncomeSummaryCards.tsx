@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { financeService } from '@/services/api';
-import { Card } from '@/components/ui/Card';
-import { DollarSign, TrendingUp, User, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { useTokens } from '@/hooks/useTokens';
+import { ChevronDown, Edit2, Trash2 } from 'lucide-react';
 import _ from 'lodash';
 
 interface IncomeSummaryCardsProps {
@@ -15,6 +15,9 @@ interface IncomeSummaryCardsProps {
   onDelete?: (id: string, type: 'income' | 'extra') => void;
 }
 
+const fmt = (v: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
 export function IncomeSummaryCards({
   month,
   year,
@@ -23,6 +26,7 @@ export function IncomeSummaryCards({
   onDelete,
 }: IncomeSummaryCardsProps) {
   const navigate = useNavigate();
+  const t = useTokens();
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const [itemToDelete, setItemToDelete] = useState<{
     id: string;
@@ -30,41 +34,22 @@ export function IncomeSummaryCards({
     description: string;
   } | null>(null);
 
-  // Buscar salários (incomes)
   const { data: incomes = [], isLoading: isLoadingIncomes } = useQuery({
     queryKey: ['incomes-summary', month, year, familyId],
     queryFn: () => financeService.getIncomes(month, year, familyId),
     enabled: !!familyId,
   });
 
-  // Buscar bônus/extras
   const { data: extrasData, isLoading: isLoadingExtras } = useQuery({
     queryKey: ['extras-summary', month, year],
-    queryFn: async () => {
-      const result = await financeService.getExtras(month, year);
-      return result;
-    },
+    queryFn: () => financeService.getExtras(month, year),
   });
 
-  // A API de extras retorna { data: [...] }
   const extras = Array.isArray(extrasData) ? extrasData : extrasData?.data || [];
-
   const isLoading = isLoadingIncomes || isLoadingExtras;
 
-  const toggleCard = (personId: string) => {
-    setExpandedCards((prev) => ({
-      ...prev,
-      [personId]: !prev[personId],
-    }));
-  };
-
-  const handleEdit = (id: string, type: 'income' | 'extra') => {
-    navigate(`/record/edit/${id}`);
-  };
-
-  const handleDeleteClick = (id: string, type: 'income' | 'extra', description: string) => {
-    setItemToDelete({ id, type, description });
-  };
+  const toggleCard = (personId: string) =>
+    setExpandedCards((prev) => ({ ...prev, [personId]: !prev[personId] }));
 
   const handleConfirmDelete = () => {
     if (itemToDelete && onDelete) {
@@ -75,216 +60,224 @@ export function IncomeSummaryCards({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="animate-pulse">
-            <div className="bg-white rounded-lg border border-primary-100 p-6 h-32" />
-          </div>
+          <div
+            key={i}
+            className="animate-pulse rounded-2xl h-36"
+            style={{ background: t.bg.card, border: `1px solid ${t.border.default}` }}
+          />
         ))}
       </div>
     );
   }
 
-  // Agrupar incomes (salários) por pessoa
   const incomesByPerson = _.groupBy(incomes, 'personId');
-
-  // Agrupar extras (bônus) por pessoa
   const extrasByPerson = _.groupBy(extras, 'personId');
 
-  // Calcular totais por pessoa
   const personSummaries = people
     .map((person) => {
       const personIncomes = incomesByPerson[person.id] || [];
       const personExtras = extrasByPerson[person.id] || [];
-
-      // Salário = soma de todos os incomes
       const salary = _.sumBy(personIncomes, 'value');
-
-      // Bônus = soma de todos os extras
       const bonus = _.sumBy(personExtras, 'value');
-
       const total = salary + bonus;
-
-      return {
-        person,
-        salary,
-        bonus,
-        total,
-        incomes: personIncomes,
-        extras: personExtras,
-      };
+      return { person, salary, bonus, total, incomes: personIncomes, extras: personExtras };
     })
-    .filter((summary) => summary.total > 0); // Mostrar apenas pessoas com renda
+    .filter((s) => s.total > 0);
 
-  if (personSummaries.length === 0) {
-    return null;
-  }
+  if (personSummaries.length === 0) return null;
+
+  const familyTotal = _.sumBy(personSummaries, 'total');
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {personSummaries.map(
-          ({ person, salary, bonus, total, incomes: personIncomes, extras: personExtras }) => {
-            const isExpanded = expandedCards[person.id];
-            const hasItems = personIncomes.length > 0 || personExtras.length > 0;
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {personSummaries.map(({ person, salary, bonus, total, incomes: pIncomes, extras: pExtras }) => {
+          const isExpanded = expandedCards[person.id];
+          const hasItems = pIncomes.length > 0 || pExtras.length > 0;
+          const familyPct = familyTotal > 0 ? (total / familyTotal) * 100 : 0;
+          const initials = person.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
 
-            return (
-              <Card key={person.id} className="overflow-hidden">
-                <div className="p-6">
-                  {/* Header com nome da pessoa */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary-50 rounded-lg">
-                        <User size={20} className="text-primary-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-primary-800">{person.name}</h3>
-                        <p className="text-xs text-primary-500">Rendimentos do mês</p>
-                      </div>
+          return (
+            <div
+              key={person.id}
+              className="rounded-2xl overflow-hidden"
+              style={{
+                background: t.bg.card,
+                border: `1px solid ${t.border.default}`,
+                boxShadow: t.shadow.card,
+              }}
+            >
+              <div className="p-5">
+                {/* Topo: avatar + nome + toggle */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
+                      style={{
+                        background: t.income.bgIcon,
+                        color: t.income.text,
+                      }}
+                    >
+                      {initials}
                     </div>
-                    {hasItems && (
-                      <button
-                        onClick={() => toggleCard(person.id)}
-                        className="p-1 hover:bg-primary-50 rounded transition-colors"
-                      >
-                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Valores resumidos */}
-                  <div className="space-y-3">
-                    {/* Salário */}
-                    {salary > 0 && (
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <DollarSign size={16} className="text-success-600" />
-                          <span className="text-xs text-primary-600">Salário</span>
-                        </div>
-                        <span className="text-sm font-semibold text-success-600">
-                          R${' '}
-                          {salary.toLocaleString('pt-BR', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Bônus */}
-                    {bonus > 0 && (
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <TrendingUp size={16} className="text-blue-600" />
-                          <span className="text-xs text-primary-600">Bônus/Extra</span>
-                        </div>
-                        <span className="text-sm font-semibold text-blue-600">
-                          R${' '}
-                          {bonus.toLocaleString('pt-BR', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Total */}
-                    <div className="pt-3 border-t border-primary-100">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-primary-700">Total</span>
-                        <span className="text-lg font-bold text-primary-800">
-                          R${' '}
-                          {total.toLocaleString('pt-BR', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </span>
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: t.text.primary }}>
+                        {person.name}
+                      </p>
+                      <p className="text-xs" style={{ color: t.text.subtle }}>
+                        Rendimentos do mês
+                      </p>
                     </div>
                   </div>
-
-                  {/* Lista expandida de itens */}
-                  {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-primary-100 space-y-2">
-                      {/* Salários */}
-                      {personIncomes.map((income: any) => (
-                        <div
-                          key={income.id}
-                          className="flex items-center justify-between p-2 bg-success-50/30 rounded-lg group"
-                        >
-                          <div className="flex-1">
-                            <p className="text-xs font-medium text-primary-800">
-                              {income.description}
-                            </p>
-                            <p className="text-xs text-success-600 font-semibold">
-                              R${' '}
-                              {income.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                            </p>
-                          </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={() => handleEdit(income.id, 'income')}
-                              className="p-1 hover:bg-success-100 rounded text-primary-600"
-                            >
-                              <Edit2 size={14} />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteClick(income.id, 'income', income.description)
-                              }
-                              className="p-1 hover:bg-danger-100 rounded text-danger-600"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Bônus/Extras */}
-                      {personExtras.map((extra: any) => (
-                        <div
-                          key={extra.id}
-                          className="flex items-center justify-between p-2 bg-blue-50/30 rounded-lg group"
-                        >
-                          <div className="flex-1">
-                            <p className="text-xs font-medium text-primary-800">
-                              {extra.description}
-                            </p>
-                            <p className="text-xs text-blue-600 font-semibold">
-                              R$ {extra.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                            </p>
-                          </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={() => handleEdit(extra.id, 'extra')}
-                              className="p-1 hover:bg-blue-100 rounded text-primary-600"
-                            >
-                              <Edit2 size={14} />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteClick(extra.id, 'extra', extra.description)
-                              }
-                              className="p-1 hover:bg-danger-100 rounded text-danger-600"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  {hasItems && (
+                    <button
+                      onClick={() => toggleCard(person.id)}
+                      className="p-1.5 rounded-lg transition-all duration-200"
+                      style={{ color: t.text.muted }}
+                      onMouseEnter={e => (e.currentTarget.style.background = t.bg.muted)}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <ChevronDown
+                        size={16}
+                        style={{
+                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.2s ease',
+                        }}
+                      />
+                    </button>
                   )}
                 </div>
 
-                {/* Barra de progresso visual */}
-                <div className="h-1 bg-gradient-to-r from-success-500 to-blue-500" />
-              </Card>
-            );
-          },
-        )}
+                {/* Total em destaque */}
+                <div className="mb-4">
+                  <p className="text-2xl font-black" style={{ color: t.income.text }}>
+                    {fmt(total)}
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: t.text.subtle }}>
+                    {familyPct.toFixed(0)}% da renda familiar
+                  </p>
+                </div>
+
+                {/* Barra de participação */}
+                <div
+                  className="w-full h-1.5 rounded-full overflow-hidden mb-4"
+                  style={{ background: t.bg.mutedStrong }}
+                >
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${familyPct}%`,
+                      background: `linear-gradient(90deg, ${t.income.text}, ${t.income.textAlt})`,
+                    }}
+                  />
+                </div>
+
+                {/* Composição resumida (sempre visível) */}
+                <div className="flex items-center gap-3">
+                  {salary > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: t.income.text }}
+                      />
+                      <span className="text-xs" style={{ color: t.text.muted }}>
+                        Salário{' '}
+                        <span style={{ color: t.text.secondary, fontWeight: 600 }}>
+                          {fmt(salary)}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                  {bonus > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: t.investment.text }}
+                      />
+                      <span className="text-xs" style={{ color: t.text.muted }}>
+                        Extra{' '}
+                        <span style={{ color: t.text.secondary, fontWeight: 600 }}>
+                          {fmt(bonus)}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Seção expandida: lançamentos individuais */}
+              {isExpanded && hasItems && (
+                <div
+                  className="px-5 pb-4 pt-3 space-y-1"
+                  style={{ borderTop: `1px solid ${t.border.divider}` }}
+                >
+                  {[
+                    ...pIncomes.map((i: any) => ({ ...i, kind: 'income' as const })),
+                    ...pExtras.map((e: any) => ({ ...e, kind: 'extra' as const })),
+                  ].map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between py-1.5 group"
+                    >
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div
+                          className="w-1.5 h-1.5 rounded-full shrink-0"
+                          style={{
+                            background: item.kind === 'income' ? t.income.text : t.investment.text,
+                          }}
+                        />
+                        <span
+                          className="text-xs truncate"
+                          style={{ color: t.text.secondary }}
+                        >
+                          {item.description}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                        <span
+                          className="text-xs font-semibold"
+                          style={{
+                            color: item.kind === 'income' ? t.income.text : t.investment.text,
+                          }}
+                        >
+                          {fmt(item.value)}
+                        </span>
+                        <div
+                          className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                        >
+                          <button
+                            onClick={() => navigate(`/record/edit/${item.id}`)}
+                            className="p-1 rounded transition-colors"
+                            style={{ color: t.text.muted }}
+                            onMouseEnter={e => (e.currentTarget.style.background = t.bg.mutedStrong)}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setItemToDelete({ id: item.id, type: item.kind, description: item.description })
+                            }
+                            className="p-1 rounded transition-colors"
+                            style={{ color: t.text.muted }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = t.expense.bgIcon; (e.currentTarget as HTMLElement).style.color = t.expense.text; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = t.text.muted; }}
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Modal de confirmação de exclusão */}
       <ConfirmModal
         isOpen={!!itemToDelete}
         onClose={() => setItemToDelete(null)}

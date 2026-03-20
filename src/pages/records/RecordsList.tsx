@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Pagination } from '@/components/ui/Pagination';
-import { cn } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { api } from '@/services/api.service';
-import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye } from 'lucide-react';
+import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Loader2, Eye, Download, Plus } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
 
-import { RecordsHeader } from './components/RecordsHeader';
 import { RecordsFilters } from './components/RecordsFilters';
 import { StatusBadge } from './components/StatusBadge';
 import { IncomeSummaryCards } from './components/IncomeSummaryCards';
+import { QuickLaunchInput } from './components/QuickLaunch/QuickLaunchInput';
 import { useRecordFilters } from './hooks/useRecordFilters';
 import { useRecords } from './hooks/useRecords';
 import { useDeleteRecord } from './hooks/useDeleteRecord';
@@ -31,7 +32,9 @@ export function RecordsList() {
   const updateStatus = useUpdateRecordStatus();
 
   const [recordToDelete, setRecordToDelete] = useState<UnifiedRecord | null>(null);
+  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const itemsPerPage = 10;
+  const t = useTokens();
 
   // Busca a família para obter o familyId
   const { data: families = [] } = useQuery({
@@ -127,7 +130,22 @@ export function RecordsList() {
 
   return (
     <div className="space-y-6">
-      <RecordsHeader onCreate={() => navigate('/record/create')} />
+      <PageHeader
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => window.print()}>
+              <Download size={16} className="mr-2" /> Exportar
+            </Button>
+            <Button onClick={() => navigate('/record/create')}>
+              <Plus size={16} className="mr-2" /> Novo Lançamento
+            </Button>
+          </>
+        }
+      />
+
+      <QuickLaunchInput />
+
+      {/* Cards de resumo de rendimentos por pessoa */}
 
       {/* Cards de resumo de rendimentos por pessoa */}
       <IncomeSummaryCards
@@ -159,142 +177,167 @@ export function RecordsList() {
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-primary-50/50">
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Descrição
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Categoria
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Data
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Valor
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider">
-                    Responsável
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-primary-600 uppercase tracking-wider text-right">
-                    Ações
-                  </th>
+                <tr style={{ borderBottom: `1px solid ${t.border.divider}` }}>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descrição</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Categoria</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Data</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tipo</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Valor</th>
+                  <th className="px-6 py-3.5" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Responsável</th>
+                  <th className="px-6 py-3.5 text-right" style={{ color: t.text.muted, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary-50">
+              <tbody>
                 {paginatedRecords.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-10 text-center text-primary-500 italic">
+                    <td colSpan={8} className="px-6 py-10 text-center italic" style={{ color: t.text.muted }}>
                       Nenhum lançamento encontrado para este período.
                     </td>
                   </tr>
                 ) : (
-                  _.map(paginatedRecords, (tx, idx) => (
-                    <tr key={idx} className="hover:bg-primary-50/30 transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              'p-2 rounded-lg',
-                              tx.type === 'income'
-                                ? 'bg-success-50 text-success-600'
-                                : 'bg-danger-50 text-danger-600',
-                            )}
-                          >
-                            {tx.type === 'income' ? (
-                              <ArrowUpCircle size={18} />
-                            ) : (
-                              <ArrowDownCircle size={18} />
-                            )}
+                  _.map(paginatedRecords, (tx, idx) => {
+                    const isIncome = tx.type === 'income';
+                    const rowBg = idx % 2 !== 0 ? t.bg.cardSubtle : 'transparent';
+                    return (
+                      <tr
+                        key={idx}
+                        className="group"
+                        style={{ background: hoveredRow === idx ? t.bg.cardHover : rowBg, borderBottom: `1px solid ${t.border.subtle}`, transition: 'background 0.2s ease', cursor: 'pointer' }}
+                        onMouseEnter={() => setHoveredRow(idx)}
+                        onMouseLeave={() => setHoveredRow(null)}
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="p-2 rounded-lg shrink-0"
+                              style={{
+                                background: isIncome ? t.income.bgIcon : t.expense.bgIcon,
+                              }}
+                            >
+                              {isIncome
+                                ? <ArrowUpCircle size={16} style={{ color: t.income.text }} />
+                                : <ArrowDownCircle size={16} style={{ color: t.expense.text }} />
+                              }
+                            </div>
+                            <button
+                              onClick={() => navigate(`/record/detail/${tx.id}`)}
+                              className="text-sm text-left transition-all duration-200"
+                              style={{ fontWeight: 500, color: t.text.primary }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; (e.currentTarget as HTMLElement).style.color = t.text.link; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; (e.currentTarget as HTMLElement).style.color = t.text.primary; }}
+                            >
+                              {tx.description}
+                            </button>
                           </div>
-                          <button
-                            onClick={() => navigate(`/record/detail/${tx.id}`)}
-                            className="text-sm font-semibold text-primary-800 hover:text-primary-600 transition-colors text-left"
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className="text-xs font-medium px-2.5 py-1 rounded-full"
+                            style={{
+                              background: 'rgba(99,102,241,0.12)',
+                              color: '#818cf8',
+                              border: '1px solid rgba(99,102,241,0.15)',
+                            }}
                           >
-                            {tx.description}
-                          </button>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge variant={tx.type === 'income' ? 'success' : 'primary'}>
-                          {tx.category?.name || tx.categoryName || 'Geral'}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-primary-500">
-                        {formatShortDate(tx.date)}
-                      </td>
-                      <td className="px-6 py-4">
-                        {tx.type === 'expense' ? (
-                          <Badge variant={tx.recurringId ? 'primary' : 'info'}>
-                            {tx.recurringId ? 'Fixo' : 'Variável'}
-                          </Badge>
-                        ) : tx.sourceId ? (
-                          <Badge variant="success">Fixo</Badge>
-                        ) : (
-                          <span className="text-xs text-primary-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <StatusBadge
-                          status={tx.status || 'PENDING'}
-                          onChange={(newStatus) => handleStatusChange(tx.id, newStatus)}
-                          disabled={updateStatus.isPending}
-                        />
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={cn(
-                            'text-sm font-bold',
-                            tx.type === 'income' ? 'text-success-600' : 'text-danger-600',
+                            {tx.category?.name || tx.categoryName || 'Geral'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm" style={{ color: t.text.muted }}>
+                          {formatShortDate(tx.date)}
+                        </td>
+                        <td className="px-6 py-4">
+                          {tx.type === 'expense' ? (
+                            <span
+                              className="text-xs font-medium px-2.5 py-1 rounded-full"
+                              style={{
+                                background: tx.recurringId ? t.balance.bgIcon : t.investment.bgIcon,
+                                color: tx.recurringId ? t.balance.textAlt : t.investment.text,
+                                border: `1px solid ${tx.recurringId ? t.balance.border : t.investment.border}`,
+                              }}
+                            >
+                              {tx.recurringId ? 'Fixo' : 'Variável'}
+                            </span>
+                          ) : tx.sourceId ? (
+                            <span
+                              className="text-xs font-medium px-2.5 py-1 rounded-full"
+                              style={{
+                                background: t.income.bgIcon,
+                                color: t.income.text,
+                                border: `1px solid ${t.income.border}`,
+                              }}
+                            >
+                              Fixo
+                            </span>
+                          ) : (
+                            <span style={{ color: t.text.subtle, fontSize: '12px' }}>—</span>
                           )}
-                        >
-                          {tx.type === 'expense' ? '- ' : '+ '} {formatCurrency(tx.value)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-primary-600 font-medium">
+                        </td>
+                        <td className="px-6 py-4">
+                          <StatusBadge
+                            status={tx.status || 'PENDING'}
+                            onChange={(newStatus) => handleStatusChange(tx.id, newStatus)}
+                            disabled={updateStatus.isPending}
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className="text-sm"
+                            style={{
+                              fontWeight: 600,
+                              fontSize: '14px',
+                              color: isIncome ? t.income.text : t.expense.text,
+                            }}
+                          >
+                            {isIncome ? '+ ' : '- '}{formatCurrency(tx.value)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-medium" style={{ color: t.text.secondary }}>
                             {getPersonName(tx.personId)}
                           </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => navigate(`/record/detail/${tx.id}`)}
-                            className="p-1.5 text-primary-400 hover:text-primary-700 hover:bg-primary-100 rounded-md transition-colors"
-                            title="Ver detalhes"
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div
+                            className="flex items-center justify-end gap-1.5 transition-all duration-200"
+                            style={{ opacity: hoveredRow === idx ? 1 : 0 }}
                           >
-                            <Eye size={16} />
-                          </button>
-                          <button
-                            onClick={() => navigate(`/record/edit/${tx.id}`)}
-                            className="p-1.5 text-primary-400 hover:text-primary-700 hover:bg-primary-100 rounded-md transition-colors"
-                            title="Editar"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(tx)}
-                            disabled={deleteRecord.isPending}
-                            className="p-1.5 text-primary-400 hover:text-danger-600 hover:bg-danger-50 rounded-md transition-colors disabled:opacity-50"
-                            title="Excluir"
-                          >
-                            {deleteRecord.isPending ? (
-                              <Loader2 size={16} className="animate-spin" />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                            <button
+                              onClick={() => navigate(`/record/detail/${tx.id}`)}
+                              className="p-1.5 rounded-lg transition-all duration-200"
+                              style={{ color: t.text.muted }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = t.bg.mutedStrong; (e.currentTarget as HTMLElement).style.color = t.text.primary; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = t.text.muted; }}
+                              title="Ver detalhes"
+                            >
+                              <Eye size={15} />
+                            </button>
+                            <button
+                              onClick={() => navigate(`/record/edit/${tx.id}`)}
+                              className="p-1.5 rounded-lg transition-all duration-200"
+                              style={{ color: t.text.muted }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = t.bg.mutedStrong; (e.currentTarget as HTMLElement).style.color = t.text.primary; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = t.text.muted; }}
+                              title="Editar"
+                            >
+                              <Edit2 size={15} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(tx)}
+                              disabled={deleteRecord.isPending}
+                              className="p-1.5 rounded-lg transition-all duration-200 disabled:opacity-50"
+                              style={{ color: t.text.muted }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = t.expense.bgIcon; (e.currentTarget as HTMLElement).style.color = t.expense.text; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = t.text.muted; }}
+                              title="Excluir"
+                            >
+                              {deleteRecord.isPending ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

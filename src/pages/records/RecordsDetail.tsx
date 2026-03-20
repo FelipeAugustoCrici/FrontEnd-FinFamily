@@ -1,49 +1,98 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button, cn } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { api } from '@/services/api.service';
+import { useTokens } from '@/hooks/useTokens';
 import {
-  ArrowUpCircle,
-  ArrowDownCircle,
   ArrowLeft,
-  Calendar,
-  Tag,
-  FileText,
-  Download,
-  Trash2,
   Edit2,
+  Trash2,
   Loader2,
+  Copy,
+  Calendar,
   User,
+  Tag,
+  RefreshCw,
+  Users,
+  TrendingDown,
+  TrendingUp,
+  Sparkles,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { formatMediumDate, formatShortDate } from '@/common/utils/date';
+
+const TYPE_CONFIG = {
+  expense: {
+    label: 'Despesa',
+    icon: TrendingDown,
+    color: '#ef4444',
+    bg: (isDark: boolean) => isDark ? 'rgba(239,68,68,0.12)' : '#fef2f2',
+    border: (isDark: boolean) => isDark ? 'rgba(239,68,68,0.30)' : '#fecaca',
+    text: (isDark: boolean) => isDark ? '#fca5a5' : '#991b1b',
+    accentBar: '#ef4444',
+  },
+  salary: {
+    label: 'Salário',
+    icon: TrendingUp,
+    color: '#10b981',
+    bg: (isDark: boolean) => isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5',
+    border: (isDark: boolean) => isDark ? 'rgba(16,185,129,0.30)' : '#a7f3d0',
+    text: (isDark: boolean) => isDark ? '#6ee7b7' : '#166534',
+    accentBar: '#10b981',
+  },
+  income: {
+    label: 'Extra / Bônus',
+    icon: Sparkles,
+    color: '#6366f1',
+    bg: (isDark: boolean) => isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff',
+    border: (isDark: boolean) => isDark ? 'rgba(99,102,241,0.30)' : '#c7d2fe',
+    text: (isDark: boolean) => isDark ? '#a5b4fc' : '#3730a3',
+    accentBar: '#6366f1',
+  },
+};
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: (d: boolean) => string; icon: React.ElementType }> = {
+  PAID:    { label: 'Pago',     color: '#10b981', bg: (d) => d ? 'rgba(16,185,129,0.15)' : '#dcfce7', icon: CheckCircle2 },
+  PENDING: { label: 'Pendente', color: '#f59e0b', bg: (d) => d ? 'rgba(245,158,11,0.15)' : '#fef9c3', icon: Clock },
+  OVERDUE: { label: 'Atrasado', color: '#ef4444', bg: (d) => d ? 'rgba(239,68,68,0.15)' : '#fee2e2', icon: AlertCircle },
+};
+
+function InfoRow({ label, value, icon: Icon, t }: { label: string; value: string; icon: React.ElementType; t: any }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <Icon size={12} color={t.text.muted} />
+        <span style={{ fontSize: 10, fontWeight: 600, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</span>
+      </div>
+      <span style={{ fontSize: 13, fontWeight: 600, color: t.text.primary }}>{value}</span>
+    </div>
+  );
+}
 
 export function RecordsDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const t = useTokens();
+  const isDark = t.bg.page === '#020617';
 
-  // Buscar o registro tentando em todas as rotas
   const { data: record, isLoading } = useQuery({
     queryKey: ['record-detail', id],
     queryFn: async () => {
       if (!id) return null;
-
-      // Tenta buscar em expenses primeiro
       try {
         const { data } = await api.get(`/finance/expenses/${id}`);
         return { ...data, recordType: 'expense' };
       } catch {
-        // Se não encontrou em expenses, tenta incomes
         try {
           const { data } = await api.get(`/finance/incomes/${id}`);
           return { ...data, recordType: 'salary' };
         } catch {
-          // Se não encontrou em incomes, tenta extras
           const { data } = await api.get(`/finance/extras/${id}`);
           return { ...data, recordType: 'income' };
         }
@@ -55,14 +104,7 @@ export function RecordsDetail() {
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (!record) return;
-
-      const route =
-        record.recordType === 'expense'
-          ? 'expenses'
-          : record.recordType === 'salary'
-            ? 'incomes'
-            : 'extras';
-
+      const route = record.recordType === 'expense' ? 'expenses' : record.recordType === 'salary' ? 'incomes' : 'extras';
       await api.delete(`/finance/${route}/${id}`);
     },
     onSuccess: () => {
@@ -74,223 +116,347 @@ export function RecordsDetail() {
     },
   });
 
-  const handleDelete = () => {
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteMutation.mutate();
-    setShowDeleteModal(false);
-  };
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-  };
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+        <Loader2 size={32} style={{ color: '#6366f1' }} className="animate-spin" />
       </div>
     );
   }
 
   if (!record) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <p className="text-primary-500">Nenhum detalhe disponível para este lançamento.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 240, gap: 16 }}>
+        <p style={{ color: t.text.muted }}>Nenhum detalhe disponível para este lançamento.</p>
         <Button onClick={() => navigate('/record')}>Voltar para Listagem</Button>
       </div>
     );
   }
 
-  const isIncome = record.recordType === 'salary' || record.recordType === 'income';
-  const typeLabel =
-    record.recordType === 'expense'
-      ? 'Despesa'
-      : record.recordType === 'salary'
-        ? 'Salário'
-        : 'Bônus/Extra';
+  const typeKey = (record.recordType as keyof typeof TYPE_CONFIG) || 'expense';
+  const type = TYPE_CONFIG[typeKey];
+  const TypeIcon = type.icon;
+  const statusCfg = record.status ? STATUS_CONFIG[record.status] : null;
+  const StatusIcon = statusCfg?.icon;
+
+  const hasHistory = record.updatedAt && record.updatedAt !== record.createdAt;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/record')}>
-            <ArrowLeft size={18} />
-          </Button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Topbar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={() => navigate('/record')}
+            style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: t.bg.muted, border: `1px solid ${t.border.default}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: t.text.secondary,
+            }}
+          >
+            <ArrowLeft size={16} />
+          </button>
           <div>
-            <h2 className="text-2xl font-bold text-primary-800">Detalhes do Lançamento</h2>
-            <p className="text-primary-500 text-sm">Registro gerado pelo sistema</p>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: t.text.primary, lineHeight: 1.2 }}>
+              Detalhes do Lançamento
+            </h2>
+            <p style={{ fontSize: 12, color: t.text.muted }}>Registro gerado pelo sistema</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="sm" onClick={() => navigate(`/record/edit/${id}`)}>
-            <Edit2 size={16} className="mr-2" /> Editar
-          </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={handleDelete}
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending ? (
-              <Loader2 size={16} className="animate-spin mr-2" />
-            ) : (
-              <Trash2 size={16} className="mr-2" />
-            )}
-            Excluir
-          </Button>
-        </div>
+
+
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <Card
-            className={cn('border-l-4', isIncome ? 'border-l-success-500' : 'border-l-danger-500')}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div
-                  className={cn(
-                    'p-3 rounded-xl',
-                    isIncome ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600',
-                  )}
-                >
-                  {isIncome ? <ArrowUpCircle size={32} /> : <ArrowDownCircle size={32} />}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-primary-800">{record.description}</h3>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    <Badge variant={isIncome ? 'success' : 'danger'}>{typeLabel}</Badge>
-                    {record.category && <Badge variant="primary">{record.category.name}</Badge>}
-                    {record.status && (
-                      <Badge
-                        variant={
-                          record.status === 'PAID'
-                            ? 'success'
-                            : record.status === 'PENDING'
-                              ? 'warning'
-                              : 'danger'
-                        }
-                      >
-                        {record.status === 'PAID'
-                          ? 'Pago'
-                          : record.status === 'PENDING'
-                            ? 'Pendente'
-                            : 'Atrasado'}
-                      </Badge>
-                    )}
+      {/* Layout principal */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start' }}>
+
+        {/* Coluna esquerda */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Card principal */}
+          <div style={{
+            background: t.bg.card,
+            border: `1px solid ${t.border.default}`,
+            borderRadius: 18,
+            boxShadow: t.shadow.card,
+            overflow: 'hidden',
+          }}>
+            {/* Barra de acento colorida */}
+            <div style={{ height: 4, background: type.accentBar }} />
+
+            <div style={{ padding: '20px 22px' }}>
+              {/* Topo: ícone + descrição + badges + valor */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: 14, flexShrink: 0,
+                    background: type.bg(isDark),
+                    border: `1.5px solid ${type.border(isDark)}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <TypeIcon size={22} color={type.color} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: t.text.primary, marginBottom: 8, lineHeight: 1.3 }}>
+                      {record.description}
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {/* Badge tipo */}
+                      <span style={{
+                        fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 999,
+                        background: type.bg(isDark), color: type.text(isDark),
+                        border: `1px solid ${type.border(isDark)}`,
+                      }}>
+                        {type.label}
+                      </span>
+                      {/* Badge status */}
+                      {statusCfg && StatusIcon && (
+                        <span style={{
+                          fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 999,
+                          background: statusCfg.bg(isDark), color: statusCfg.color,
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}>
+                          <StatusIcon size={11} />
+                          {statusCfg.label}
+                        </span>
+                      )}
+                      {/* Badge categoria */}
+                      {record.category && (
+                        <span style={{
+                          fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
+                          background: t.bg.muted, color: t.text.secondary,
+                          border: `1px solid ${t.border.default}`,
+                        }}>
+                          {record.category.name}
+                        </span>
+                      )}
+                      {/* Badge recorrente */}
+                      {record.recurringId && (
+                        <span style={{
+                          fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
+                          background: isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff',
+                          color: isDark ? '#a5b4fc' : '#4338ca',
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}>
+                          <RefreshCw size={10} />
+                          Recorrente
+                        </span>
+                      )}
+                      {/* Badge compartilhado */}
+                      {record.isShared && (
+                        <span style={{
+                          fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
+                          background: t.bg.muted, color: t.text.muted,
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}>
+                          <Users size={10} />
+                          Compartilhado
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {/* Valor */}
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                    Valor
+                  </p>
+                  <p style={{ fontSize: 30, fontWeight: 900, color: type.color, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                    {formatCurrency(record.value)}
+                  </p>
+                </div>
               </div>
-              <div className="text-left sm:text-right">
-                <p className="text-xs text-primary-500 uppercase font-bold tracking-wider">
-                  Valor do Lançamento
-                </p>
-                <p
-                  className={cn(
-                    'text-3xl font-black',
-                    isIncome ? 'text-success-600' : 'text-danger-600',
-                  )}
-                >
-                  {formatCurrency(record.value)}
-                </p>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: t.border.divider, marginBottom: 16 }} />
+
+              {/* Grid de informações */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                <InfoRow label="Data" value={formatMediumDate(record.date)} icon={Calendar} t={t} />
+                {record.person && <InfoRow label="Responsável" value={record.person.name} icon={User} t={t} />}
+                {record.category
+                  ? <InfoRow label="Categoria" value={record.category.name} icon={Tag} t={t} />
+                  : <InfoRow label="Tipo" value={type.label} icon={TypeIcon} t={t} />
+                }
               </div>
             </div>
-          </Card>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Card title="Dados do Registro">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Calendar className="text-primary-400 mt-0.5" size={18} />
-                  <div>
-                    <p className="text-xs text-primary-500 font-medium">Data do Lançamento</p>
-                    <p className="text-sm font-semibold text-primary-800">
-                      {formatMediumDate(record.date)}
-                    </p>
-                  </div>
-                </div>
-                {record.category && (
-                  <div className="flex items-start gap-3">
-                    <Tag className="text-primary-400 mt-0.5" size={18} />
-                    <div>
-                      <p className="text-xs text-primary-500 font-medium">Categoria</p>
-                      <p className="text-sm font-semibold text-primary-800 capitalize">
-                        {record.category.name}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {record.person && (
-                  <div className="flex items-start gap-3">
-                    <User className="text-primary-400 mt-0.5" size={18} />
-                    <div>
-                      <p className="text-xs text-primary-500 font-medium">Responsável</p>
-                      <p className="text-sm font-semibold text-primary-800">{record.person.name}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
-
-            <Card title="Informações Adicionais">
-              <div className="flex items-start gap-3">
-                <FileText className="text-primary-400 mt-0.5" size={18} />
-                <p className="text-sm text-primary-600 leading-relaxed">
-                  {record.recordType === 'expense' && 'Despesa registrada no sistema. '}
-                  {record.recordType === 'salary' && 'Salário fixo mensal. '}
-                  {record.recordType === 'income' && 'Rendimento extra ou bônus. '}
-                  {record.recurringId && 'Este é um lançamento recorrente.'}
-                </p>
-              </div>
-            </Card>
           </div>
 
-          <Card title="Histórico">
-            <div className="space-y-6 relative before:absolute before:inset-0 before:left-2.5 before:w-0.5 before:bg-primary-100">
-              <div className="flex gap-6 relative">
-                <div className="w-5 h-5 rounded-full bg-white border-4 border-success-500 z-10 flex-shrink-0"></div>
-                <div className="pb-2">
-                  <p className="text-sm font-bold text-primary-800">Lançamento Efetivado</p>
-                  <p className="text-xs text-primary-500">
+          {/* Informações do Lançamento */}
+          <div style={{
+            background: t.bg.card,
+            border: `1px solid ${t.border.default}`,
+            borderRadius: 18,
+            padding: '18px 22px',
+            boxShadow: t.shadow.card,
+          }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>
+              Informações do Lançamento
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+              <InfoRow label="Data" value={formatMediumDate(record.date)} icon={Calendar} t={t} />
+              {record.person && <InfoRow label="Responsável" value={record.person.name} icon={User} t={t} />}
+              {record.category && <InfoRow label="Categoria" value={record.category.name} icon={Tag} t={t} />}
+              <InfoRow label="Tipo" value={type.label} icon={TypeIcon} t={t} />
+              {record.status && statusCfg && (
+                <InfoRow label="Status" value={statusCfg.label} icon={statusCfg.icon} t={t} />
+              )}
+              {record.createdAt && (
+                <InfoRow label="Criado em" value={formatShortDate(record.createdAt)} icon={Clock} t={t} />
+              )}
+            </div>
+          </div>
+
+          {/* Histórico */}
+          <div style={{
+            background: t.bg.card,
+            border: `1px solid ${t.border.default}`,
+            borderRadius: 18,
+            padding: '18px 22px',
+            boxShadow: t.shadow.card,
+          }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+              Histórico
+            </p>
+            <div style={{ position: 'relative', paddingLeft: 20 }}>
+              {/* Linha vertical */}
+              <div style={{
+                position: 'absolute', left: 6, top: 8,
+                width: 2, background: t.border.default,
+                bottom: hasHistory ? 8 : 'auto',
+                height: hasHistory ? undefined : 0,
+              }} />
+
+              {/* Evento criação */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: hasHistory ? 16 : 0 }}>
+                <div style={{
+                  width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
+                  background: '#10b981', border: `2px solid ${t.bg.card}`,
+                  boxShadow: `0 0 0 2px #10b981`,
+                  position: 'absolute', left: 0,
+                }} />
+                <div style={{ paddingLeft: 4 }}>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: t.text.primary }}>Lançamento Efetivado</p>
+                  <p style={{ fontSize: 11, color: t.text.muted }}>
                     Criado em {formatShortDate(record.createdAt || record.date)}
                   </p>
                 </div>
               </div>
-              {record.updatedAt && record.updatedAt !== record.createdAt && (
-                <div className="flex gap-6 relative">
-                  <div className="w-5 h-5 rounded-full bg-white border-4 border-primary-400 z-10 flex-shrink-0"></div>
-                  <div className="pb-2">
-                    <p className="text-sm font-bold text-primary-800">Última Atualização</p>
-                    <p className="text-xs text-primary-500">{formatShortDate(record.updatedAt)}</p>
+
+              {/* Evento atualização */}
+              {hasHistory && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginTop: 16 }}>
+                  <div style={{
+                    width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
+                    background: isDark ? '#6366f1' : '#818cf8',
+                    border: `2px solid ${t.bg.card}`,
+                    boxShadow: `0 0 0 2px ${isDark ? '#6366f1' : '#818cf8'}`,
+                    position: 'absolute', left: 0,
+                  }} />
+                  <div style={{ paddingLeft: 4 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: t.text.primary }}>Última Atualização</p>
+                    <p style={{ fontSize: 11, color: t.text.muted }}>{formatShortDate(record.updatedAt)}</p>
                   </div>
                 </div>
               )}
             </div>
-          </Card>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <Card title="Ações Disponíveis">
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" disabled>
-                <Download size={16} className="mr-2" /> Baixar Comprovante
-              </Button>
-              <Button variant="outline" className="w-full justify-start" disabled>
-                <FileText size={16} className="mr-2" /> Gerar PDF
-              </Button>
+        {/* Coluna direita */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Ações */}
+          <div style={{
+            background: t.bg.card,
+            border: `1px solid ${t.border.default}`,
+            borderRadius: 18,
+            padding: '18px 18px',
+            boxShadow: t.shadow.card,
+          }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+              Ações
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button
+                onClick={() => navigate(`/record/edit/${id}`)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+                  background: t.bg.muted, border: `1px solid ${t.border.default}`,
+                  color: t.text.secondary, fontSize: 13, fontWeight: 600,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Edit2 size={15} /> Editar lançamento
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+                  background: isDark ? 'rgba(239,68,68,0.10)' : '#fef2f2',
+                  border: `1px solid ${isDark ? 'rgba(239,68,68,0.25)' : '#fecaca'}`,
+                  color: isDark ? '#fca5a5' : '#dc2626',
+                  fontSize: 13, fontWeight: 600,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Trash2 size={15} /> Excluir lançamento
+              </button>
             </div>
-          </Card>
+          </div>
+
+          {/* Contexto / Insight */}
+          <div style={{
+            background: isDark ? 'rgba(99,102,241,0.08)' : '#eef2ff',
+            border: `1px solid ${isDark ? 'rgba(99,102,241,0.20)' : '#c7d2fe'}`,
+            borderRadius: 18,
+            padding: '16px 18px',
+          }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: isDark ? '#a5b4fc' : '#4338ca', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+              Contexto
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {record.recurringId && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <RefreshCw size={13} color={isDark ? '#a5b4fc' : '#6366f1'} style={{ marginTop: 1, flexShrink: 0 }} />
+                  <p style={{ fontSize: 12, color: isDark ? '#c7d2fe' : '#4338ca', lineHeight: 1.5 }}>
+                    Faz parte de uma série recorrente
+                  </p>
+                </div>
+              )}
+              {record.isShared && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <Users size={13} color={isDark ? '#a5b4fc' : '#6366f1'} style={{ marginTop: 1, flexShrink: 0 }} />
+                  <p style={{ fontSize: 12, color: isDark ? '#c7d2fe' : '#4338ca', lineHeight: 1.5 }}>
+                    Despesa compartilhada entre membros
+                  </p>
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <TypeIcon size={13} color={isDark ? '#a5b4fc' : '#6366f1'} style={{ marginTop: 1, flexShrink: 0 }} />
+                <p style={{ fontSize: 12, color: isDark ? '#c7d2fe' : '#4338ca', lineHeight: 1.5 }}>
+                  {typeKey === 'expense' && 'Registrado como despesa no período'}
+                  {typeKey === 'salary' && 'Salário fixo mensal registrado'}
+                  {typeKey === 'income' && 'Rendimento extra ou bônus registrado'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Modal de confirmação de exclusão */}
       <ConfirmModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => { deleteMutation.mutate(); setShowDeleteModal(false); }}
         title="Excluir Lançamento"
         description={`Tem certeza que deseja excluir "${record.description}"? Esta ação não pode ser desfeita.`}
         confirmText="Excluir"

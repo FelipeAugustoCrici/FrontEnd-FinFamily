@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { Plus, Users, Trash2, Edit, UserPlus, Loader2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useFamilies } from './hooks/useFamilies';
 import { useCreateFamily } from './hooks/useCreateFamily';
@@ -131,25 +132,19 @@ export function FamiliesList() {
   return (
     <>
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-primary-800 flex items-center gap-2">
-              <Users size={28} />
-              {family.name}
-            </h2>
-            <p className="text-primary-500">Gerencie os membros da sua família</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => navigate(`/family/edit/${family.id}`)}>
-              <Edit size={18} className="mr-2" />
-              Editar Família
-            </Button>
-            <Button variant="ghost" onClick={() => setDeleteModalOpen(true)}>
-              <Trash2 size={18} className="mr-2 text-red-500" />
-              <span className="text-red-500">Excluir</span>
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          actions={
+            <>
+              <Button variant="secondary" onClick={() => navigate(`/family/edit/${family.id}`)}>
+                <Edit size={16} className="mr-2" /> Editar
+              </Button>
+              <Button variant="ghost" onClick={() => setDeleteModalOpen(true)}>
+                <Trash2 size={16} className="mr-2 text-red-500" />
+                <span className="text-red-500">Excluir</span>
+              </Button>
+            </>
+          }
+        />
 
         {/* Lista de Membros */}
         <Card title="Membros da Família" className="overflow-hidden">

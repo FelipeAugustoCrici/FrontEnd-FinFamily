@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Check, Clock, AlertCircle, ChevronDown } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
+import { useTokens } from '@/hooks/useTokens';
 import { RecordStatus } from '../types/record.types';
 
 interface StatusBadgeProps {
@@ -9,39 +10,43 @@ interface StatusBadgeProps {
   disabled?: boolean;
 }
 
-const statusConfig = {
-  PENDING: {
-    label: 'Pendente',
-    icon: Clock,
-    bgColor: 'bg-warning-50',
-    textColor: 'text-warning-700',
-    borderColor: 'border-warning-200',
-    hoverBg: 'hover:bg-warning-100',
-  },
-  PAID: {
-    label: 'Pago',
-    icon: Check,
-    bgColor: 'bg-success-50',
-    textColor: 'text-success-700',
-    borderColor: 'border-success-200',
-    hoverBg: 'hover:bg-success-100',
-  },
-  OVERDUE: {
-    label: 'Atrasado',
-    icon: AlertCircle,
-    bgColor: 'bg-danger-50',
-    textColor: 'text-danger-700',
-    borderColor: 'border-danger-200',
-    hoverBg: 'hover:bg-danger-100',
-  },
-};
-
 export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const t = useTokens();
 
-  const currentStatus = statusConfig[status || 'PENDING'];
-  const Icon = currentStatus.icon;
+  const statusConfig = {
+    PENDING: {
+      label: 'Pendente',
+      icon: Clock,
+      style: {
+        background: t.warning.bg,
+        color: t.warning.text,
+        border: `1px solid ${t.warning.border}`,
+      },
+    },
+    PAID: {
+      label: 'Pago',
+      icon: Check,
+      style: {
+        background: 'rgba(34,197,94,0.12)',
+        color: '#4ade80',
+        border: '1px solid rgba(34,197,94,0.2)',
+      },
+    },
+    OVERDUE: {
+      label: 'Atrasado',
+      icon: AlertCircle,
+      style: {
+        background: t.expense.bgIcon,
+        color: t.expense.text,
+        border: `1px solid ${t.expense.border}`,
+      },
+    },
+  };
+
+  const current = statusConfig[status || 'PENDING'];
+  const Icon = current.icon;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -49,20 +54,9 @@ export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
         setIsOpen(false);
       }
     };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
-
-  const handleStatusChange = (newStatus: RecordStatus) => {
-    onChange(newStatus);
-    setIsOpen(false);
-  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -70,43 +64,47 @@ export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all',
-          currentStatus.bgColor,
-          currentStatus.textColor,
-          currentStatus.borderColor,
-          !disabled && currentStatus.hoverBg,
-          !disabled && 'cursor-pointer',
+          'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200',
+          !disabled && 'cursor-pointer hover:opacity-80',
           disabled && 'opacity-50 cursor-not-allowed',
         )}
+        style={current.style}
       >
-        <Icon size={14} />
-        <span>{currentStatus.label}</span>
+        <Icon size={12} />
+        <span>{current.label}</span>
         {!disabled && (
-          <ChevronDown size={12} className={cn('transition-transform', isOpen && 'rotate-180')} />
+          <ChevronDown size={11} className={cn('transition-transform', isOpen && 'rotate-180')} />
         )}
       </button>
 
       {isOpen && !disabled && (
-        <div className="absolute z-50 mt-1 w-36 bg-white rounded-lg shadow-lg border border-primary-100 py-1">
-          {(Object.keys(statusConfig) as RecordStatus[]).map((statusKey) => {
-            const config = statusConfig[statusKey];
-            const StatusIcon = config.icon;
-            const isSelected = statusKey === status;
-
+        <div
+          className="absolute z-50 mt-1.5 w-36 rounded-xl py-1.5 overflow-hidden"
+          style={{
+            background: t.bg.card,
+            border: `1px solid ${t.border.default}`,
+            boxShadow: t.shadow.drop,
+          }}
+        >
+          {(Object.keys(statusConfig) as RecordStatus[]).map((key) => {
+            const cfg = statusConfig[key];
+            const StatusIcon = cfg.icon;
+            const isSelected = key === status;
             return (
               <button
-                key={statusKey}
-                onClick={() => handleStatusChange(statusKey)}
-                className={cn(
-                  'w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors',
-                  config.textColor,
-                  config.hoverBg,
-                  isSelected && config.bgColor,
-                )}
+                key={key}
+                onClick={() => { onChange(key); setIsOpen(false); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors duration-150"
+                style={{
+                  color: cfg.style.color,
+                  background: isSelected ? cfg.style.background : 'transparent',
+                }}
+                onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = t.bg.cardHover; }}
+                onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
               >
-                <StatusIcon size={14} />
-                <span>{config.label}</span>
-                {isSelected && <Check size={12} className="ml-auto" />}
+                <StatusIcon size={13} />
+                <span>{cfg.label}</span>
+                {isSelected && <Check size={11} className="ml-auto" />}
               </button>
             );
           })}

@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Calendar, Download, Loader2 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Download, Loader2, Calendar } from 'lucide-react';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import { useReportsSummary } from './hooks/useReportsSummary';
 import {
@@ -68,21 +69,13 @@ export function Reports() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-primary-800">Relatórios Financeiros</h1>
-          <p className="text-primary-500 text-sm">
-            Análises detalhadas e insights sobre suas finanças
-          </p>
-        </div>
-        <div className="flex gap-2">
+      <PageHeader
+        actions={
           <Button variant="outline" size="sm">
-            <Download size={16} className="mr-2" />
-            Exportar PDF
+            <Download size={16} className="mr-2" /> Exportar PDF
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filtro de Período */}
       <Card>

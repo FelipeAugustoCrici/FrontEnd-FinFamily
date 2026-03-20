@@ -2,19 +2,21 @@ import { useFormContext, useWatch, Controller } from 'react-hook-form';
 import { Input, Select } from '@/components/ui/Input';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { FileText, DollarSign, Calendar, Tag, Users } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
 import _ from 'lodash';
 
 export function RecordDetailsForm({ categories }: { categories: any[] }) {
   const { register, setValue, formState, control } = useFormContext();
   const type = useWatch({ name: 'type' });
   const isShared = useWatch({ name: 'isShared' });
+  const t = useTokens();
+  const isDark = t.bg.page === '#020617';
 
   const expenseCategories = categories.filter((c) => c.type === 'expense');
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const categoryId = e.target.value;
     setValue('categoryId', categoryId);
-
     if (categoryId) {
       const selected = _.find(categories, { id: categoryId });
       setValue('categoryName', selected?.name || '');
@@ -23,44 +25,53 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
     }
   };
 
+  const sharedActiveBg = isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff';
+  const sharedActiveBorder = isDark ? 'rgba(99,102,241,0.35)' : '#c7d2fe';
+  const sharedActiveText = isDark ? '#a5b4fc' : '#3730a3';
+  const sharedInactiveBg = t.bg.muted;
+  const sharedInactiveBorder = t.border.default;
+  const sharedInactiveText = t.text.muted;
+
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Descrição */}
       <Input
         label="Descrição"
-        placeholder="Ex: Conta de luz, Supermercado, etc."
+        placeholder="Ex: Conta de luz, Supermercado, Salário mensal..."
         {...register('description')}
         error={formState.errors.description?.message as string}
         icon={<FileText size={18} className="text-primary-400" />}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Controller
-          name="value"
-          control={control}
-          render={({ field }) => (
-            <CurrencyInput
-              label="Valor (R$)"
-              placeholder="0,00"
-              value={field.value}
-              onChange={field.onChange}
-              error={formState.errors.value?.message as string}
-              icon={<DollarSign size={18} className="text-primary-400" />}
-            />
-          )}
-        />
+      {/* Valor em destaque */}
+      <Controller
+        name="value"
+        control={control}
+        render={({ field }) => (
+          <CurrencyInput
+            label="Valor (R$)"
+            placeholder="0,00"
+            value={field.value}
+            onChange={field.onChange}
+            error={formState.errors.value?.message as string}
+            icon={<DollarSign size={18} className="text-primary-400" />}
+          />
+        )}
+      />
 
-        {type === 'expense' && (
-          <div className="relative">
+      {/* Categoria + Data */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {type === 'expense' ? (
+          <div>
             <Select
               label="Categoria"
               {...register('categoryId')}
               options={[
                 {
                   value: '',
-                  label:
-                    expenseCategories.length > 0
-                      ? 'Selecione uma categoria'
-                      : 'Nenhuma categoria cadastrada',
+                  label: expenseCategories.length > 0
+                    ? 'Selecione uma categoria'
+                    : 'Nenhuma categoria cadastrada',
                 },
                 ...expenseCategories.map((c) => ({ value: c.id, label: c.name })),
               ]}
@@ -69,53 +80,104 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
               disabled={expenseCategories.length === 0}
             />
             {expenseCategories.length === 0 && (
-              <p className="text-xs text-amber-600 mt-1 ml-0.5 flex items-center gap-1">
-                <Tag size={12} />
+              <p style={{ fontSize: 11, color: '#d97706', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Tag size={11} />
                 Cadastre categorias de despesa primeiro
               </p>
             )}
           </div>
-        )}
-
-        {type !== 'expense' && (
-          <div className="flex items-center justify-center bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <p className="text-sm text-gray-500">
-              {type === 'salary'
-                ? '💰 Salário não requer categoria'
-                : '✨ Extra não requer categoria'}
+        ) : (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: t.bg.muted,
+            border: `1px solid ${t.border.default}`,
+            borderRadius: 10,
+            padding: '12px 16px',
+          }}>
+            <p style={{ fontSize: 13, color: t.text.muted, textAlign: 'center' }}>
+              {type === 'salary' ? '💰 Salário não requer categoria' : '✨ Extra não requer categoria'}
             </p>
           </div>
         )}
+
+        <Input
+          label="Data"
+          type="date"
+          {...register('date')}
+          error={formState.errors.date?.message as string}
+          icon={<Calendar size={18} className="text-primary-400" />}
+        />
       </div>
 
-      <Input
-        label="Data"
-        type="date"
-        {...register('date')}
-        error={formState.errors.date?.message as string}
-        icon={<Calendar size={18} className="text-primary-400" />}
-      />
-
+      {/* Toggle compartilhado — apenas para despesas */}
       {type === 'expense' && (
-        <button
-          type="button"
-          onClick={() => setValue('isShared', !isShared)}
-          className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
-            isShared
-              ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/30 dark:border-indigo-800 dark:text-indigo-300'
-              : 'bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-800/40 dark:border-slate-700 dark:text-slate-400'
-          }`}
+        <div
+          style={{
+            background: isShared ? sharedActiveBg : sharedInactiveBg,
+            border: `1.5px solid ${isShared ? sharedActiveBorder : sharedInactiveBorder}`,
+            borderRadius: 14,
+            padding: '14px 16px',
+            transition: 'all 0.18s ease',
+          }}
         >
-          <div className="flex items-center gap-2">
-            <Users size={16} />
-            <span className="text-sm font-medium">
-              {isShared ? 'Despesa compartilhada' : 'Despesa individual'}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <div style={{
+                width: 34,
+                height: 34,
+                borderRadius: 8,
+                background: isShared ? (isDark ? 'rgba(99,102,241,0.2)' : '#e0e7ff') : t.bg.mutedStrong,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Users size={16} color={isShared ? sharedActiveText : t.text.muted} />
+              </div>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 700, color: isShared ? sharedActiveText : t.text.secondary, marginBottom: 2 }}>
+                  {isShared ? 'Despesa compartilhada' : 'Despesa individual'}
+                </p>
+                <p style={{ fontSize: 11, color: isShared ? sharedActiveText : t.text.muted, opacity: 0.8 }}>
+                  {isShared
+                    ? 'Dividida entre os membros da família'
+                    : 'Apenas do responsável selecionado'}
+                </p>
+              </div>
+            </div>
+
+            {/* Toggle switch */}
+            <button
+              type="button"
+              onClick={() => setValue('isShared', !isShared)}
+              style={{
+                width: 44,
+                height: 24,
+                borderRadius: 999,
+                background: isShared ? '#6366f1' : (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1'),
+                border: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+                flexShrink: 0,
+                transition: 'background 0.18s ease',
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: 3,
+                left: isShared ? 23 : 3,
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                background: '#ffffff',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                transition: 'left 0.18s ease',
+              }} />
+            </button>
           </div>
-          <div className={`w-10 h-5 rounded-full transition-colors relative ${isShared ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${isShared ? 'translate-x-5' : 'translate-x-0.5'}`} />
-          </div>
-        </button>
+        </div>
       )}
     </div>
   );

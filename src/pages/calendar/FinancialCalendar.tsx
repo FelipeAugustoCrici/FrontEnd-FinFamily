@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, CalendarDays, Loader2 } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { useCalendar } from './hooks/useCalendar';
 import { MonthlySummaryCards } from './components/MonthlySummaryCards';
 import { CalendarGrid } from './components/CalendarGrid';
@@ -44,45 +45,13 @@ export function FinancialCalendar() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-            <CalendarDays size={20} className="text-primary-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-primary-800">Calendário Financeiro</h1>
-            <p className="text-xs text-primary-500">Visualize seus compromissos financeiros</p>
-          </div>
-        </div>
-
-        {/* Month navigation */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevMonth}
-            className="p-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
-          >
-            <ChevronLeft size={16} className="text-primary-600" />
-          </button>
-          <button
-            onClick={goToday}
-            className={cn(
-              'px-4 py-2 rounded-lg text-sm font-semibold border transition-colors',
-              month === now.getMonth() + 1 && year === now.getFullYear()
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'border-primary-200 text-primary-600 hover:bg-primary-50',
-            )}
-          >
-            {MONTH_NAMES[month - 1]} {year}
-          </button>
-          <button
-            onClick={nextMonth}
-            className="p-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
-          >
-            <ChevronRight size={16} className="text-primary-600" />
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        showPeriod
+        month={month}
+        year={year}
+        onPrevMonth={prevMonth}
+        onNextMonth={nextMonth}
+      />
 
       {/* Filters */}
       <CalendarFilters filter={filter} onChange={setFilter} />

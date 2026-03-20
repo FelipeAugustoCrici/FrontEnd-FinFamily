@@ -1,23 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-type Theme = 'light' | 'dark';
+function getIsDark() {
+  return document.documentElement.classList.contains('dark');
+}
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('theme') as Theme) || 'light';
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    // Inicializa a partir do localStorage para evitar flash
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return getIsDark();
   });
 
   useEffect(() => {
+    // Aplica a classe no mount
     const root = document.documentElement;
-    if (theme === 'dark') {
+    if (isDark) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
 
-  const toggle = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
+  useEffect(() => {
+    // Observa mudanças externas na classe do <html> (ex: outro componente chamou toggle)
+    const observer = new MutationObserver(() => {
+      setIsDark(getIsDark());
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, []);
 
-  return { theme, toggle, isDark: theme === 'dark' };
+  const toggle = useCallback(() => {
+    setIsDark((prev) => !prev);
+  }, []);
+
+  return { theme: isDark ? 'dark' : 'light', toggle, isDark };
 }

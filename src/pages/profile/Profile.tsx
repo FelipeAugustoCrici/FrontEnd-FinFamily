@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { User, Mail, Phone, Calendar, Save, Loader2 } from 'lucide-react';
 import { fetchUserAttributes, updateUserAttributes } from 'aws-amplify/auth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -129,14 +130,9 @@ export function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-primary-800">Meu Perfil</h1>
-          <p className="text-primary-500 text-sm">Gerencie suas informações pessoais</p>
-        </div>
-        {!isEditing && <Button onClick={() => setIsEditing(true)}>Editar Perfil</Button>}
-      </div>
+      <PageHeader
+        actions={!isEditing ? <Button onClick={() => setIsEditing(true)}>Editar Perfil</Button> : undefined}
+      />
 
       {/* Avatar e informações principais */}
       <Card>

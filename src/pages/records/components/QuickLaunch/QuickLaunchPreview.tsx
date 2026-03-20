@@ -1,13 +1,5 @@
-import { cn } from '@/components/ui/Button';
-import {
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Calendar,
-  Tag,
-  User,
-  DollarSign,
-  FileText,
-} from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Calendar, Tag, User, DollarSign, FileText } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
 import type { ParsedLaunch } from './quickLaunch.parser';
 
 const fmt = (v: number) =>
@@ -22,79 +14,75 @@ interface Props {
   onDescriptionChange: (v: string) => void;
 }
 
-const Row = ({
-  icon: Icon,
-  label,
-  value,
-  valueClass,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  valueClass?: string;
-}) => (
-  <div className="flex items-center gap-2.5 text-sm">
-    <Icon size={14} className="text-primary-400 shrink-0" />
-    <span className="text-primary-500 w-24 shrink-0">{label}</span>
-    <span className={cn('font-semibold text-primary-800 truncate', valueClass)}>{value}</span>
-  </div>
-);
-
 export function QuickLaunchPreview({ parsed, categoryName, personName, dateLabel, description, onDescriptionChange }: Props) {
+  const t = useTokens();
   const isIncome = parsed.type !== 'expense';
-  const typeLabel =
-    parsed.type === 'salary' ? 'Salário' : parsed.type === 'income' ? 'Receita' : 'Despesa';
+  const typeLabel = parsed.type === 'salary' ? 'Salário' : parsed.type === 'income' ? 'Receita' : 'Despesa';
+  const semantic = isIncome ? t.income : t.expense;
 
   return (
-    <div className="rounded-xl border border-primary-100 bg-primary-50/60 p-4 space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
+    <div
+      className="rounded-xl p-4 space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200"
+      style={{ background: t.bg.cardSubtle, border: `1px solid ${t.border.default}` }}
+    >
+      {/* Type badge */}
       <div className="flex items-center gap-2 mb-1">
-        <div
-          className={cn(
-            'w-6 h-6 rounded-full flex items-center justify-center',
-            isIncome ? 'bg-success-100 text-success-600' : 'bg-danger-100 text-danger-600',
-          )}
-        >
-          {isIncome ? <ArrowUpCircle size={14} /> : <ArrowDownCircle size={14} />}
+        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: semantic.bgIcon }}>
+          {isIncome
+            ? <ArrowUpCircle size={14} style={{ color: semantic.text }} />
+            : <ArrowDownCircle size={14} style={{ color: semantic.text }} />
+          }
         </div>
-        <span
-          className={cn(
-            'text-xs font-bold uppercase tracking-wide',
-            isIncome ? 'text-success-600' : 'text-danger-600',
-          )}
-        >
-          {typeLabel}
-        </span>
+        <span className="text-xs font-bold uppercase tracking-wide" style={{ color: semantic.text }}>{typeLabel}</span>
         {parsed.confidence >= 0.7 && (
-          <span className="ml-auto text-xs text-success-600 font-medium">✓ pronto para salvar</span>
+          <span className="ml-auto text-xs font-medium" style={{ color: t.income.text }}>✓ pronto para salvar</span>
         )}
       </div>
 
+      {/* Description */}
       <div className="flex items-center gap-2.5 text-sm">
-        <FileText size={14} className="text-primary-400 shrink-0" />
-        <span className="text-primary-500 w-24 shrink-0">Descrição</span>
+        <FileText size={14} style={{ color: t.text.subtle }} className="shrink-0" />
+        <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Descrição</span>
         <input
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           placeholder="Descrição"
-          className="flex-1 bg-white border border-primary-200 rounded-md px-2 py-0.5 text-sm font-semibold text-primary-800 outline-none focus:border-primary-400 transition-colors"
+          className="flex-1 rounded-md px-2 py-0.5 text-sm font-semibold outline-none transition-colors"
+          style={{ background: t.bg.input, border: `1px solid ${t.border.input}`, color: t.text.primary }}
+          onFocus={e => (e.currentTarget.style.borderColor = t.border.focus)}
+          onBlur={e => (e.currentTarget.style.borderColor = t.border.input)}
         />
       </div>
 
-      <Row
-        icon={DollarSign}
-        label="Valor"
-        value={parsed.amount !== null ? fmt(parsed.amount) : '—'}
-        valueClass={
-          parsed.amount !== null
-            ? isIncome
-              ? 'text-success-600'
-              : 'text-danger-600'
-            : 'text-primary-400'
-        }
-      />
-      <Row icon={Calendar} label="Data" value={dateLabel} />
-      <Row icon={Tag} label="Categoria" value={categoryName ?? '—'} />
-      <Row icon={User} label="Responsável" value={personName ?? '—'} />
+      {/* Valor */}
+      <div className="flex items-center gap-2.5 text-sm">
+        <DollarSign size={14} style={{ color: t.text.subtle }} className="shrink-0" />
+        <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Valor</span>
+        <span className="font-semibold" style={{ color: parsed.amount !== null ? semantic.text : t.text.disabled }}>
+          {parsed.amount !== null ? fmt(parsed.amount) : '—'}
+        </span>
+      </div>
+
+      {/* Data */}
+      <div className="flex items-center gap-2.5 text-sm">
+        <Calendar size={14} style={{ color: t.text.subtle }} className="shrink-0" />
+        <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Data</span>
+        <span className="font-semibold" style={{ color: t.text.primary }}>{dateLabel}</span>
+      </div>
+
+      {/* Categoria */}
+      <div className="flex items-center gap-2.5 text-sm">
+        <Tag size={14} style={{ color: t.text.subtle }} className="shrink-0" />
+        <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Categoria</span>
+        <span className="font-semibold" style={{ color: categoryName ? t.text.primary : t.text.disabled }}>{categoryName ?? '—'}</span>
+      </div>
+
+      {/* Responsável */}
+      <div className="flex items-center gap-2.5 text-sm">
+        <User size={14} style={{ color: t.text.subtle }} className="shrink-0" />
+        <span className="w-24 shrink-0" style={{ color: t.text.muted }}>Responsável</span>
+        <span className="font-semibold" style={{ color: personName ? t.text.primary : t.text.disabled }}>{personName ?? '—'}</span>
+      </div>
     </div>
   );
 }

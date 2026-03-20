@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GoalsCard, BudgetsCard, CreditCardsCard } from './components';
 import { GoalFormModal, BudgetFormModal, CreditCardFormModal } from './components';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { api } from '@/services/api.service';
 
 export function PlanningList() {
@@ -22,9 +23,7 @@ export function PlanningList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-slate-900">Planejamento Financeiro</h1>
-      </div>
+      <PageHeader />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <GoalsCard onCreateNew={() => setGoalModalOpen(true)} />

@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Card } from '@/components/ui/Card';
+import { useTokens } from '@/hooks/useTokens';
+import { SmartInput } from './SmartInput';
 import { RecordFormHeader } from './RecordFormHeader';
 import { FamilySelector } from './FamilySelector';
 import { RecordTypeSelector } from './RecordTypeSelector';
@@ -45,35 +46,24 @@ export function RecordForm({
   categories = [],
   people = [],
 }: RecordFormProps) {
+  const t = useTokens();
+  const isDark = t.bg.page === '#020617';
+
   const mapBackendTypeToFormType = (data?: any): 'expense' | 'salary' | 'income' => {
-    if (data?.recordType) {
-      return data.recordType;
-    }
-
-    if (!data?.sourceId && !data?.recurringId && !data?.categoryId) {
-      return 'expense';
-    }
-
-    if (data?.sourceId) {
-      return 'salary';
-    }
-
+    if (data?.recordType) return data.recordType;
+    if (!data?.sourceId && !data?.recurringId && !data?.categoryId) return 'expense';
+    if (data?.sourceId) return 'salary';
     return 'expense';
   };
 
   const getFamilyId = () => {
     const data = initialData as any;
-
     if (data?.person?.familyId) return data.person.familyId;
     if (data?.person?.family?.id) return data.person.family.id;
     if (data?.familyId) return data.familyId;
-
     if (families.length > 0) return families[0].id;
-
     return '';
   };
-
-  const familyIdValue = getFamilyId();
 
   const methods = useForm<RecordFormData>({
     resolver: zodResolver(recordSchema),
@@ -87,7 +77,7 @@ export function RecordForm({
       categoryId: initialData?.categoryId || '',
       type: mapBackendTypeToFormType(initialData),
       personId: initialData?.personId || '',
-      familyId: familyIdValue,
+      familyId: getFamilyId(),
       isRecurring: !!(initialData as any)?.recurringId,
       durationMonths: '',
       isShared: (initialData as any)?.isShared !== false,
@@ -121,25 +111,85 @@ export function RecordForm({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto space-y-8">
-        <RecordFormHeader isEdit={!!initialData?.id} isLoading={!!isLoading} />
+      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: 900, margin: '0 auto' }}>
+        {/* Header com botões */}
+        <div style={{ marginBottom: 28 }}>
+          <RecordFormHeader isEdit={!!initialData?.id} isLoading={!!isLoading} />
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-6">
-            <Card title="Família e Responsável">
-              <FamilySelector families={families} />
-            </Card>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'start' }}>
+          {/* Coluna principal */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-            <Card title="Tipo de Registro">
+          {/* 0. Preenchimento Inteligente */}
+            <section style={{
+              background: isDark ? 'rgba(99,102,241,0.06)' : '#f5f3ff',
+              border: `1.5px solid ${isDark ? 'rgba(99,102,241,0.20)' : '#ddd6fe'}`,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: t.shadow.card,
+            }}>
+              <SmartInput categories={categories} />
+            </section>
+
+            {/* 1. Tipo de Registro */}
+            <section style={{
+              background: t.bg.card,
+              border: `1px solid ${t.border.default}`,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: t.shadow.card,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+                Tipo de Registro
+              </p>
               <RecordTypeSelector />
-            </Card>
+            </section>
 
-            <Card title="Informações do Lançamento">
+            {/* 2. Informações do Lançamento */}
+            <section style={{
+              background: t.bg.card,
+              border: `1px solid ${t.border.default}`,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: t.shadow.card,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+                Informações do Lançamento
+              </p>
               <RecordDetailsForm categories={categories} />
+            </section>
+
+            {/* 3. Opções adicionais */}
+            <section style={{
+              background: t.bg.card,
+              border: `1px solid ${t.border.default}`,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: t.shadow.card,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+                Opções Adicionais
+              </p>
               <RecurrenceSection />
-            </Card>
+            </section>
+
+            {/* 4. Família e Responsável */}
+            <section style={{
+              background: t.bg.card,
+              border: `1px solid ${t.border.default}`,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: t.shadow.card,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: t.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+                Família e Responsável
+              </p>
+              <FamilySelector families={families} />
+            </section>
           </div>
 
+          {/* Coluna lateral — Resumo */}
           <SummarySection people={people} />
         </div>
       </form>

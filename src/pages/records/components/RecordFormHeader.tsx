@@ -1,34 +1,36 @@
 import { Button } from '@/components/ui/Button';
 import { Save, X, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTokens } from '@/hooks/useTokens';
 
 export function RecordFormHeader({ isEdit, isLoading }: { isEdit: boolean; isLoading: boolean }) {
   const navigate = useNavigate();
+  const t = useTokens();
 
   return (
-    <div className="flex items-center justify-between">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
       <div>
-        <h2 className="text-2xl font-bold text-primary-800">
+        <h2 style={{ fontSize: 22, fontWeight: 800, color: t.text.primary, marginBottom: 2 }}>
           {isEdit ? 'Editar Lançamento' : 'Novo Lançamento'}
         </h2>
-        <p className="text-primary-500">
+        <p style={{ fontSize: 13, color: t.text.muted }}>
           {isEdit
             ? 'Atualize os dados do lançamento'
             : 'Preencha as informações do novo lançamento'}
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
         <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-          <X size={18} className="mr-2" />
+          <X size={16} style={{ marginRight: 6 }} />
           Cancelar
         </Button>
 
         <Button type="submit" disabled={isLoading}>
           {isLoading ? (
-            <Loader2 size={18} className="mr-2 animate-spin" />
+            <Loader2 size={16} style={{ marginRight: 6 }} className="animate-spin" />
           ) : (
-            <Save size={18} className="mr-2" />
+            <Save size={16} style={{ marginRight: 6 }} />
           )}
           {isEdit ? 'Atualizar' : 'Salvar'}
         </Button>
