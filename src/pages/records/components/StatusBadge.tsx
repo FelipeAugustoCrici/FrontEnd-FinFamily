@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, Clock, AlertCircle, ChevronDown } from 'lucide-react';
 import { cn } from '@/components/ui/Button';
 import { useTokens } from '@/hooks/useTokens';
@@ -12,7 +13,8 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
   const t = useTokens();
 
   const statusConfig = {
@@ -49,19 +51,30 @@ export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
   const Icon = current.icon;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+    if (!isOpen) return;
+    const close = () => setIsOpen(false);
+    document.addEventListener('mousedown', close);
+    window.addEventListener('scroll', close, true);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      window.removeEventListener('scroll', close, true);
     };
-    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!isOpen && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setIsOpen(o => !o);
+  };
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       <button
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        ref={btnRef}
+        onClick={handleToggle}
         disabled={disabled}
         className={cn(
           'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200',
@@ -77,38 +90,50 @@ export function StatusBadge({ status, onChange, disabled }: StatusBadgeProps) {
         )}
       </button>
 
-      {isOpen && !disabled && (
-        <div
-          className="absolute z-50 mt-1.5 w-36 rounded-xl py-1.5 overflow-hidden"
-          style={{
-            background: t.bg.card,
-            border: `1px solid ${t.border.default}`,
-            boxShadow: t.shadow.drop,
-          }}
-        >
-          {(Object.keys(statusConfig) as RecordStatus[]).map((key) => {
-            const cfg = statusConfig[key];
-            const StatusIcon = cfg.icon;
-            const isSelected = key === status;
-            return (
-              <button
-                key={key}
-                onClick={() => { onChange(key); setIsOpen(false); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors duration-150"
-                style={{
-                  color: cfg.style.color,
-                  background: isSelected ? cfg.style.background : 'transparent',
-                }}
-                onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = t.bg.cardHover; }}
-                onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-              >
-                <StatusIcon size={13} />
-                <span>{cfg.label}</span>
-                {isSelected && <Check size={11} className="ml-auto" />}
-              </button>
-            );
-          })}
-        </div>
+      {isOpen && !disabled && createPortal(
+        <>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9998 }} onClick={() => setIsOpen(false)} />
+          <div
+            style={{
+              position: 'fixed',
+              top: pos.top,
+              left: pos.left,
+              zIndex: 9999,
+              width: 144,
+              borderRadius: 12,
+              paddingTop: 6,
+              paddingBottom: 6,
+              overflow: 'hidden',
+              background: t.bg.card,
+              border: `1px solid ${t.border.default}`,
+              boxShadow: t.shadow.drop,
+            }}
+          >
+            {(Object.keys(statusConfig) as RecordStatus[]).map((key) => {
+              const cfg = statusConfig[key];
+              const StatusIcon = cfg.icon;
+              const isSelected = key === status;
+              return (
+                <button
+                  key={key}
+                  onClick={() => { onChange(key); setIsOpen(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors duration-150"
+                  style={{
+                    color: cfg.style.color,
+                    background: isSelected ? cfg.style.background : 'transparent',
+                  }}
+                  onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = t.bg.cardHover; }}
+                  onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                >
+                  <StatusIcon size={13} />
+                  <span>{cfg.label}</span>
+                  {isSelected && <Check size={11} className="ml-auto" />}
+                </button>
+              );
+            })}
+          </div>
+        </>,
+        document.body,
       )}
     </div>
   );

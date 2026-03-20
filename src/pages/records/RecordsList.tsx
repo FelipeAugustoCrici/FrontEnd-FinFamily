@@ -16,6 +16,7 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { RecordsFilters } from './components/RecordsFilters';
 import { StatusBadge } from './components/StatusBadge';
 import { IncomeSummaryCards } from './components/IncomeSummaryCards';
+import { MobileRecordsList } from './components/MobileRecordsList';
 import { QuickLaunchInput } from './components/QuickLaunch/QuickLaunchInput';
 import { useRecordFilters } from './hooks/useRecordFilters';
 import { useRecords } from './hooks/useRecords';
@@ -178,7 +179,7 @@ queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
         />
 
         {}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hidden md:block">
           {isLoading ? (
             <SkeletonTable rows={8} t={t} />
           ) : (
@@ -348,6 +349,30 @@ queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
                 )}
               </tbody>
             </table>
+          )}
+        </div>
+
+        {/* Mobile list */}
+        <div className="md:hidden px-3">
+          {isLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '12px 0' }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} style={{
+                  height: 88, borderRadius: 14,
+                  background: t.bg.muted,
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                }} />
+              ))}
+            </div>
+          ) : (
+            <MobileRecordsList
+              records={paginatedRecords}
+              getPersonName={getPersonName}
+              onDelete={handleDeleteClick}
+              deleteLoading={deleteRecord.isPending}
+              onStatusChange={handleStatusChange}
+              updateLoading={updateStatus.isPending}
+            />
           )}
         </div>
 
