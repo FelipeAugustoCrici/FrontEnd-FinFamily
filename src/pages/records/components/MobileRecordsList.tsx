@@ -206,6 +206,8 @@ function RecordCard({ record, getPersonName, onDelete, deleteLoading, onStatusCh
       alignItems: 'stretch',
       gap: 10,
       overflow: 'hidden',
+      maxWidth: '100%',
+      minWidth: 0,
     }}>
       {/* Left: icon */}
       <div style={{
@@ -303,7 +305,7 @@ export function MobileRecordsList({ records, getPersonName, onDelete, deleteLoad
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '12px 0 80px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '12px 0 80px', overflow: 'hidden' }}>
       {groups.map(group => (
         <div key={group.label}>
           {/* Group header */}
