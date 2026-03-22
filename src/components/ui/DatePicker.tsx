@@ -31,6 +31,8 @@ export interface DatePickerProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
+  optional?: boolean;
   error?: string | { message?: string };
   helperText?: string;
   min?: string;
@@ -61,7 +63,7 @@ const btnBase = (bg: string, color: string): React.CSSProperties => ({
 
 export function DatePicker({
   value, onChange, label, placeholder = 'Selecione uma data',
-  disabled = false, error, helperText, min, max,
+  disabled = false, required = false, optional = false, error, helperText, min, max,
   mode = 'date', size = 'md', fullWidth = true, className,
 }: DatePickerProps) {
   const t = useTokens();
@@ -143,7 +145,7 @@ const calcDropDirection = useCallback(() => {
   ];
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const yearRange = Array.from({ length: 10 }, (_, i) => now.getFullYear() - 4 + i);
+  const yearRange = Array.from({ length: 100 }, (_, i) => now.getFullYear() - i).reverse();
 
 const popoverPos: React.CSSProperties = dropUp
     ? { bottom: sz.height + 8, top: 'auto' }
@@ -156,8 +158,10 @@ const popoverPos: React.CSSProperties = dropUp
       className={className}
     >
       {label && (
-        <label htmlFor={id} style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary, marginLeft: 2 }}>
+        <label htmlFor={id} style={{ fontSize: 13, fontWeight: 500, color: t.text.secondary, marginLeft: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
           {label}
+          {required && <span style={{ color: '#ef4444' }}>*</span>}
+          {optional && <span style={{ color: t.text.muted, fontWeight: 400 }}>(opcional)</span>}
         </label>
       )}
 
@@ -301,17 +305,19 @@ const popoverPos: React.CSSProperties = dropUp
 
               {}
               <p style={{ fontSize: 9, fontWeight: 700, color: t.text.subtle, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>Ano</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 3 }}>
-                {yearRange.map(y => {
-                  const isActive = viewYear === y;
-                  return (
-                    <button key={y} type="button" onClick={() => setViewYear(y)}
-                      style={{ ...btnBase(isActive ? (isDark ? 'rgba(99,102,241,0.20)' : 'rgba(99,102,241,0.10)') : 'transparent', isActive ? t.text.link : t.text.secondary), padding: '4px 0', borderRadius: 7, fontSize: 10, fontWeight: isActive ? 700 : 400 }}
-                      onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.bg.muted; }}
-                      onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                    >{y}</button>
-                  );
-                })}
+              <div style={{ maxHeight: 80, overflowY: 'auto', borderRadius: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 3 }}>
+                  {yearRange.map(y => {
+                    const isActive = viewYear === y;
+                    return (
+                      <button key={y} type="button" onClick={() => setViewYear(y)}
+                        style={{ ...btnBase(isActive ? (isDark ? 'rgba(99,102,241,0.20)' : 'rgba(99,102,241,0.10)') : 'transparent', isActive ? t.text.link : t.text.secondary), padding: '4px 0', borderRadius: 7, fontSize: 10, fontWeight: isActive ? 700 : 400 }}
+                        onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.bg.muted; }}
+                        onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                      >{y}</button>
+                    );
+                  })}
+                </div>
               </div>
             </>
           ) : (
@@ -330,17 +336,19 @@ const popoverPos: React.CSSProperties = dropUp
                 })}
               </div>
               <p style={{ fontSize: 9, fontWeight: 700, color: t.text.subtle, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>Ano</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 3 }}>
-                {yearRange.map(y => {
-                  const isActive = viewYear === y;
-                  return (
-                    <button key={y} type="button" onClick={() => { setViewYear(y); onChange?.(formatISO(y, viewMonth, 1)); setOpen(false); }}
-                      style={{ ...btnBase(isActive ? (isDark ? 'rgba(99,102,241,0.20)' : 'rgba(99,102,241,0.10)') : 'transparent', isActive ? t.text.link : t.text.secondary), padding: '4px 0', borderRadius: 7, fontSize: 10, fontWeight: isActive ? 700 : 400 }}
-                      onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.bg.muted; }}
-                      onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                    >{y}</button>
-                  );
-                })}
+              <div style={{ maxHeight: 80, overflowY: 'auto', borderRadius: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 3 }}>
+                  {yearRange.map(y => {
+                    const isActive = viewYear === y;
+                    return (
+                      <button key={y} type="button" onClick={() => { setViewYear(y); onChange?.(formatISO(y, viewMonth, 1)); setOpen(false); }}
+                        style={{ ...btnBase(isActive ? (isDark ? 'rgba(99,102,241,0.20)' : 'rgba(99,102,241,0.10)') : 'transparent', isActive ? t.text.link : t.text.secondary), padding: '4px 0', borderRadius: 7, fontSize: 10, fontWeight: isActive ? 700 : 400 }}
+                        onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.bg.muted; }}
+                        onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                      >{y}</button>
+                    );
+                  })}
+                </div>
               </div>
             </>
           )}

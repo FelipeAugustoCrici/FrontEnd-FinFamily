@@ -228,7 +228,7 @@ export const Layout = () => {
           </button>
         </div>
 
-        <div className="p-6 md:p-8 animate-in fade-in duration-500">
+        <div className="p-4 md:p-8 animate-in fade-in duration-500">
           <Outlet />
         </div>
       </main>

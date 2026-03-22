@@ -6,11 +6,8 @@ export function useSignUp() {
 
   async function signUp(email: string, password: string, name: string) {
     setLoading(true);
-    try {
-      return registerUser(email, password, name);
-    } finally {
-      setLoading(false);
-    }
+    // loading is kept ON after return — caller must call setLoading(false) or it resets on confirm
+    return registerUser(email, password, name);
   }
 
   async function confirm(
@@ -31,9 +28,9 @@ export function useSignUp() {
     }
   }
 
-  return {
-    signUp,
-    confirm,
-    loading,
-  };
+  function stopLoading() {
+    setLoading(false);
+  }
+
+  return { signUp, confirm, stopLoading, loading };
 }

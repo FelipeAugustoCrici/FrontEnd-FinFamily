@@ -258,7 +258,7 @@ function RecordCard({ record, getPersonName, onDelete, deleteLoading, onStatusCh
       </div>
 
       {/* Right: value + menu */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', flexShrink: 0, gap: 4 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', flexShrink: 0, gap: 4, minWidth: 90 }}>
         <span style={{
           fontSize: 14, fontWeight: 800, color: valueColor, whiteSpace: 'nowrap',
         }}>

@@ -57,8 +57,8 @@ export function RecordDetailsForm({ categories }: { categories: any[] }) {
         )}
       />
 
-      {}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      {/* Categoria + Data */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {type === 'expense' ? (
           <div>
             <Select

@@ -117,7 +117,8 @@ export function RecordForm({
           <RecordFormHeader isEdit={!!initialData?.id} isLoading={!!isLoading} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: 24, alignItems: 'start' }}
+             className="md:grid-cols-[1fr_320px]">
           {}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
@@ -189,8 +190,10 @@ export function RecordForm({
             </section>
           </div>
 
-          {}
-          <SummarySection people={people} />
+          {/* Summary — hidden on mobile */}
+          <div className="hidden md:block">
+            <SummarySection people={people} />
+          </div>
         </div>
       </form>
     </FormProvider>

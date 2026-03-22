@@ -353,7 +353,7 @@ queryClient.invalidateQueries({ queryKey: ['incomes-summary'] });
         </div>
 
         {/* Mobile list */}
-        <div className="md:hidden px-3">
+        <div className="md:hidden -mx-6 px-3">
           {isLoading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '12px 0' }}>
               {Array.from({ length: 5 }).map((_, i) => (
